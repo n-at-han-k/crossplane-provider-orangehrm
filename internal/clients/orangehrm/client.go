@@ -126,6 +126,32 @@ func DeleteIDs(ids ...string) map[string]any {
 	return map[string]any{"ids": out}
 }
 
+// IsID reports whether an external name can be an identifier this API assigns.
+//
+// WHY THIS IS NOT JUST A LENGTH CHECK: crossplane-runtime seeds the external
+// name with the managed resource's own Kubernetes NAME, before the first
+// Observe runs. So the first read of a resource called `head-office` asks for
+//
+//	GET /api/v2/admin/locations/head-office
+//
+// which OrangeHRM answers 422 Invalid Parameter, not 404 -- the id is
+// declared an integer and the endpoint validates it. A 422 is not "does not
+// exist", so Observe fails, Create is never called, and the resource sits there
+// reconciling nothing for ever. (Not every endpoint validates: job-titles
+// answers 404 for the same shape. Depending on which is a lottery.)
+//
+// Every id this API assigns is a number, so an external name that is not one
+// cannot name an existing record, and the resource has not been created yet.
+func IsID(externalName string) bool {
+	if externalName == "" {
+		return false
+	}
+
+	_, err := strconv.ParseInt(externalName, 10, 64)
+
+	return err == nil
+}
+
 // APIError is an unsuccessful response, carrying the status so that a caller
 // can tell "it is gone" from "it did not answer".
 type APIError struct {

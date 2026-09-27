@@ -140,3 +140,22 @@ func TestNotFoundIsTheOnlyGone(t *testing.T) {
 		t.Fatalf("a 500 reported as not found: %v", err)
 	}
 }
+
+// The first Observe of every resource asks about the external name
+// crossplane-runtime seeded from the Kubernetes NAME, and OrangeHRM answers a
+// non-numeric id 422 Invalid Parameter rather than 404 on the endpoints that
+// validate it. A 422 is not "does not exist", so Observe would fail and Create
+// would never run -- which is why what counts as an id is decided here rather
+// than from the response.
+func TestOnlyANumberCanBeAnID(t *testing.T) {
+	for _, id := range []string{"1", "7", "12345"} {
+		if !IsID(id) {
+			t.Errorf("IsID(%q) = false, want true", id)
+		}
+	}
+	for _, id := range []string{"", "head-office", "annual-leave", "7a", " 7"} {
+		if IsID(id) {
+			t.Errorf("IsID(%q) = true, want false -- nothing has been created yet", id)
+		}
+	}
+}

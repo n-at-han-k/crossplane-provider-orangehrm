@@ -202,9 +202,11 @@ func upToDate(cr *v1alpha1.AdminMembership, observed *orangehrm.AdminMembershipM
 }
 
 func (c *external) Observe(ctx context.Context, cr *v1alpha1.AdminMembership) (managed.ExternalObservation, error) {
+	// An external name that is not an id is the one crossplane-runtime seeded
+	// from the resource's own Kubernetes name, so nothing has been created yet
+	// (see IsID: asking for it would be a 422, which is not a 404).
 	id := meta.GetExternalName(cr)
-	if id == "" {
-		// Nothing has been created yet.
+	if !orangehrm.IsID(id) {
 		return managed.ExternalObservation{ResourceExists: false}, nil
 	}
 
