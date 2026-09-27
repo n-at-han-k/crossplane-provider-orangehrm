@@ -1,7 +1,7 @@
 # ====================================================================================
 # Setup Project
-PROJECT_NAME := provider-rt
-PROJECT_REPO := github.com/n-at-han-k/crossplane-provider-rt
+PROJECT_NAME := provider-orangehrm
+PROJECT_REPO := github.com/n-at-han-k/crossplane-provider-orangehrm
 
 PLATFORMS ?= linux_amd64 linux_arm64
 -include build/makelib/common.mk
@@ -43,7 +43,7 @@ CROSSPLANE_CLI_VERSION = v2.2.0
 # ====================================================================================
 # Setup Images
 
-IMAGES = provider-rt
+IMAGES = provider-orangehrm
 -include build/makelib/imagelight.mk
 
 # ====================================================================================
@@ -62,25 +62,25 @@ IMAGES = provider-rt
 #                    built-in GITHUB_TOKEN, so there is nothing to provision or
 #                    rotate. Also the sensible pull source for our own cluster.
 #
-# The package is named provider-rt, NOT crossplane-provider-rt. That is
+# The package is named provider-orangehrm, NOT crossplane-provider-orangehrm. That is
 # the Crossplane package identity -- the provider-<name> convention, and what
 # appears in `kubectl get providers`. Only the repo carries the longer,
 # disambiguating name.
 #
 # Resulting images:
-#   xpkg.upbound.io/n-at-han-k/provider-rt:<version>
-#   ghcr.io/n-at-han-k/provider-rt:<version>
+#   xpkg.upbound.io/n-at-han-k/provider-orangehrm:<version>
+#   ghcr.io/n-at-han-k/provider-orangehrm:<version>
 XPKG_REG_ORGS ?= xpkg.upbound.io/n-at-han-k ghcr.io/n-at-han-k
 # xpkg.upbound.io infers channel tags itself, so promoting there is redundant
 # (and is what upstream skips). ghcr.io does not, so it is NOT excluded here and
 # does get promoted.
 XPKG_REG_ORGS_NO_PROMOTE ?= xpkg.upbound.io/n-at-han-k
-XPKGS = provider-rt
+XPKGS = provider-orangehrm
 -include build/makelib/xpkg.mk
 
 # NOTE(hasheddan): we force image building to happen prior to xpkg build so that
 # we ensure image is present in daemon.
-xpkg.build.provider-rt: do.build.images
+xpkg.build.provider-orangehrm: do.build.images
 
 fallthrough: submodules
 	@echo Initial setup complete. Running make again . . .
@@ -120,9 +120,9 @@ dev: $(KIND) $(KUBECTL)
 	@$(INFO) Creating kind cluster
 	@$(KIND) create cluster --name=$(PROJECT_NAME)-dev
 	@$(KUBECTL) cluster-info --context kind-$(PROJECT_NAME)-dev
-	@$(INFO) Installing Provider RT CRDs
+	@$(INFO) Installing Provider OrangeHRM CRDs
 	@$(KUBECTL) apply -R -f package/crds
-	@$(INFO) Starting Provider RT controllers
+	@$(INFO) Starting Provider OrangeHRM controllers
 	@$(GO) run cmd/provider/main.go --debug
 
 dev-clean: $(KIND) $(KUBECTL)

@@ -1,119 +1,281 @@
 apiVersion: meta.pkg.crossplane.io/v1
 kind: Provider
 metadata:
-  name: provider-rt
+  name: provider-orangehrm
   annotations:
     # NOTE: this block IS the Marketplace listing. Everything here is rendered
     # publicly, so keep it accurate.
     meta.crossplane.io/maintainer: n-at-han-k (https://github.com/n-at-han-k)
-    meta.crossplane.io/source: github.com/n-at-han-k/crossplane-provider-rt
+    meta.crossplane.io/source: github.com/n-at-han-k/crossplane-provider-orangehrm
     meta.crossplane.io/license: Apache-2.0
     meta.crossplane.io/description: |
-      Manage RT Identity Server as Kubernetes resources.
+      Manage OrangeHRM Identity Server as Kubernetes resources.
     meta.crossplane.io/readme: |
-      `provider-rt` manages RT Identity Server as Kubernetes
+      `provider-orangehrm` manages OrangeHRM Identity Server as Kubernetes
       resources, so tenants, organizations and applications can be declared
       alongside the rest of your cluster and reconciled by Crossplane.
 
-      It is GENERATED from the API descriptions RT publishes with the
+      It is GENERATED from the API descriptions OrangeHRM publishes with the
       server itself, so what it can manage is what those documents describe --
       no more, and nothing hand-maintained that can drift from them.
 
       ## Managed resources
 
 
-      * `Article`
+      * `AdminEducation`
 
 
-      * `Asset`
+      * `AdminEmailSubscriptionSubscriber`
 
 
-      * `Catalog`
+      * `AdminEmploymentStatus`
 
 
-      * `CatalogRight`
+      * `AdminI18nLanguage`
 
 
-      * `Class`
+      * `AdminJobCategory`
 
 
-      * `ClassRight`
+      * `AdminJobTitle`
 
 
-      * `Customfield`
+      * `AdminLanguage`
 
 
-      * `CustomfieldAppliesto`
+      * `AdminLicense`
 
 
-      * `CustomfieldRight`
+      * `AdminLocation`
 
 
-      * `CustomfieldValue`
+      * `AdminMembership`
 
 
-      * `GlobalRight`
+      * `AdminNationality`
 
 
-      * `Group`
+      * `AdminOauthClient`
 
 
-      * `GroupMember`
+      * `AdminPayGrade`
 
 
-      * `GroupRight`
+      * `AdminPayGradeCurrency`
 
 
-      * `Lifecycle`
+      * `AdminSkill`
 
 
-      * `LifecycleMap`
+      * `AdminSubunit`
 
 
-      * `Queue`
+      * `AdminUser`
 
 
-      * `QueueRight`
+      * `AdminWorkShift`
 
 
-      * `Ticket`
+      * `AdminWorkspaceNotificationRegistration`
 
 
-      * `User`
+      * `AttendanceEmployeeRecord`
 
 
-      * `UserGroup`
+      * `AttendanceRecord`
+
+
+      * `AuthOpenidProvider`
+
+
+      * `BuzzCommentLike`
+
+
+      * `BuzzPost`
+
+
+      * `BuzzShare`
+
+
+      * `BuzzShareComment`
+
+
+      * `BuzzShareLike`
+
+
+      * `ClaimEmployeeRequest`
+
+
+      * `ClaimEvent`
+
+
+      * `ClaimExpensesType`
+
+
+      * `ClaimRequest`
+
+
+      * `ClaimRequestAttachment`
+
+
+      * `ClaimRequestExpense`
+
+
+      * `LeaveEmployeesLeaveRequest`
+
+
+      * `LeaveHoliday`
+
+
+      * `LeaveLeaveEntitlement`
+
+
+      * `LeaveLeaveRequest`
+
+
+      * `LeaveLeaveType`
+
+
+      * `PerformanceConfigTracker`
+
+
+      * `PerformanceEmployeesTracker`
+
+
+      * `PerformanceKpi`
+
+
+      * `PerformanceManageReview`
+
+
+      * `PerformanceTrackerLog`
+
+
+      * `PimCustomField`
+
+
+      * `PimEmployee`
+
+
+      * `PimEmployeeDependent`
+
+
+      * `PimEmployeeEducation`
+
+
+      * `PimEmployeeEmergencyContact`
+
+
+      * `PimEmployeeImmigration`
+
+
+      * `PimEmployeeLanguage`
+
+
+      * `PimEmployeeLanguageFluency`
+
+
+      * `PimEmployeeLicense`
+
+
+      * `PimEmployeeMembership`
+
+
+      * `PimEmployeeSalaryComponent`
+
+
+      * `PimEmployeeScreenAttachment`
+
+
+      * `PimEmployeeSkill`
+
+
+      * `PimEmployeeSubordinate`
+
+
+      * `PimEmployeeSupervisor`
+
+
+      * `PimEmployeeTermination`
+
+
+      * `PimEmployeeWorkExperience`
+
+
+      * `PimReportingMethod`
+
+
+      * `PimReportsDefined`
+
+
+      * `PimTerminationReason`
+
+
+      * `RecruitmentCandidate`
+
+
+      * `RecruitmentCandidateHistory`
+
+
+      * `RecruitmentCandidateInterview`
+
+
+      * `RecruitmentInterviewAttachment`
+
+
+      * `RecruitmentVacancy`
+
+
+      * `RecruitmentVacancyAttachment`
+
+
+      * `TimeCustomer`
+
+
+      * `TimeProjectActivity`
+
+
+      * `TimeProject`
+
+
+      * `TimeProjectActivitiesCopy`
+
+
+      * `TimeValidationActivityName`
 
 
       ## Getting started
 
-      Install the provider, then give it an endpoint and a credential. Unlike
-      a single-key API, RT needs to be told WHERE it is as well as who
-      you are, so the secret is one JSON document rather than a bare token:
+      Install the provider, then give it an endpoint and an OAuth client.
+      OrangeHRM needs to be told WHERE it is as well as who you are, and
+      its access tokens expire in an hour, so the secret holds the client the
+      provider mints tokens with rather than a token:
 
       ```yaml
       apiVersion: pkg.crossplane.io/v1
       kind: Provider
       metadata:
-        name: provider-rt
+        name: provider-orangehrm
       spec:
-        package: xpkg.upbound.io/n-at-han-k/provider-rt:v0.1.0
+        package: xpkg.upbound.io/n-at-han-k/provider-orangehrm:v0.1.0
       ---
       apiVersion: v1
       kind: Secret
       metadata:
-        name: rt-creds
+        name: orangehrm-creds
         namespace: crossplane-system
       type: Opaque
       stringData:
         credentials: |
           {
-            "endpoint": "https://identity.example.com/api/server/v1",
+            "endpoint": "https://hr.example.com/web/index.php",
+            "clientId": "crossplane",
+            "clientSecret": "...",
             "username": "admin",
-            "password": "admin"
+            "password": "..."
           }
       ---
-      apiVersion: rt.crossplane.io/v1alpha1
+      apiVersion: orangehrm.crossplane.io/v1alpha1
       kind: ClusterProviderConfig
       metadata:
         name: default
@@ -122,11 +284,14 @@ metadata:
           source: Secret
           secretRef:
             namespace: crossplane-system
-            name: rt-creds
+            name: orangehrm-creds
             key: credentials
       ```
 
-      `token` and `apiKey` are accepted in place of `username`/`password`.
+      Register the client under Admin > Configuration > Register OAuth Client.
+      `username`/`password` make it the `password` grant, which is what most of
+      this API's rights need; without them it is `client_credentials`. A
+      ready-made `token` is accepted too, and nothing renews it.
 
       See the `examples/` directory in the source repository for a manifest per
       managed resource.

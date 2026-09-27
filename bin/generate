@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# The whole build: one RT document in, one Crossplane provider out.
+# The whole build: one OrangeHRM document in, one Crossplane provider out.
 #
 # What lands in the repo is COMMITTED -- the image compiles what is here, not
 # what a regeneration would produce. Run this, look at the diff, commit it.
@@ -7,38 +7,30 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-SPEC=reference/openapi-schema-rt/request_tracker_rest2.yaml
+SPEC=reference/orangehrm-v2.json
 
-# The API description is a SUBMODULE, so the commit that generated this tree
-# is recorded rather than described in prose: `git submodule status` says
-# which spec the committed provider came from, and a regeneration after
-# `git submodule update --remote` is a diff with the spec bump beside it.
-# Only when it is not checked out. `git submodule update` would otherwise
-# reset a deliberate bump -- checking out a newer spec and then regenerating
-# is exactly what this script is for, and silently rewinding it means
-# regenerating from the old document and wondering why nothing changed.
-if [ ! -f "$SPEC" ]; then
-  git submodule update --init reference/openapi-schema-rt
-fi
-
-test -f "$SPEC" || { echo "missing $SPEC -- the spec submodule did not check out"; exit 1; }
+# The API description is GENERATED from OrangeHRM's own source rather than
+# published by it -- see hack/gen-spec.sh, which is how this file got here and
+# how it is refreshed for a new OrangeHRM release. It is committed, not a
+# submodule: there is no upstream repository of it to pin.
+test -f "$SPEC" || { echo "missing $SPEC -- run hack/gen-spec.sh"; exit 1; }
 
 # The generated trees, cleared first. Without this a Kind whose paths were
 # removed from the document stays behind for ever: the generator writes what
 # the document describes and never deletes what it no longer does.
-# internal/clients/rt is cleared file by file, because client_test.go beside
-# the models is hand-written.
+# internal/clients/orangehrm is cleared file by file, because client_test.go
+# beside the models is hand-written.
 rm -rf apis internal/controller package/crds
-rm -f internal/clients/rt/model_*.go internal/clients/rt/client.go
+rm -f internal/clients/orangehrm/model_*.go internal/clients/orangehrm/client.go
 
-openapi-generator-rt generate \
+openapi-generator-orangehrm generate \
   -i "$SPEC" \
-  -g rt-crossplane \
+  -g orangehrm-crossplane \
   -o . \
   --git-host github.com \
   --git-user-id n-at-han-k \
-  --git-repo-id crossplane-provider-rt \
-  --additional-properties="providerName=rt,providerTitle=RT,groupName=rt.crossplane.io,apiVersion=v1alpha1"
+  --git-repo-id crossplane-provider-orangehrm \
+  --additional-properties="providerName=orangehrm,providerTitle=OrangeHRM,groupName=orangehrm.crossplane.io,apiVersion=v1alpha1,pathPrefix=/api/v2"
 
 # Every operation in the document is either wired into a controller or a
 # search. A resource the generator silently stopped covering is a provider

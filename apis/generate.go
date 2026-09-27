@@ -11,7 +11,15 @@
 //go:generate rm -rf ../package/crds
 
 // Generate deepcopy methodsets and CRD manifests.
-//go:generate go run -tags generate sigs.k8s.io/controller-tools/cmd/controller-gen object:headerFile=../hack/boilerplate.go.txt paths=./... crd:crdVersions=v1 output:artifacts:config=../package/crds
+//
+// allowDangerousTypes, for the float fields the document describes: a KPI's
+// min and max rating, a salary amount, an employee's years of experience.
+// controller-gen refuses a float64 in a CRD by default because JSON numbers
+// round differently across languages -- so this is a real ceiling, not a
+// formality. The alternative is carrying them as strings and parsing in the
+// controller, which moves the rounding rather than removing it and makes every
+// such field a translation layer. The API takes a number; the CRD says so.
+//go:generate go run -tags generate sigs.k8s.io/controller-tools/cmd/controller-gen object:headerFile=../hack/boilerplate.go.txt paths=./... crd:crdVersions=v1,allowDangerousTypes=true output:artifacts:config=../package/crds
 
 // Generate crossplane-runtime methodsets (resource.Claim, etc)
 //go:generate go run -tags generate github.com/crossplane/crossplane-tools/cmd/angryjet generate-methodsets --header-file=../hack/boilerplate.go.txt ./...

@@ -9,7 +9,7 @@ import (
 
 // Package type metadata.
 const (
-	Group   = "rt.crossplane.io"
+	Group   = "orangehrm.crossplane.io"
 	Version = "v1alpha1"
 )
 

@@ -1,4 +1,4 @@
-module github.com/n-at-han-k/crossplane-provider-rt
+module github.com/n-at-han-k/crossplane-provider-orangehrm
 
 // The whole module graph of a provider that is known to build, not only its
 // direct dependencies: `go mod tidy` otherwise floats k8s.io/* past what

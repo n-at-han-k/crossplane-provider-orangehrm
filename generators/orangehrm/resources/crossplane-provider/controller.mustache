@@ -1,0 +1,513 @@
+{{!
+    The managed reconciler for one resource. Observe/Create/Update/Delete are
+    the document's four operations; everything else is the same connector the
+    provider-template scaffold has.
+}}
+{{#operations}}
+{{>partial_header}}
+
+package {{kindPackage}}
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+
+	"github.com/crossplane/crossplane-runtime/v2/pkg/controller"
+	"github.com/crossplane/crossplane-runtime/v2/pkg/errors"
+	"github.com/crossplane/crossplane-runtime/v2/pkg/event"
+	"github.com/crossplane/crossplane-runtime/v2/pkg/feature"
+	"github.com/crossplane/crossplane-runtime/v2/pkg/meta"
+	"github.com/crossplane/crossplane-runtime/v2/pkg/ratelimiter"
+	"github.com/crossplane/crossplane-runtime/v2/pkg/reconciler/managed"
+	"github.com/crossplane/crossplane-runtime/v2/pkg/resource"
+	"github.com/crossplane/crossplane-runtime/v2/pkg/statemetrics"
+	"k8s.io/apimachinery/pkg/types"
+	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+
+	xpv2 "github.com/crossplane/crossplane/apis/v2/core/v2"
+
+	"{{gitHost}}/{{gitUserId}}/{{gitRepoId}}/apis/{{kindPackage}}/{{apiVersion}}"
+	apis{{apiVersion}} "{{gitHost}}/{{gitUserId}}/{{gitRepoId}}/apis/{{apiVersion}}"
+	"{{gitHost}}/{{gitUserId}}/{{gitRepoId}}/internal/clients/{{providerName}}"
+)
+
+const (
+	errTrackPCUsage = "cannot track ProviderConfig usage"
+	errGetPC        = "cannot get ProviderConfig"
+	errGetCPC       = "cannot get ClusterProviderConfig"
+	errGetCreds     = "cannot get credentials"
+	errNewClient    = "cannot create new Service"
+
+	errGet    = "cannot get {{providerTitle}} {{kindCamel}}"
+	errCreate = "cannot create {{providerTitle}} {{kindCamel}}"
+	errUpdate = "cannot update {{providerTitle}} {{kindCamel}}"
+	errDelete = "cannot delete {{providerTitle}} {{kindCamel}}"
+	errParams = "cannot build the {{providerTitle}} {{kindCamel}} request body"
+	errParse  = "cannot parse the {{providerTitle}} {{kindCamel}} response"
+
+	// errNoID guards the one failure mode that silently leaks a resource: the
+	// create succeeds but nothing in the answer carries an identifier. Setting
+	// an empty external name would make every later Observe report
+	// ResourceExists: false and create another one, forever.
+	errNoID = "{{providerTitle}} returned no {{kindCamel}} identifier from create; refusing to record an empty external name (one may have been created and needs manual cleanup)"
+)
+
+// newService builds the API client from the extracted credentials.
+var newService = func(creds []byte) (*{{providerName}}.Client, error) {
+	return {{providerName}}.NewClientFromCredentials(creds)
+}
+
+// SetupGated adds a controller that reconciles {{kind}} managed resources with safe-start support.
+func SetupGated(mgr ctrl.Manager, o controller.Options) error {
+	o.Gate.Register(func() {
+		if err := Setup(mgr, o); err != nil {
+			panic(errors.Wrap(err, "cannot setup {{kind}} controller"))
+		}
+	}, {{apiVersion}}.{{kind}}GroupVersionKind)
+	return nil
+}
+
+// Setup adds a controller that reconciles {{kind}} managed resources.
+func Setup(mgr ctrl.Manager, o controller.Options) error {
+	name := managed.ControllerName({{apiVersion}}.{{kind}}GroupKind)
+
+	opts := []managed.ReconcilerOption{
+		managed.WithTypedExternalConnector[*{{apiVersion}}.{{kind}}](&connector{
+			kube:         mgr.GetClient(),
+			usage:        resource.NewProviderConfigUsageTracker(mgr.GetClient(), &apis{{apiVersion}}.ProviderConfigUsage{}),
+			newServiceFn: newService,
+		}),
+		managed.WithLogger(o.Logger.WithValues("controller", name)),
+		managed.WithPollInterval(o.PollInterval),
+		managed.WithRecorder(event.NewAPIRecorder(mgr.GetEventRecorderFor(name))), //nolint:staticcheck // Crossplane has not moved to the new events API yet.
+	}
+
+	if o.Features.Enabled(feature.EnableBetaManagementPolicies) {
+		opts = append(opts, managed.WithManagementPolicies())
+	}
+
+	if o.Features.Enabled(feature.EnableAlphaChangeLogs) {
+		opts = append(opts, managed.WithChangeLogger(o.ChangeLogOptions.ChangeLogger))
+	}
+
+	if o.MetricOptions != nil {
+		opts = append(opts, managed.WithMetricRecorder(o.MetricOptions.MRMetrics))
+	}
+
+	if o.MetricOptions != nil && o.MetricOptions.MRStateMetrics != nil {
+		stateMetricsRecorder := statemetrics.NewMRStateRecorder(
+			mgr.GetClient(), o.Logger, o.MetricOptions.MRStateMetrics, &{{apiVersion}}.{{kind}}List{}, o.MetricOptions.PollStateMetricInterval,
+		)
+		if err := mgr.Add(stateMetricsRecorder); err != nil {
+			return errors.Wrap(err, "cannot register MR state metrics recorder for kind {{apiVersion}}.{{kind}}List")
+		}
+	}
+
+	r := managed.NewReconciler(mgr, resource.ManagedKind({{apiVersion}}.{{kind}}GroupVersionKind), opts...)
+
+	return ctrl.NewControllerManagedBy(mgr).
+		Named(name).
+		WithOptions(o.ForControllerRuntime()).
+		WithEventFilter(resource.DesiredStateChanged()).
+		For(&{{apiVersion}}.{{kind}}{}).
+		Complete(ratelimiter.NewReconciler(name, r, o.GlobalRateLimiter))
+}
+
+type connector struct {
+	kube         client.Client
+	usage        *resource.ProviderConfigUsageTracker
+	newServiceFn func(creds []byte) (*{{providerName}}.Client, error)
+}
+
+// Connect tracks the ProviderConfig usage, reads the (Cluster)ProviderConfig
+// the resource names, extracts its credentials and forms a client from them.
+func (c *connector) Connect(ctx context.Context, cr *{{apiVersion}}.{{kind}}) (managed.TypedExternalClient[*{{apiVersion}}.{{kind}}], error) {
+	if err := c.usage.Track(ctx, cr); err != nil {
+		return nil, errors.Wrap(err, errTrackPCUsage)
+	}
+
+	var cd apis{{apiVersion}}.ProviderCredentials
+
+	ref := cr.GetProviderConfigReference()
+
+	switch ref.Kind {
+	case "ProviderConfig":
+		pc := &apis{{apiVersion}}.ProviderConfig{}
+		if err := c.kube.Get(ctx, types.NamespacedName{Name: ref.Name, Namespace: cr.GetNamespace()}, pc); err != nil {
+			return nil, errors.Wrap(err, errGetPC)
+		}
+		cd = pc.Spec.Credentials
+	case "ClusterProviderConfig":
+		cpc := &apis{{apiVersion}}.ClusterProviderConfig{}
+		if err := c.kube.Get(ctx, types.NamespacedName{Name: ref.Name}, cpc); err != nil {
+			return nil, errors.Wrap(err, errGetCPC)
+		}
+		cd = cpc.Spec.Credentials
+	default:
+		return nil, errors.Errorf("unsupported provider config kind: %s", ref.Kind)
+	}
+
+	data, err := resource.CommonCredentialExtractor(ctx, cd.Source, c.kube, cd.CommonCredentialSelectors)
+	if err != nil {
+		return nil, errors.Wrap(err, errGetCreds)
+	}
+
+	svc, err := c.newServiceFn(data)
+	if err != nil {
+		return nil, errors.Wrap(err, errNewClient)
+	}
+
+	return &external{service: svc}, nil
+}
+
+type external struct {
+	service *{{providerName}}.Client
+}
+
+{{#hasRequestModel}}
+// desired projects spec.forProvider onto the create request body. The JSON
+// fields are strings in the CRD and real values on the wire, so they are
+// unmarshalled here rather than passed through.
+func desired(cr *{{apiVersion}}.{{kind}}) (*{{providerName}}.{{requestModel}}, error) {
+	body := &{{providerName}}.{{requestModel}}{}
+
+{{#parameters}}
+{{^isParent}}
+{{#isJson}}
+	if cr.Spec.ForProvider.{{goName}} != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.{{goName}}), &body.{{goName}}); err != nil {
+			return nil, errors.Wrap(err, "{{jsonName}}")
+		}
+	}
+{{/isJson}}
+{{^isJson}}
+	body.{{goName}} = {{#needsCast}}{{clientType}}({{/needsCast}}cr.Spec.ForProvider.{{goName}}{{#needsCast}}){{/needsCast}}
+{{/isJson}}
+{{/isParent}}
+{{/parameters}}
+
+	return body, nil
+}
+{{/hasRequestModel}}
+
+{{#hasResponseModel}}
+// observation projects the read response onto status.atProvider.
+func observation(in *{{providerName}}.{{responseModel}}) ({{apiVersion}}.{{kind}}Observation, error) {
+	out := {{apiVersion}}.{{kind}}Observation{}
+
+{{#observations}}
+{{#isJson}}
+	if raw, err := json.Marshal(in.{{goName}}); err == nil {
+		out.{{goName}} = string(raw)
+	} else {
+		return out, errors.Wrap(err, "{{jsonName}}")
+	}
+{{/isJson}}
+{{^isJson}}
+	out.{{goName}} = {{#needsCast}}{{goType}}({{/needsCast}}in.{{goName}}{{#needsCast}}){{/needsCast}}
+{{/isJson}}
+{{/observations}}
+
+	return out, nil
+}
+{{/hasResponseModel}}
+
+// upToDate compares only the fields the server answers under the same name
+// and the same shape. A field it does not echo back -- a password, a body the
+// server reshapes on the way out -- cannot be diffed without reporting drift
+// on every reconcile, so it is left alone.
+{{#hasResponseModel}}
+func upToDate(cr *{{apiVersion}}.{{kind}}, observed *{{providerName}}.{{responseModel}}) bool {
+{{#comparables}}
+{{#isJson}}
+	if cr.Spec.ForProvider.{{goName}} != "" {
+		if raw, err := json.Marshal(observed.{{observedName}}); err != nil || !jsonEqual(cr.Spec.ForProvider.{{goName}}, string(raw)) {
+			return false
+		}
+	}
+{{/isJson}}
+{{^isJson}}
+{{#zeroCheck}}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.{{goName}} {{{zeroCheck}}} && cr.Spec.ForProvider.{{goName}} != {{#needsCast}}{{goType}}({{/needsCast}}observed.{{observedName}}{{#needsCast}}){{/needsCast}} {
+		return false
+	}
+{{/zeroCheck}}
+{{^zeroCheck}}
+	if cr.Spec.ForProvider.{{goName}} != {{#needsCast}}{{goType}}({{/needsCast}}observed.{{observedName}}{{#needsCast}}){{/needsCast}} {
+		return false
+	}
+{{/zeroCheck}}
+{{/isJson}}
+{{/comparables}}
+
+	return true
+}
+{{/hasResponseModel}}
+
+{{#anyJson}}
+// jsonEqual compares two JSON documents by value rather than by text, so that
+// a server re-ordering an object's keys is not a permanent diff.
+func jsonEqual(a, b string) bool {
+	var left, right any
+
+	if err := json.Unmarshal([]byte(a), &left); err != nil {
+		return false
+	}
+	if err := json.Unmarshal([]byte(b), &right); err != nil {
+		return false
+	}
+
+	x, err := json.Marshal(left)
+	if err != nil {
+		return false
+	}
+	y, err := json.Marshal(right)
+	if err != nil {
+		return false
+	}
+
+	return string(x) == string(y)
+}
+{{/anyJson}}
+
+func (c *external) Observe(ctx context.Context, cr *{{apiVersion}}.{{kind}}) (managed.ExternalObservation, error) {
+{{#hasRead}}
+	id := meta.GetExternalName(cr)
+	if id == "" {
+		// Nothing has been created yet.
+		return managed.ExternalObservation{ResourceExists: false}, nil
+	}
+
+{{#readHasPathParams}}
+	body, err := c.service.DoRequest(ctx, "{{readMethod}}", fmt.Sprintf("{{readPath}}"{{#parents}}, cr.Spec.ForProvider.{{goName}}{{/parents}}, id), nil)
+{{/readHasPathParams}}
+{{^readHasPathParams}}
+	body, err := c.service.DoRequest(ctx, "{{readMethod}}", "{{readPath}}", nil)
+{{/readHasPathParams}}
+	if err != nil {
+		// ONLY a 404 means it is gone. Any other failure (500, timeout,
+		// throttling) must be surfaced -- treating it as "does not exist"
+		// would provision a second one and orphan the first.
+		if {{providerName}}.IsNotFound(err) {
+			return managed.ExternalObservation{ResourceExists: false}, nil
+		}
+		return managed.ExternalObservation{}, errors.Wrap(err, errGet)
+	}
+
+	// Every OrangeHRM answer is an envelope -- {"data": …, "meta": …} -- and
+	// what the resource IS is the data. The envelope itself is paging.
+	var envelope {{providerName}}.{{envelopeModel}}
+	if err := json.Unmarshal(body, &envelope); err != nil {
+		return managed.ExternalObservation{}, errors.Wrap(err, errParse)
+	}
+	observed := envelope.Data
+
+	at, err := observation(&observed)
+	if err != nil {
+		return managed.ExternalObservation{}, errors.Wrap(err, errParse)
+	}
+	cr.Status.AtProvider = at
+
+	if meta.WasDeleted(cr) {
+		cr.Status.SetConditions(xpv2.Deleting())
+	} else {
+		cr.Status.SetConditions(xpv2.Available())
+	}
+
+	return managed.ExternalObservation{
+		ResourceExists:   true,
+		ResourceUpToDate: upToDate(cr, &observed),
+	}, nil
+{{/hasRead}}
+{{^hasRead}}
+	// This API offers no read for a {{kindCamel}}, so nothing can be observed
+	// and nothing can be reported as drifted.
+	//
+	// Whether it EXISTS cannot come from the external name either:
+	// crossplane-runtime's default initializer is NewNameAsExternalName, so
+	// the annotation is already set to the resource's own name before the
+	// first Observe ever runs. Reading existence off it would report
+	// ResourceExists on the first pass, Create would never be called, and the
+	// resource would sit there Available having done nothing at all.
+	//
+	// What this controller does know is whether IT has created the
+	// {{kindCamel}} -- which is what the Ready condition it set at the end of
+	// Create says, and that condition is persisted with the status.
+	if cr.Status.GetCondition(xpv2.TypeReady).Reason != xpv2.ReasonAvailable {
+		return managed.ExternalObservation{ResourceExists: false}, nil
+	}
+
+	return managed.ExternalObservation{
+		ResourceExists:   true,
+		ResourceUpToDate: true,
+	}, nil
+{{/hasRead}}
+}
+
+func (c *external) Create(ctx context.Context, cr *{{apiVersion}}.{{kind}}) (managed.ExternalCreation, error) {
+{{#hasCreate}}
+	cr.Status.SetConditions(xpv2.Creating())
+
+{{#hasRequestModel}}
+	body, err := desired(cr)
+	if err != nil {
+		return managed.ExternalCreation{}, errors.Wrap(err, errParams)
+	}
+{{/hasRequestModel}}
+{{^hasRequestModel}}
+	// The document describes this create as taking no body.
+	var body interface{}
+{{/hasRequestModel}}
+
+	respBody, location, err := c.service.DoCreateRequest(ctx, "{{createMethod}}", {{#hasParents}}fmt.Sprintf("{{createPath}}"{{#parents}}, cr.Spec.ForProvider.{{goName}}{{/parents}}){{/hasParents}}{{^hasParents}}"{{createPath}}"{{/hasParents}}, body)
+	if err != nil {
+		return managed.ExternalCreation{}, errors.Wrap(err, errCreate)
+	}
+
+	id := ""
+
+{{^hasResponseModel}}
+	// Nothing to parse the answer into, so the identifier is the Location
+	// header or there is none.
+	id = {{providerName}}.IDFromLocation(location)
+	_ = respBody
+{{/hasResponseModel}}
+{{#hasResponseModel}}
+	if len(respBody) == 0 {
+		id = {{providerName}}.IDFromLocation(location)
+	} else {
+		var envelope {{providerName}}.{{envelopeModel}}
+		if err := json.Unmarshal(respBody, &envelope); err != nil {
+			return managed.ExternalCreation{}, errors.Wrap(err, errParse)
+		}
+		created := envelope.Data
+{{#hasID}}
+		// Through %v because OrangeHRM numbers its ids and an external name is
+		// a string -- the annotation has to hold what the member path spells.
+		id = fmt.Sprintf("%v", created.{{idFieldExported}})
+{{/hasID}}
+{{^hasID}}
+		// The document describes no identifier on what this create answers, so
+		// the Location header is all there is.
+		id = {{providerName}}.IDFromLocation(location)
+{{/hasID}}
+
+		at, err := observation(&created)
+		if err != nil {
+			return managed.ExternalCreation{}, errors.Wrap(err, errParse)
+		}
+		cr.Status.AtProvider = at
+	}
+{{/hasResponseModel}}
+
+	if id == "" {
+		return managed.ExternalCreation{}, errors.New(errNoID)
+	}
+
+	meta.SetExternalName(cr, id)
+{{^hasRead}}
+
+	// The only record that this {{kindCamel}} was created: with no read,
+	// Observe has nothing else to tell "created" from "not yet".
+	cr.Status.SetConditions(xpv2.Available())
+{{/hasRead}}
+
+	return managed.ExternalCreation{}, nil
+{{/hasCreate}}
+{{^hasCreate}}
+	return managed.ExternalCreation{}, errors.New("this API offers no create for a {{kindCamel}}")
+{{/hasCreate}}
+}
+
+func (c *external) Update(ctx context.Context, cr *{{apiVersion}}.{{kind}}) (managed.ExternalUpdate, error) {
+{{#hasUpdate}}
+	id := meta.GetExternalName(cr)
+	if id == "" {
+		return managed.ExternalUpdate{}, errors.New(errUpdate)
+	}
+
+{{#hasRequestModel}}
+	body, err := desired(cr)
+	if err != nil {
+		return managed.ExternalUpdate{}, errors.Wrap(err, errParams)
+	}
+{{/hasRequestModel}}
+{{^hasRequestModel}}
+	// The document describes this update as taking no body.
+	var body interface{}
+{{/hasRequestModel}}
+
+{{#updateHasPathParams}}
+	respBody, err := c.service.DoRequest(ctx, "{{updateMethod}}", fmt.Sprintf("{{updatePath}}"{{#parents}}, cr.Spec.ForProvider.{{goName}}{{/parents}}, id), body)
+{{/updateHasPathParams}}
+{{^updateHasPathParams}}
+	respBody, err := c.service.DoRequest(ctx, "{{updateMethod}}", "{{updatePath}}", body)
+{{/updateHasPathParams}}
+	if err != nil {
+		return managed.ExternalUpdate{}, errors.Wrap(err, errUpdate)
+	}
+
+	// The update's answer is not read: the next Observe reports the new state,
+	// which is where status.atProvider comes from anyway, and a PUT that
+	// answers something other than the record -- a bulk endpoint answering a
+	// count -- would fail to parse on every successful update.
+	_ = respBody
+
+	return managed.ExternalUpdate{}, nil
+{{/hasUpdate}}
+{{^hasUpdate}}
+	// This API offers no update for a {{kindCamel}}. Observe therefore never
+	// reports drift, so this is unreachable rather than silently doing
+	// nothing -- but if it is reached, say so instead of reporting Synced.
+	return managed.ExternalUpdate{}, errors.New("this API offers no update for a {{kindCamel}}; it must be deleted and recreated")
+{{/hasUpdate}}
+}
+
+func (c *external) Delete(ctx context.Context, cr *{{apiVersion}}.{{kind}}) (managed.ExternalDelete, error) {
+{{#hasDelete}}
+	cr.Status.SetConditions(xpv2.Deleting())
+
+	id := meta.GetExternalName(cr)
+	if id == "" {
+		// Never created; nothing to destroy.
+		return managed.ExternalDelete{}, nil
+	}
+
+	// A 404 means someone else already did it, which is success as far as
+	// reconciliation is concerned.
+{{#deleteByIDs}}
+	// OrangeHRM deletes on the COLLECTION, with the ids in the BODY -- there is
+	// no DELETE …/{id} for most of this API. So the external name goes in the
+	// body, and only the owning ids are interpolated into the path.
+	_, err := c.service.DoRequest(ctx, "{{deleteMethod}}", {{#hasParents}}fmt.Sprintf("{{deletePath}}"{{#parents}}, cr.Spec.ForProvider.{{goName}}{{/parents}}){{/hasParents}}{{^hasParents}}"{{deletePath}}"{{/hasParents}}, {{providerName}}.DeleteIDs(id))
+{{/deleteByIDs}}
+{{^deleteByIDs}}
+{{#deleteHasPathParams}}
+	_, err := c.service.DoRequest(ctx, "{{deleteMethod}}", fmt.Sprintf("{{deletePath}}"{{#parents}}, cr.Spec.ForProvider.{{goName}}{{/parents}}, id), nil)
+{{/deleteHasPathParams}}
+{{^deleteHasPathParams}}
+	_, err := c.service.DoRequest(ctx, "{{deleteMethod}}", "{{deletePath}}", nil)
+{{/deleteHasPathParams}}
+{{/deleteByIDs}}
+	if err != nil && !{{providerName}}.IsNotFound(err) {
+		return managed.ExternalDelete{}, errors.Wrap(err, errDelete)
+	}
+
+	return managed.ExternalDelete{}, nil
+{{/hasDelete}}
+{{^hasDelete}}
+	// This API offers no delete for a {{kindCamel}}. Erroring rather than
+	// returning success, because success would let Crossplane remove the
+	// finalizer and forget a {{kindCamel}} that still exists.
+	return managed.ExternalDelete{}, errors.New("this API offers no delete for a {{kindCamel}}; it must be removed out of band")
+{{/hasDelete}}
+}
+
+func (c *external) Disconnect(_ context.Context) error {
+	return nil
+}
+{{/operations}}

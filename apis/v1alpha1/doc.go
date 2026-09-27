@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Package v1alpha1 contains the core resources of the RT provider.
+// Package v1alpha1 contains the core resources of the OrangeHRM provider.
 // +kubebuilder:object:generate=true
-// +groupName=rt.crossplane.io
+// +groupName=orangehrm.crossplane.io
 // +versionName=v1alpha1
 package v1alpha1

@@ -44,14 +44,14 @@ import (
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
-	"github.com/n-at-han-k/crossplane-provider-rt/apis"
-	rt "github.com/n-at-han-k/crossplane-provider-rt/internal/controller"
-	"github.com/n-at-han-k/crossplane-provider-rt/internal/version"
+	"github.com/n-at-han-k/crossplane-provider-orangehrm/apis"
+	orangehrm "github.com/n-at-han-k/crossplane-provider-orangehrm/internal/controller"
+	"github.com/n-at-han-k/crossplane-provider-orangehrm/internal/version"
 )
 
 func main() {
 	var (
-		app            = kingpin.New(filepath.Base(os.Args[0]), "RT support for Crossplane.").DefaultEnvars()
+		app            = kingpin.New(filepath.Base(os.Args[0]), "OrangeHRM support for Crossplane.").DefaultEnvars()
 		debug          = app.Flag("debug", "Run with debug logging.").Short('d').Bool()
 		leaderElection = app.Flag("leader-election", "Use leader election for the controller manager.").Short('l').Default("false").Envar("LEADER_ELECTION").Bool()
 
@@ -68,7 +68,7 @@ func main() {
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 
 	zl := zap.New(zap.UseDevMode(*debug))
-	log := logging.NewLogrLogger(zl.WithName("provider-rt"))
+	log := logging.NewLogrLogger(zl.WithName("provider-orangehrm"))
 	if *debug {
 		// The controller-runtime is *very* verbose even at info level, so we only
 		// provide it a real logger when we're running in debug mode.
@@ -98,14 +98,14 @@ func main() {
 		// server. Switching to Leases only and longer leases appears to
 		// alleviate this.
 		LeaderElection:             *leaderElection,
-		LeaderElectionID:           "crossplane-leader-election-provider-rt",
+		LeaderElectionID:           "crossplane-leader-election-provider-orangehrm",
 		LeaderElectionResourceLock: resourcelock.LeasesResourceLock,
 		LeaseDuration:              func() *time.Duration { d := 60 * time.Second; return &d }(),
 		RenewDeadline:              func() *time.Duration { d := 50 * time.Second; return &d }(),
 	})
 	kingpin.FatalIfError(err, "Cannot create controller manager")
 
-	kingpin.FatalIfError(apis.AddToScheme(mgr.GetScheme()), "Cannot add RT APIs to scheme")
+	kingpin.FatalIfError(apis.AddToScheme(mgr.GetScheme()), "Cannot add OrangeHRM APIs to scheme")
 	kingpin.FatalIfError(apiextensionsv1.AddToScheme(mgr.GetScheme()), "Cannot add CustomResourceDefinition to scheme")
 
 	metricRecorder := managed.NewMRMetricRecorder()
@@ -143,12 +143,12 @@ func main() {
 		clo := controller.ChangeLogOptions{
 			ChangeLogger: managed.NewGRPCChangeLogger(
 				changelogsv1alpha1.NewChangeLogServiceClient(conn),
-				managed.WithProviderVersion(fmt.Sprintf("provider-rt:%s", version.Version))),
+				managed.WithProviderVersion(fmt.Sprintf("provider-orangehrm:%s", version.Version))),
 		}
 		o.ChangeLogOptions = &clo
 	}
 
 	kingpin.FatalIfError(customresourcesgate.Setup(mgr, o), "Cannot setup CRD gate controller")
-	kingpin.FatalIfError(rt.SetupGated(mgr, o), "Cannot setup RT controllers")
+	kingpin.FatalIfError(orangehrm.SetupGated(mgr, o), "Cannot setup OrangeHRM controllers")
 	kingpin.FatalIfError(mgr.Start(ctrl.SetupSignalHandler()), "Cannot start controller manager")
 }
