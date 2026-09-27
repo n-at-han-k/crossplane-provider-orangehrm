@@ -354,17 +354,56 @@ func (c *external) Create(ctx context.Context, cr *v1alpha1.Group) (managed.Exte
 }
 
 func (c *external) Update(ctx context.Context, cr *v1alpha1.Group) (managed.ExternalUpdate, error) {
-	// This API offers no update for a group. Observe therefore never
-	// reports drift, so this is unreachable rather than silently doing
-	// nothing -- but if it is reached, say so instead of reporting Synced.
-	return managed.ExternalUpdate{}, errors.New("this API offers no update for a group; it must be deleted and recreated")
+	id := meta.GetExternalName(cr)
+	if id == "" {
+		return managed.ExternalUpdate{}, errors.New(errUpdate)
+	}
+
+	body, err := desired(cr)
+	if err != nil {
+		return managed.ExternalUpdate{}, errors.Wrap(err, errParams)
+	}
+
+	respBody, err := c.service.DoRequest(ctx, "PUT", fmt.Sprintf("/group/%v", id), body)
+	if err != nil {
+		return managed.ExternalUpdate{}, errors.Wrap(err, errUpdate)
+	}
+
+	// An update that answers no body is success; status.atProvider is left as
+	// the last read rather than wiped with a zero value.
+	if len(respBody) > 0 {
+		var updated rt.GroupIdGet200Response
+		if err := json.Unmarshal(respBody, &updated); err != nil {
+			return managed.ExternalUpdate{}, errors.Wrap(err, errParse)
+		}
+
+		at, err := observation(&updated)
+		if err != nil {
+			return managed.ExternalUpdate{}, errors.Wrap(err, errParse)
+		}
+		cr.Status.AtProvider = at
+	}
+
+	return managed.ExternalUpdate{}, nil
 }
 
 func (c *external) Delete(ctx context.Context, cr *v1alpha1.Group) (managed.ExternalDelete, error) {
-	// This API offers no delete for a group. Erroring rather than
-	// returning success, because success would let Crossplane remove the
-	// finalizer and forget a group that still exists.
-	return managed.ExternalDelete{}, errors.New("this API offers no delete for a group; it must be removed out of band")
+	cr.Status.SetConditions(xpv2.Deleting())
+
+	id := meta.GetExternalName(cr)
+	if id == "" {
+		// Never created; nothing to destroy.
+		return managed.ExternalDelete{}, nil
+	}
+
+	// A 404 means someone else already did it, which is success as far as
+	// reconciliation is concerned.
+	_, err := c.service.DoRequest(ctx, "DELETE", fmt.Sprintf("/group/%v", id), nil)
+	if err != nil && !rt.IsNotFound(err) {
+		return managed.ExternalDelete{}, errors.Wrap(err, errDelete)
+	}
+
+	return managed.ExternalDelete{}, nil
 }
 
 func (c *external) Disconnect(_ context.Context) error {

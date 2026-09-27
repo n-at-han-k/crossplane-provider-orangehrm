@@ -6,13 +6,41 @@ package apis
 import (
 	"k8s.io/apimachinery/pkg/runtime"
 
+	articlev1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/article/v1alpha1"
+
+	assetv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/asset/v1alpha1"
+
+	catalogv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/catalog/v1alpha1"
+
+	catalog_rightv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/catalog_right/v1alpha1"
+
+	classv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/class/v1alpha1"
+
+	class_rightv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/class_right/v1alpha1"
+
 	customfieldv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/customfield/v1alpha1"
+
+	customfield_rightv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/customfield_right/v1alpha1"
+
+	customfield_valuev1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/customfield_value/v1alpha1"
+
+	customrolev1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/customrole/v1alpha1"
+
+	global_rightv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/global_right/v1alpha1"
 
 	groupv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/group/v1alpha1"
 
 	group_memberv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/group_member/v1alpha1"
 
+	group_rightv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/group_right/v1alpha1"
+
+	lifecyclev1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/lifecycle/v1alpha1"
+
+	lifecycle_mapv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/lifecycle_map/v1alpha1"
+
 	queuev1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/queue/v1alpha1"
+
+	queue_rightv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/queue_right/v1alpha1"
 
 	ticketv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/ticket/v1alpha1"
 
@@ -29,13 +57,41 @@ func init() {
 	AddToSchemes = append(AddToSchemes,
 		rtv1alpha1.SchemeBuilder.AddToScheme,
 
+		articlev1alpha1.SchemeBuilder.AddToScheme,
+
+		assetv1alpha1.SchemeBuilder.AddToScheme,
+
+		catalogv1alpha1.SchemeBuilder.AddToScheme,
+
+		catalog_rightv1alpha1.SchemeBuilder.AddToScheme,
+
+		classv1alpha1.SchemeBuilder.AddToScheme,
+
+		class_rightv1alpha1.SchemeBuilder.AddToScheme,
+
 		customfieldv1alpha1.SchemeBuilder.AddToScheme,
+
+		customfield_rightv1alpha1.SchemeBuilder.AddToScheme,
+
+		customfield_valuev1alpha1.SchemeBuilder.AddToScheme,
+
+		customrolev1alpha1.SchemeBuilder.AddToScheme,
+
+		global_rightv1alpha1.SchemeBuilder.AddToScheme,
 
 		groupv1alpha1.SchemeBuilder.AddToScheme,
 
 		group_memberv1alpha1.SchemeBuilder.AddToScheme,
 
+		group_rightv1alpha1.SchemeBuilder.AddToScheme,
+
+		lifecyclev1alpha1.SchemeBuilder.AddToScheme,
+
+		lifecycle_mapv1alpha1.SchemeBuilder.AddToScheme,
+
 		queuev1alpha1.SchemeBuilder.AddToScheme,
+
+		queue_rightv1alpha1.SchemeBuilder.AddToScheme,
 
 		ticketv1alpha1.SchemeBuilder.AddToScheme,
 

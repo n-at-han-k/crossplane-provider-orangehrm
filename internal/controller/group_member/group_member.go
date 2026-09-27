@@ -231,10 +231,26 @@ func (c *external) Update(ctx context.Context, cr *v1alpha1.GroupMember) (manage
 }
 
 func (c *external) Delete(ctx context.Context, cr *v1alpha1.GroupMember) (managed.ExternalDelete, error) {
-	// This API offers no delete for a groupMember. Erroring rather than
-	// returning success, because success would let Crossplane remove the
-	// finalizer and forget a groupMember that still exists.
-	return managed.ExternalDelete{}, errors.New("this API offers no delete for a groupMember; it must be removed out of band")
+	cr.Status.SetConditions(xpv2.Deleting())
+
+	id := meta.GetExternalName(cr)
+	if id == "" {
+		// Never created; nothing to destroy.
+		return managed.ExternalDelete{}, nil
+	}
+
+	// A 404 means someone else already did it, which is success as far as
+	// reconciliation is concerned.
+	// The inverse of the set: this empties the owning resource's collection
+	// rather than removing one member of it, so the external name is not
+	// part of the path.
+	_ = id
+	_, err := c.service.DoRequest(ctx, "DELETE", fmt.Sprintf("/group/%v/members", cr.Spec.ForProvider.Id), nil)
+	if err != nil && !rt.IsNotFound(err) {
+		return managed.ExternalDelete{}, errors.Wrap(err, errDelete)
+	}
+
+	return managed.ExternalDelete{}, nil
 }
 
 func (c *external) Disconnect(_ context.Context) error {

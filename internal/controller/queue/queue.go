@@ -407,10 +407,37 @@ func (c *external) Create(ctx context.Context, cr *v1alpha1.Queue) (managed.Exte
 }
 
 func (c *external) Update(ctx context.Context, cr *v1alpha1.Queue) (managed.ExternalUpdate, error) {
-	// This API offers no update for a queue. Observe therefore never
-	// reports drift, so this is unreachable rather than silently doing
-	// nothing -- but if it is reached, say so instead of reporting Synced.
-	return managed.ExternalUpdate{}, errors.New("this API offers no update for a queue; it must be deleted and recreated")
+	id := meta.GetExternalName(cr)
+	if id == "" {
+		return managed.ExternalUpdate{}, errors.New(errUpdate)
+	}
+
+	body, err := desired(cr)
+	if err != nil {
+		return managed.ExternalUpdate{}, errors.Wrap(err, errParams)
+	}
+
+	respBody, err := c.service.DoRequest(ctx, "PUT", fmt.Sprintf("/queue/%v", id), body)
+	if err != nil {
+		return managed.ExternalUpdate{}, errors.Wrap(err, errUpdate)
+	}
+
+	// An update that answers no body is success; status.atProvider is left as
+	// the last read rather than wiped with a zero value.
+	if len(respBody) > 0 {
+		var updated rt.QueueIdNameGet200Response
+		if err := json.Unmarshal(respBody, &updated); err != nil {
+			return managed.ExternalUpdate{}, errors.Wrap(err, errParse)
+		}
+
+		at, err := observation(&updated)
+		if err != nil {
+			return managed.ExternalUpdate{}, errors.Wrap(err, errParse)
+		}
+		cr.Status.AtProvider = at
+	}
+
+	return managed.ExternalUpdate{}, nil
 }
 
 func (c *external) Delete(ctx context.Context, cr *v1alpha1.Queue) (managed.ExternalDelete, error) {

@@ -1,6 +1,7 @@
 package rt;
 
 import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
 import org.openapitools.codegen.CliOption;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenOperation;
@@ -221,33 +222,40 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
                                     CodegenOperation co, Map<String, List<CodegenOperation>> operations) {
         String collection = collectionOf(resourcePath);
 
-        // RT spells the CREATE singular and the SEARCH plural -- POST /ticket
-        // creates one, POST /tickets searches -- so the plural path is not a
-        // second, listable face of the same collection the way it is in a
-        // REST API that follows the usual convention. Nothing here is kept
-        // from it: Crossplane never lists, and a `/tickets` group would
-        // camelise to the same Kind as `/ticket` and write over its files.
+        // RT POSTs both to create and to SEARCH -- POST /ticket creates one,
+        // POST /tickets searches -- and the two are told apart by what they
+        // answer, not by how the path is spelled. A create answers 201, a
+        // search answers 200. That reading survives the places where the
+        // spelling does not: `POST /lifecycles` is a create on a plural path,
+        // and `POST /customfields` is a search on one.
         //
-        // What is kept is therefore everything a managed resource actually
-        // calls:
+        // What is kept is everything a managed resource actually calls:
         //
         //   a member path                GET read, PUT update, DELETE delete
-        //   POST on a singular path      the create
+        //   POST answering 201           the create
         //   PUT on a collection          RT's idempotent "set these" --
         //                                /user/{idOrName}/groups
+        //   DELETE on a collection       the inverse of that set
         //
-        // and what is dropped is a GET or a DELETE on a collection (a list,
-        // which nothing calls) and a POST on a plural path (a search).
+        // and what is dropped is a GET on a collection (a list, which nothing
+        // calls) and a POST that answers 200 (a search, or an action endpoint
+        // like /lifecycle/{name}/validate).
         String method = co.httpMethod.toUpperCase(Locale.ROOT);
         boolean member = isMember(collection, resourcePath);
         boolean set = "PUT".equals(method) || "PATCH".equals(method);
-        boolean create = "POST".equals(method) && !isPlural(lastSegment(collection));
+        boolean create = "POST".equals(method) && answers(operation, "201");
+        boolean clear = "DELETE".equals(method);
 
-        if (!member && !set && !create) {
+        if (!member && !set && !create && !clear) {
             return;
         }
 
-        List<CodegenOperation> group = operations.computeIfAbsent(collection, key -> new ArrayList<>());
+        if (!describesAResource(collection)) {
+            return;
+        }
+
+        List<CodegenOperation> group =
+                operations.computeIfAbsent(canonicalCollection(collection), key -> new ArrayList<>());
 
         // An operation carrying two tags is offered once per tag; here both
         // offers name the same group, so the second one is a duplicate.
@@ -257,6 +265,134 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
 
         group.add(co);
         co.baseName = lastSegment(collection);
+    }
+
+    /**
+     * What survives grouping, and under which key.
+     *
+     * Two things cannot be decided from one operation alone, and the whole
+     * document is right here -- {@code openAPI} is set before any of this
+     * runs -- so both are answered by looking at it.
+     *
+     * <p><b>A group that describes nothing.</b> RT revokes a right with
+     * {@code DELETE /queue/{id}/rights/{right}/group/{id}} and removes one
+     * member with {@code DELETE /group/{id}/member/{id}}. Each looks like a
+     * member path, so each would become a Kind that can only be deleted --
+     * never created, never read, nothing for Crossplane to own. A collection
+     * with neither a create nor a read is a verb spelled as a path.
+     *
+     * <p><b>Two paths, one resource.</b> RT creates a lifecycle at
+     * {@code POST /lifecycles} and addresses it at {@code /lifecycle/{name}}
+     * ever after, and both camelise to {@code Lifecycle}. Left alone they are
+     * two groups writing one set of files, the second silently overwriting
+     * the first with half a resource. Both are keyed on the collection that
+     * owns the member path.
+     *
+     * <p>A collection that describes nothing is never a candidate to be
+     * keyed on, which is what keeps the lone revoke DELETE at
+     * {@code /group/{id}/member} from swallowing the membership set at
+     * {@code /group/{id}/members}.
+     */
+    private boolean describesAResource(String collection) {
+        if (openAPI == null || openAPI.getPaths() == null) {
+            return true;
+        }
+
+        for (Map.Entry<String, PathItem> entry : openAPI.getPaths().entrySet()) {
+            String path = entry.getKey();
+
+            if (!collectionOf(path).equals(collection)) {
+                continue;
+            }
+
+            for (Map.Entry<PathItem.HttpMethod, Operation> described
+                    : entry.getValue().readOperationsMap().entrySet()) {
+                String method = described.getKey().name();
+                boolean member = isMember(collection, path);
+
+                if (member && "GET".equals(method)) {
+                    return true;
+                }
+                if (!member && ("PUT".equals(method) || "PATCH".equals(method)
+                        || ("POST".equals(method) && answers(described.getValue(), "201")))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /** The collection every group of this Kind is keyed on. */
+    private String canonicalCollection(String collection) {
+        if (openAPI == null || openAPI.getPaths() == null) {
+            return collection;
+        }
+
+        String kind = toApiName(collection);
+        String canonical = collection;
+
+        for (String path : openAPI.getPaths().keySet()) {
+            String other = collectionOf(path);
+
+            if (other.equals(canonical) || !toApiName(other).equals(kind)
+                    || !describesAResource(other)) {
+                continue;
+            }
+
+            // The member path is what the resource is addressed by, so its
+            // collection is the one to key on; failing that, take the same
+            // one every time rather than whichever was seen first.
+            boolean canonicalAddresses = addressedByAMember(canonical);
+            boolean otherAddresses = addressedByAMember(other);
+
+            if (otherAddresses && !canonicalAddresses) {
+                canonical = other;
+            } else if (otherAddresses == canonicalAddresses && other.compareTo(canonical) < 0) {
+                canonical = other;
+            }
+        }
+
+        return canonical;
+    }
+
+    private boolean addressedByAMember(String collection) {
+        return openAPI.getPaths().keySet().stream()
+                .anyMatch(path -> collectionOf(path).equals(collection) && isMember(collection, path));
+    }
+
+    /**
+     * The collection a group is about: the one its member path hangs off,
+     * because that is what the resource is addressed by. With no member path
+     * -- a set, like /group/{id}/members -- the shortest path will do, since
+     * they are all the same one.
+     */
+    private String collectionOf(List<CodegenOperation> group) {
+        String shortest = null;
+
+        for (CodegenOperation op : group) {
+            String collection = collectionOf(op.path);
+
+            if (!collection.equals(op.path)) {
+                return collection;
+            }
+            if (shortest == null || collection.length() < shortest.length()) {
+                shortest = collection;
+            }
+        }
+
+        return shortest == null ? "" : shortest;
+    }
+
+    /** Whether a described operation documents this response code. */
+    private boolean answers(Operation operation, String code) {
+        return operation.getResponses() != null && operation.getResponses().containsKey(code);
+    }
+
+    /** Whether an operation documents this response code. */
+    private boolean answers(CodegenOperation op, String code) {
+        return op.responses != null
+                && op.responses.stream().anyMatch(response -> code.equals(response.code));
     }
 
     /**
@@ -280,21 +416,16 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
     @Override
     public OperationsMap postProcessOperationsWithModels(OperationsMap objs, List<ModelMap> allModels) {
         List<CodegenOperation> group = objs.getOperations().getOperation();
-        String collection = group.isEmpty() ? "" : collectionOf(group.get(0).path);
+        String collection = collectionOf(group);
 
         CodegenOperation update = null;
+        boolean deleteOnCollection = false;
 
         for (CodegenOperation op : group) {
-            boolean onCollection = collection.equals(op.path);
+            boolean member = isMember(collection, op.path);
             String method = op.httpMethod.toUpperCase(Locale.ROOT);
 
-            // Anything writing to the collection itself is the create: a
-            // POST, or RT's membership PUT, which has no member path to be an
-            // update of. A GET never reaches here -- addOperationToGroup drops
-            // the lists.
-            if (onCollection && !"GET".equals(method)) {
-                op.vendorExtensions.put("x-terraform-is-create", true);
-            } else if (!onCollection && isMember(collection, op.path)) {
+            if (member) {
                 if ("GET".equals(method)) {
                     op.vendorExtensions.put("x-terraform-is-read", true);
                 } else if ("DELETE".equals(method)) {
@@ -302,6 +433,17 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
                 } else if ("PUT".equals(method) || ("PATCH".equals(method) && update == null)) {
                     update = "PUT".equals(method) || update == null ? op : update;
                 }
+            } else if ("DELETE".equals(method)) {
+                // The inverse of a set: DELETE /group/{id}/members empties
+                // what PUT /group/{id}/members filled. It takes no id of its
+                // own, which is what deleteIsSet below tells the template.
+                op.vendorExtensions.put("x-terraform-is-delete", true);
+                deleteOnCollection = true;
+            } else if (!"GET".equals(method)) {
+                // A POST answering 201, or a set's PUT. Its path need not be
+                // the collection: RT creates a lifecycle at /lifecycles and
+                // addresses it at /lifecycle/{name} ever after.
+                op.vendorExtensions.put("x-terraform-is-create", true);
             }
         }
 
@@ -342,6 +484,10 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
                 && owning != null && !owning.isEmpty();
 
         operations.put("isSet", isSet);
+        // A delete on the collection takes the owning ids and nothing else --
+        // there is no id of its own to append, because the resource is the
+        // whole set.
+        operations.put("deleteIsSet", deleteOnCollection);
         if (isSet) {
             operations.put("setIdField", owning.get(0).get("goName"));
         }

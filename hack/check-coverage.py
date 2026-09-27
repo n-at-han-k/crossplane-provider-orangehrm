@@ -1,35 +1,60 @@
 #!/usr/bin/env python3
-"""Every operation in the document is either wired into a controller or a search.
+"""Every operation in the document is accounted for, and every one that a
+managed resource should call is actually called.
 
-The generator drops an operation on purpose in exactly one case: a list or a
-search, which a Crossplane managed resource never calls -- it reads one
-resource by its external name and nothing else. That is a rule, not a list of
-exceptions, and this proves it stayed one: an operation that is neither wired
-nor a search is a resource the provider silently does not cover.
+The generator drops an operation on purpose in three cases, and this spells
+the same three rules a second time so that the two have to agree:
+
+  list / search   a GET on a collection, or a POST that answers 200. A
+                  Crossplane resource reads one thing by its external name
+                  and never lists.
+  action          a POST that answers 200 on a path of its own --
+                  /lifecycle/{name}/validate. A verb, not a resource.
+  verb path       a path whose collection has neither a create nor a read
+                  anywhere in the document -- the rights revokes and the
+                  single-member removals. Nothing there can be owned.
+
+Anything else must appear in a controller. An operation that should be wired
+and is not is a resource the provider silently does not cover.
 
     python3 hack/check-coverage.py
 """
 
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 
 import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
-SPEC = ROOT / "reference/request-tracker-openapi/request_tracker_rest2.yaml"
+SPEC = ROOT / "reference/openapi-schema-rt/request_tracker_rest2.yaml"
 VERBS = ("get", "put", "post", "delete", "patch")
-
-# The same rule the generator applies, spelled once more here so that the two
-# have to agree. A trailing "s" is the whole pluralisation rule -- see the
-# generator's own note about it.
-def plural(segment):
-    low = segment.lower()
-    return low.endswith("s") and not low.endswith(("ss", "us", "is"))
 
 
 def member(path):
     return path.rstrip("/").split("/")[-1].startswith("{")
+
+
+def collection(path):
+    path = path.rstrip("/")
+    return path.rsplit("/", 1)[0] if member(path) else path
+
+
+def describes_a_resource(paths, wanted):
+    """A collection someone can create in or read from -- not a bare verb."""
+    for path, item in paths.items():
+        if collection(path) != wanted:
+            continue
+        for verb in VERBS:
+            if verb not in item:
+                continue
+            if member(path) and verb == "get":
+                return True
+            if not member(path) and (verb in ("put", "patch")
+                                     or (verb == "post" and "201" in item[verb].get("responses", {}))):
+                return True
+    return False
 
 
 def wired():
@@ -44,46 +69,53 @@ def wired():
 
 def main():
     if not SPEC.exists():
-        sys.exit("missing {} -- see reference/ in the README".format(SPEC))
+        sys.exit("missing {} -- run: git submodule update --init".format(SPEC))
 
     doc = yaml.safe_load(SPEC.open())
+    paths = doc["paths"]
     calls = wired()
+    resourceful = {c: describes_a_resource(paths, c)
+                   for c in {collection(p) for p in paths}}
 
-    missing, searches = [], []
+    counts, missing, skipped = Counter(), [], []
 
-    for path, item in doc["paths"].items():
+    for path, item in paths.items():
         for verb in VERBS:
             if verb not in item:
                 continue
-            method = verb.upper()
-            # A controller spells its path with %v where the document spells
-            # a parameter, and appends the external name to the member path.
-            interpolated = re.sub(r"\{[^}]*\}", "%v", path)
-            hit = (method, interpolated) in calls or \
-                  (method, re.sub(r"/%v$", "", interpolated)) in calls
+            method, op = verb.upper(), item[verb]
+            where = "{:6} {:52} ({})".format(method, path, op.get("operationId"))
 
-            if hit:
-                continue
+            # Ordered so that each operation gets the name of what it
+            # actually is: a search on a collection that describes no
+            # resource is still a search, not a verb path.
+            if not member(path) and method == "GET":
+                counts["list"] += 1
+                skipped.append("list             " + where)
+            elif not member(path) and method == "POST" \
+                    and "201" not in op.get("responses", {}):
+                counts["search or action"] += 1
+                skipped.append("search or action " + where)
+            elif not resourceful[collection(path)]:
+                counts["verb path"] += 1
+                skipped.append("verb path        " + where)
+            else:
+                counts["wired"] += 1
+                if (method, re.sub(r"\{[^}]*\}", "%v", path)) not in calls:
+                    missing.append(where)
 
-            last = path.rstrip("/").split("/")[-1]
-            is_search = not member(path) and (
-                method in ("GET", "DELETE") or (method == "POST" and plural(last)))
-
-            (searches if is_search else missing).append(
-                "{:6} {}  ({})".format(method, path, item[verb].get("operationId")))
-
-    for line in searches:
-        print("search/list, not a managed operation:  " + line)
+    for line in sorted(skipped):
+        print(line)
 
     if missing:
-        print("\nNOT COVERED -- neither wired into a controller nor a search:")
+        print("\nNOT COVERED -- should be wired into a controller and is not:")
         for line in missing:
             print("  " + line)
         sys.exit(1)
 
-    total = sum(1 for item in doc["paths"].values() for v in VERBS if v in item)
-    print("\n{} operations: {} wired into controllers, {} searches."
-          .format(total, total - len(searches), len(searches)))
+    total = sum(counts.values())
+    print("\n{} operations: {}".format(
+        total, ", ".join("{} {}".format(n, name) for name, n in sorted(counts.items()))))
 
 
 if __name__ == "__main__":

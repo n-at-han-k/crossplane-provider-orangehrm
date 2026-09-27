@@ -22,7 +22,37 @@ metadata:
       ## Managed resources
 
 
+      * `Article`
+
+
+      * `Asset`
+
+
+      * `Catalog`
+
+
+      * `CatalogRight`
+
+
+      * `Class`
+
+
+      * `ClassRight`
+
+
       * `Customfield`
+
+
+      * `CustomfieldRight`
+
+
+      * `CustomfieldValue`
+
+
+      * `Customrole`
+
+
+      * `GlobalRight`
 
 
       * `Group`
@@ -31,7 +61,19 @@ metadata:
       * `GroupMember`
 
 
+      * `GroupRight`
+
+
+      * `Lifecycle`
+
+
+      * `LifecycleMap`
+
+
       * `Queue`
+
+
+      * `QueueRight`
 
 
       * `Ticket`

@@ -7,9 +7,15 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-SPEC=reference/request-tracker-openapi/request_tracker_rest2.yaml
+SPEC=reference/openapi-schema-rt/request_tracker_rest2.yaml
 
-test -f "$SPEC" || { echo "missing $SPEC -- see reference/ in the README"; exit 1; }
+# The API description is a SUBMODULE, so the commit that generated this tree
+# is recorded rather than described in prose: `git submodule status` says
+# which spec the committed provider came from, and a regeneration after
+# `git submodule update --remote` is a diff with the spec bump beside it.
+git submodule update --init reference/openapi-schema-rt
+
+test -f "$SPEC" || { echo "missing $SPEC -- the spec submodule did not check out"; exit 1; }
 
 openapi-generator-rt generate \
   -i "$SPEC" \
@@ -28,7 +34,7 @@ python3 hack/check-coverage.py
 # The build submodule is what the Makefile is written against; it is not in
 # the generator's output because it is not a file, it is a checkout.
 if [ ! -f build/makelib/common.mk ]; then
-  git submodule update --init --recursive
+  git submodule update --init --recursive build
 fi
 
 # Which imports each generated file actually uses depends on which operations

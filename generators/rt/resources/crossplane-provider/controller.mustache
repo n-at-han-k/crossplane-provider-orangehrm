@@ -494,12 +494,21 @@ func (c *external) Delete(ctx context.Context, cr *{{apiVersion}}.{{kind}}) (man
 
 	// A 404 means someone else already did it, which is success as far as
 	// reconciliation is concerned.
+{{#deleteIsSet}}
+	// The inverse of the set: this empties the owning resource's collection
+	// rather than removing one member of it, so the external name is not
+	// part of the path.
+	_ = id
+	_, err := c.service.DoRequest(ctx, "{{deleteMethod}}", {{#hasParents}}fmt.Sprintf("{{deletePath}}"{{#parents}}, cr.Spec.ForProvider.{{goName}}{{/parents}}){{/hasParents}}{{^hasParents}}"{{deletePath}}"{{/hasParents}}, nil)
+{{/deleteIsSet}}
+{{^deleteIsSet}}
 {{#deleteHasPathParams}}
 	_, err := c.service.DoRequest(ctx, "{{deleteMethod}}", fmt.Sprintf("{{deletePath}}"{{#parents}}, cr.Spec.ForProvider.{{goName}}{{/parents}}, id), nil)
 {{/deleteHasPathParams}}
 {{^deleteHasPathParams}}
 	_, err := c.service.DoRequest(ctx, "{{deleteMethod}}", "{{deletePath}}", nil)
 {{/deleteHasPathParams}}
+{{/deleteIsSet}}
 	if err != nil && !{{providerName}}.IsNotFound(err) {
 		return managed.ExternalDelete{}, errors.Wrap(err, errDelete)
 	}

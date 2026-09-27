@@ -14,42 +14,67 @@ would produce. Run `bin/generate`, read the diff, commit it.
 
 ## Where it comes from
 
-[rt/request-tracker-openapi], which is a reverse engineered spec — RT's own
-API documentation is not one — and is explicitly partial: it has the paths its
-author needed. What the provider covers is what that document describes, and
-it grows when the document does.
+[n-at-han-k/openapi-schema-rt], a fork of [rt/request-tracker-openapi].
 
-`reference/` is gitignored — it is upstream, read only, and nothing here is
-built from a copy of it that this repo keeps.
+Upstream is a reverse engineered spec — RT's own API documentation is not one,
+and nothing generates this from RT's Perl; it was written by hand, path by
+path, against a live server. It is explicitly partial: "I've been adding paths
+as I need them." The fork carries upstream's full history and adds the rest of
+the REST2 surface a provider needs. Additions are meant to go back upstream,
+so they follow upstream's conventions and keep its file name.
+
+The spec is a **submodule** at `reference/openapi-schema-rt`, not a vendored
+copy and not a gitignored clone: the commit it is pinned to is the commit this
+generated tree came from, and `git submodule status` says so without anyone
+writing it down. `bin/generate` checks it out for you.
 
 ```bash
-mkdir -p reference && cd reference
-git clone https://gitlab-ext.utu.fi/rt/request-tracker-openapi.git
+git submodule update --init            # the spec, and crossplane/build
+git submodule update --remote reference/openapi-schema-rt   # take a newer spec
 ```
 
 ## What it covers
 
-Every one of the document's 22 operations, accounted for. `make coverage`
-proves it, and fails if a future spec adds an operation that falls through.
+Twenty-one Kinds, from all 103 operations the document describes.
+`make coverage` proves the accounting and fails if an operation that should
+be wired into a controller is not.
 
 | Kind | create | read | update | delete |
 |---|---|---|---|---|
-| `Ticket` | `POST /ticket` | `GET /ticket/{id}` | `PUT /ticket/{id}` | — |
-| `User` | `POST /user` | `GET /user/{idOrName}` | `PUT /user/{idOrName}` | `DELETE /user/{idOrName}` |
-| `Group` | `POST /group` | `GET /group/{id}` | — | — |
-| `Queue` | `POST /queue` | `GET /queue/{idOrName}` | — | `DELETE /queue/{idOrName}` |
-| `Customfield` | `POST /customfield` | `GET /customfield/{id}` | — | — |
-| `UserGroup` | `PUT /user/{idOrName}/groups` | — | — | — |
-| `GroupMember` | `PUT /group/{id}/members` | — | — | — |
+| `Ticket` | `POST /ticket` | ✓ | ✓ | ✓ |
+| `Queue` | `POST /queue` | ✓ | ✓ | ✓ |
+| `User` | `POST /user` | ✓ | ✓ | ✓ |
+| `Group` | `POST /group` | ✓ | ✓ | ✓ |
+| `Customfield` | `POST /customfield` | ✓ | ✓ | ✓ |
+| `CustomfieldValue` | `POST /customfield/{id}/value` | ✓ | ✓ | ✓ |
+| `Catalog` | `POST /catalog` | ✓ | ✓ | ✓ |
+| `Class` | `POST /class` | ✓ | ✓ | ✓ |
+| `Asset` | `POST /asset` | ✓ | ✓ | ✓ |
+| `Article` | `POST /article` | ✓ | ✓ | ✓ |
+| `Lifecycle` | `POST /lifecycles` | ✓ | ✓ | ✓ |
+| `Customrole` | — | ✓ | — | — |
+| `GroupMember` | `PUT /group/{id}/members` | — | — | `DELETE` same path |
+| `UserGroup` | `PUT /user/{idOrName}/groups` | — | — | `DELETE` same path |
+| `LifecycleMap` | `PUT /lifecycle/{name}/maps` | — | — | — |
+| `QueueRight`, `GroupRight`, `ClassRight`, `CatalogRight`, `CustomfieldRight`, `GlobalRight` | `POST …/rights` | — | — | — |
 
-A dash is the API's, not the provider's: RT does not delete a ticket, it
-closes one. Update and Delete on those resources return an error saying so
-rather than reporting Synced over a request never made.
+A dash is RT's limit, not the provider's. `Customrole` has no create because
+REST2 offers none — the web UI is the only way to make one.
 
-The remaining six operations are searches and lists — `GET /tickets`,
-`POST /users`, `POST /groups`, `POST /customfields`, `GET /queues/all`,
-`GET /rt`. A Crossplane managed resource never calls them: it reads one
-resource by its external name and nothing else.
+The other 47 operations are not things a managed resource calls:
+
+- **21 lists** — `GET /tickets`, `/queues/all`, `/customfield/{id}/values`,
+  every `…/rights/available`. Crossplane reads one resource by its external
+  name and never lists.
+- **12 searches and actions** — `POST /users`, `POST /customfields`,
+  every `…/rights/bulk`, `POST /lifecycle/{name}/validate`. Told apart from a
+  create by what they answer: a create answers 201, these answer 200.
+- **14 verb paths** — the rights revokes
+  (`DELETE /queue/{id}/rights/{right}/group/{id}`) and the single-member
+  removals (`DELETE /group/{id}/member/{id}`). Each looks like a member path,
+  but nothing can create or read one, so there is no resource there to own.
+  Revoking is therefore out of reach of `QueueRight` and friends; see the
+  gaps below.
 
 ## The generator
 
@@ -65,6 +90,27 @@ them is the create, the read, the update and the delete. Both targets ask
 exactly that question.
 
 What RT needed on top of the WSO2 generator:
+
+- **201 decides a create, not the spelling.** RT POSTs both to create and to
+  search. `POST /ticket` creates, `POST /tickets` searches; but `POST
+  /lifecycles` creates on a plural path and `POST /customfields` searches on
+  one, so no rule about singular and plural survives the whole document. A
+  create answers 201 and a search answers 200, which also drops the action
+  endpoints (`/lifecycle/{name}/validate`) for free.
+
+- **Two paths, one resource.** RT creates a lifecycle at `POST /lifecycles`
+  and addresses it at `/lifecycle/{name}` ever after. Both camelise to
+  `Lifecycle`, so left alone they are two groups writing one set of files —
+  the second overwriting the first with half a resource. They are keyed on
+  the collection that owns the member path.
+
+- **Verbs that look like resources.** `DELETE /queue/{id}/rights/{right}/group/{id}`
+  is a member path by shape, so it would become a Kind that can only be
+  deleted. A collection with neither a create nor a read anywhere in the
+  document is a verb, and is dropped.
+
+- **Sets have an inverse.** `DELETE /group/{id}/members` empties what
+  `PUT /group/{id}/members` filled, and takes no id of its own.
 
 - **Singular creates.** RT creates with `POST /ticket` and searches with
   `POST /tickets`. Upstream's grouping assumes the create and the collection
@@ -144,13 +190,20 @@ whole header verbatim, for a scheme this client does not spell.
 - Nested objects and arrays become a `string` holding JSON. `upToDate`
   compares those by value rather than by text, so a re-ordered object coming
   back is not a permanent diff.
-- A resource whose API has no delete (`Ticket`, `Group`, `Customfield`,
-  the two membership Kinds) cannot be deleted by Crossplane. Deleting the
-  managed resource errors and the finalizer stays, deliberately: succeeding
-  would let Crossplane forget a ticket that still exists. Close it in RT and
-  remove the finalizer.
-- `UserGroup` and `GroupMember` have no read, so they are never reported as
-  drifted — a membership changed in RT's UI will not be corrected.
+- A right cannot be revoked. Granting is `POST …/rights`; revoking needs
+  `DELETE …/rights/{right}/group/{id}`, whose path the generator cannot
+  derive from the grant it was given. Deleting a `QueueRight` errors rather
+  than silently leaving the right in place.
+- A resource whose API has no delete (`Customrole`, `LifecycleMap`, the six
+  rights Kinds) cannot be deleted by Crossplane. Deleting the managed
+  resource errors and the finalizer stays, deliberately: succeeding would let
+  Crossplane forget something that still exists.
+- The Kinds with no read — the memberships, `LifecycleMap`, the rights — are
+  never reported as drifted. A membership changed in RT's UI is not
+  corrected.
+- `Customfield` and `Customrole` read as they do because RT spells them as
+  one word; a friendlier Kind name would be a rename the document does not
+  make.
 - No acceptance tests against a live RT, and no `examples/`.
 - The document is partial. Queues cannot be updated, groups and custom fields
   cannot be deleted, and ticket comments, replies, attachments and history are
@@ -158,4 +211,5 @@ whole header verbatim, for a scheme this client does not spell.
 
 [Request Tracker]: https://bestpractical.com/request-tracker
 [rt/request-tracker-openapi]: https://gitlab-ext.utu.fi/rt/request-tracker-openapi
+[n-at-han-k/openapi-schema-rt]: https://github.com/n-at-han-k/openapi-schema-rt
 [crossplane-provider-wso2]: https://github.com/n-at-han-k/crossplane-provider-wso2
