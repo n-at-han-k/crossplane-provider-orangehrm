@@ -48,9 +48,12 @@ const (
 	errNoID = "OrangeHRM returned no attendanceRecord identifier from create; refusing to record an empty external name (one may have been created and needs manual cleanup)"
 )
 
-// newService builds the API client from the extracted credentials.
-var newService = func(creds []byte) (*orangehrm.Client, error) {
-	return orangehrm.NewClientFromCredentials(creds)
+// newService builds the API client from the extracted credentials and the
+// endpoint the ProviderConfig carries. The endpoint is NOT in the secret: it is
+// not a secret, and keeping it out is what lets a ProviderConfig point straight
+// at a Secret holding nothing but the token.
+var newService = func(creds []byte, endpoint string) (*orangehrm.Client, error) {
+	return orangehrm.NewClientFromCredentials(creds, endpoint)
 }
 
 // SetupGated adds a controller that reconciles AttendanceRecord managed resources with safe-start support.
@@ -112,7 +115,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 type connector struct {
 	kube         client.Client
 	usage        *resource.ProviderConfigUsageTracker
-	newServiceFn func(creds []byte) (*orangehrm.Client, error)
+	newServiceFn func(creds []byte, endpoint string) (*orangehrm.Client, error)
 }
 
 // Connect tracks the ProviderConfig usage, reads the (Cluster)ProviderConfig
@@ -123,6 +126,7 @@ func (c *connector) Connect(ctx context.Context, cr *v1alpha1.AttendanceRecord) 
 	}
 
 	var cd apisv1alpha1.ProviderCredentials
+	var endpoint string
 
 	ref := cr.GetProviderConfigReference()
 
@@ -133,12 +137,14 @@ func (c *connector) Connect(ctx context.Context, cr *v1alpha1.AttendanceRecord) 
 			return nil, errors.Wrap(err, errGetPC)
 		}
 		cd = pc.Spec.Credentials
+		endpoint = pc.Spec.Endpoint
 	case "ClusterProviderConfig":
 		cpc := &apisv1alpha1.ClusterProviderConfig{}
 		if err := c.kube.Get(ctx, types.NamespacedName{Name: ref.Name}, cpc); err != nil {
 			return nil, errors.Wrap(err, errGetCPC)
 		}
 		cd = cpc.Spec.Credentials
+		endpoint = cpc.Spec.Endpoint
 	default:
 		return nil, errors.Errorf("unsupported provider config kind: %s", ref.Kind)
 	}
@@ -148,7 +154,7 @@ func (c *connector) Connect(ctx context.Context, cr *v1alpha1.AttendanceRecord) 
 		return nil, errors.Wrap(err, errGetCreds)
 	}
 
-	svc, err := c.newServiceFn(data)
+	svc, err := c.newServiceFn(data, endpoint)
 	if err != nil {
 		return nil, errors.Wrap(err, errNewClient)
 	}

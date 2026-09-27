@@ -29,6 +29,21 @@ type ProviderCredentials struct {
 type ProviderConfigSpec struct {
 	// Credentials required to authenticate to this provider.
 	Credentials ProviderCredentials `json:"credentials"`
+
+	// Endpoint is the base URL of the API, e.g.
+	// https://hr.example.com/web/index.php -- everything the API description
+	// spells is relative to it.
+	//
+	// HERE RATHER THAN IN THE SECRET, because it is not one. The credential is
+	// a bearer token and nothing else, which is what lets this point straight
+	// at a Secret something else already made: the token OrangeHRM
+	// issues is a bare string, and requiring a JSON document around it would
+	// mean copying that Secret into one.
+	//
+	// A credentials blob that IS a JSON document may carry an `endpoint` of its
+	// own; this wins where both are set.
+	// +optional
+	Endpoint string `json:"endpoint,omitempty"`
 }
 
 // +kubebuilder:object:root=true
@@ -36,6 +51,7 @@ type ProviderConfigSpec struct {
 
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
+// +kubebuilder:printcolumn:name="ENDPOINT",type="string",JSONPath=".spec.endpoint"
 // +kubebuilder:printcolumn:name="SECRET-NAME",type="string",JSONPath=".spec.credentials.secretRef.name",priority=1
 // +kubebuilder:resource:scope=Namespaced,categories={crossplane,provider,orangehrm}
 // A ProviderConfig configures a Helm 'provider', i.e. a connection to a particular
@@ -85,6 +101,7 @@ type ProviderConfigUsageList struct {
 
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
+// +kubebuilder:printcolumn:name="ENDPOINT",type="string",JSONPath=".spec.endpoint"
 // +kubebuilder:printcolumn:name="SECRET-NAME",type="string",JSONPath=".spec.credentials.secretRef.name",priority=1
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,provider,orangehrm}
 // A ClusterProviderConfig configures a OrangeHRM provider.

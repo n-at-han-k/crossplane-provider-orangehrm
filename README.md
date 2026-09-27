@@ -253,33 +253,57 @@ you.
 
 ## Credentials
 
-A `ProviderConfig`'s secret is one JSON document: OrangeHRM needs to be told
-where it is as well as who you are.
+A bearer token, and the endpoint on the ProviderConfig beside it:
+
+```yaml
+apiVersion: orangehrm.crossplane.io/v1alpha1
+kind: ClusterProviderConfig
+metadata:
+  name: default
+spec:
+  endpoint: https://hr.example.com/web/index.php
+  credentials:
+    source: Secret
+    secretRef:
+      namespace: orangehrm
+      name: orangehrm-api-token
+      key: token
+```
+
+**A token rather than a client to mint one with**, because OrangeHRM has no
+grant a controller can run. `OAuthServer.php` enables exactly two:
+
+```php
+$this->oauthServer->enableGrantType($grant, $this->accessTokenTTL);          // AuthCodeGrant
+$this->oauthServer->enableGrantType($refreshTokenGrant, $this->accessTokenTTL);
+```
+
+The first needs a browser and the second needs the first to have happened, so
+nothing here can obtain a token unattended -- `password` and
+`client_credentials` are both answered `unsupported_grant_type`. Registering an
+OAuth client under **Admin > Configuration > Register OAuth Client** gets you a
+client, not a token. A long-lived access token issued to an API user is what
+this takes; rotating a refresh token is the upgrade path if those ever expire
+on a schedule someone has to chase.
+
+**The endpoint is on the spec, not in the secret**, because it is not one --
+and because the token OrangeHRM issues is a bare string. A Secret something
+else already made can therefore be pointed at as it is, rather than copied into
+a JSON document. A credentials blob that IS a document may carry its own
+`endpoint` and `token`; `spec.endpoint` wins where both are set.
 
 ```yaml
 stringData:
   credentials: |
     {
       "endpoint": "https://hr.example.com/web/index.php",
-      "clientId": "crossplane",
-      "clientSecret": "...",
-      "username": "admin",
-      "password": "..."
+      "token": "..."
     }
 ```
 
-Register the client under **Admin > Configuration > Register OAuth Client**. The
-provider mints its own access tokens at `{endpoint}/oauth2/token` and caches
-them process-wide until they expire, because a client is built on every Connect
-— which is every reconcile of every resource — and a token per client is a
-round trip and a row in OrangeHRM's token table each time. A 401 on a cached
-token drops it and retries once.
-
-`username`/`password` make the exchange the `password` grant, which is what
-most of this API's rights need; without them it is `client_credentials`. The
-scope defaults to `admin`, which is what OrangeHRM's own documentation says the
-API requires. A ready-made `token` is accepted instead of a client, and nothing
-renews it — OrangeHRM's expire in an hour, so that is for a one-off.
+Redirects are not followed: an unrecognised token is answered with a 302 to the
+login page, which then answers 200 with HTML, so a followed redirect turns a bad
+token into "cannot parse the response" somewhere far from the cause.
 
 ## What it does not do yet
 

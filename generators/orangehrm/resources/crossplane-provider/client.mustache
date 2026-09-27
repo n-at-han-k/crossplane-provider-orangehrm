@@ -9,46 +9,40 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 )
 
-// Credentials are what a ProviderConfig's secret holds: the endpoint to talk
-// to and one of the ways this API accepts a caller.
+// Credentials are what a ProviderConfig's secret holds.
 //
-// A single JSON document rather than a key per field, because
-// CommonCredentialExtractor hands back one blob and a Secret with one key is
-// one thing to rotate.
+// EITHER a JSON document -- {"endpoint": …, "token": …} -- or the bare token,
+// which is what {{providerTitle}} itself issues and what a Secret made by
+// something else already contains. The endpoint then comes from the
+// ProviderConfig's `spec.endpoint`, where it belongs: it is not a secret, and
+// requiring a JSON document around the token would mean copying every such
+// Secret into one.
 type Credentials struct {
-	// Endpoint is the base URL of the API -- the path OrangeHRM is served
-	// under, e.g. https://orangehrm.example.com/web/index.php. Everything the
-	// API description spells is relative to it, and so is the token endpoint
-	// at /oauth2/token.
-	Endpoint string `json:"endpoint"`
+	// Endpoint is the base URL of the API, e.g.
+	// https://hr.example.com/web/index.php -- everything the API description
+	// spells is relative to it. spec.endpoint wins where both are set.
+	Endpoint string `json:"endpoint,omitempty"`
 
-	// ClientID and ClientSecret are an OAuth client registered under
-	// Admin > Configuration > Register OAuth Client. This is the credential to
-	// use: OrangeHRM's access tokens expire in an hour, and a provider that
-	// reconciles for months cannot be given one by hand.
-	ClientID     string `json:"clientId,omitempty"`
-	ClientSecret string `json:"clientSecret,omitempty"`
-
-	// Username and Password turn the exchange into the `password` grant, which
-	// is what OrangeHRM needs for anything requiring a USER's rights -- which
-	// is most of the API. Without them the grant is `client_credentials`.
-	Username string `json:"username,omitempty"`
-	Password string `json:"password,omitempty"`
-
-	// Scope defaults to `admin`, which is the scope OrangeHRM's own
-	// documentation says the API requires.
-	Scope string `json:"scope,omitempty"`
-
-	// Token is a bearer token to send as-is, for a caller that would rather
-	// mint one out of band. It expires and nothing here renews it, so it is
-	// for a one-off rather than for a provider left running.
+	// Token is an {{providerTitle}} OAuth2 access token, sent as
+	// `Authorization: Bearer <token>`.
+	//
+	// A TOKEN RATHER THAN A CLIENT TO MINT ONE WITH, because {{providerTitle}}
+	// has no grant a controller can run: src/plugins/orangehrmCoreOAuthPlugin/
+	// Server/OAuthServer.php enables exactly two, AuthCodeGrant and
+	// RefreshTokenGrant. The first needs a browser and the second needs the
+	// first to have happened, so nothing here can obtain a token unattended --
+	// `password` and `client_credentials` are both answered
+	// `unsupported_grant_type`.
+	//
+	// The token therefore comes from wherever the instance was provisioned:
+	// a long-lived one issued to an API user. A refresh token could be rotated
+	// by this client, and is the upgrade path if these ever expire on a
+	// schedule someone has to chase.
 	Token string `json:"token,omitempty"`
 }
 
@@ -56,179 +50,65 @@ type Credentials struct {
 type Client struct {
 	BaseURL    string
 	HTTPClient *http.Client
-
-	// Token is a bearer token used verbatim, and creds is what mints one when
-	// it is absent.
-	Token string
-	creds Credentials
+	Token      string
 }
 
 // NewClient creates a new API client with the given base URL.
 func NewClient(baseURL string) *Client {
 	return &Client{
-		BaseURL:    baseURL,
-		HTTPClient: &http.Client{Timeout: 60 * time.Second},
+		BaseURL: baseURL,
+		HTTPClient: &http.Client{
+			Timeout: 60 * time.Second,
+			// REDIRECTS ARE NOT FOLLOWED. {{providerTitle}} answers a token it
+			// does not recognise with a 302 to the login page, which then
+			// answers 200 with HTML -- so a followed redirect turns a bad token
+			// into "cannot parse the response" and hides what is wrong.
+			// Unfollowed, it stays the 302 it is.
+			CheckRedirect: func(*http.Request, []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		},
 	}
 }
 
-// NewClientFromCredentials builds a client from a ProviderConfig's secret.
-func NewClientFromCredentials(raw []byte) (*Client, error) {
-	var creds Credentials
+// NewClientFromCredentials builds a client from a ProviderConfig's secret and
+// the endpoint its spec carries.
+func NewClientFromCredentials(raw []byte, endpoint string) (*Client, error) {
+	creds := Credentials{}
 
+	// A blob that is not JSON is the token itself. Tried in that order because
+	// a bare token cannot be mistaken for a document, while a document read as
+	// a token would go out as an Authorization header full of braces and fail
+	// with a 401 that says nothing about why.
 	if err := json.Unmarshal(raw, &creds); err != nil {
-		return nil, fmt.Errorf("credentials are not valid JSON: %w", err)
+		creds.Token = strings.TrimSpace(string(raw))
+	}
+
+	if endpoint != "" {
+		creds.Endpoint = endpoint
 	}
 
 	// An empty endpoint would send every request to a relative URL and fail
 	// with something far less obvious than this.
 	if creds.Endpoint == "" {
-		return nil, fmt.Errorf("credentials carry no endpoint")
+		return nil, fmt.Errorf("no endpoint: set spec.endpoint on the ProviderConfig, or an \"endpoint\" in the credentials")
 	}
-	if creds.Token == "" && creds.ClientID == "" {
-		return nil, fmt.Errorf("credentials carry neither a token nor a clientId")
+	if creds.Token == "" {
+		return nil, fmt.Errorf("credentials carry no token")
 	}
 
-	creds.Endpoint = strings.TrimRight(creds.Endpoint, "/")
-
-	client := NewClient(creds.Endpoint)
+	client := NewClient(strings.TrimRight(creds.Endpoint, "/"))
 	client.Token = creds.Token
-	client.creds = creds
 
 	return client, nil
 }
 
-// An access token OrangeHRM issued, and when it stops being one.
-type token struct {
-	value   string
-	expires time.Time
-}
-
-// ponytail: one process-wide cache rather than a token per client. A client is
-// built on every Connect -- which is every reconcile of every resource -- so a
-// token minted per client is an extra round trip per reconcile and a new token
-// in OrangeHRM's table each time. Keyed by endpoint and client, so two
-// ProviderConfigs do not share one.
-var (
-	tokensMu sync.Mutex
-	tokens   = map[string]token{}
-)
-
-// accessToken returns a bearer token for these credentials, minting one if the
-// cache has none or the one it has is about to expire.
-func (c *Client) accessToken(ctx context.Context) (string, error) {
-	if c.Token != "" {
-		return c.Token, nil
-	}
-
-	key := c.creds.Endpoint + "\x00" + c.creds.ClientID + "\x00" + c.creds.Username
-
-	tokensMu.Lock()
-	defer tokensMu.Unlock()
-
-	// A minute of headroom: a token that expires between this check and the
-	// request answers 401, and the retry would be the only thing that noticed.
-	if cached, ok := tokens[key]; ok && time.Now().Add(time.Minute).Before(cached.expires) {
-		return cached.value, nil
-	}
-
-	minted, err := c.mintToken(ctx)
-	if err != nil {
-		return "", err
-	}
-	tokens[key] = minted
-
-	return minted.value, nil
-}
-
-// invalidate drops the cached token, so the next request mints a new one. What
-// a 401 means for a token that has not expired by this client's clock:
-// OrangeHRM restarted, the client was re-registered, or the clocks disagree.
-func (c *Client) invalidate() {
-	if c.Token != "" {
-		return
-	}
-
-	key := c.creds.Endpoint + "\x00" + c.creds.ClientID + "\x00" + c.creds.Username
-
-	tokensMu.Lock()
-	delete(tokens, key)
-	tokensMu.Unlock()
-}
-
-func (c *Client) mintToken(ctx context.Context) (token, error) {
-	scope := c.creds.Scope
-	if scope == "" {
-		scope = "admin"
-	}
-
-	form := url.Values{
-		"client_id":     {c.creds.ClientID},
-		"client_secret": {c.creds.ClientSecret},
-		"scope":         {scope},
-	}
-
-	// The `password` grant where a user was given, because most of this API is
-	// a user's rights rather than the client's.
-	if c.creds.Username != "" {
-		form.Set("grant_type", "password")
-		form.Set("username", c.creds.Username)
-		form.Set("password", c.creds.Password)
-	} else {
-		form.Set("grant_type", "client_credentials")
-	}
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
-		c.creds.Endpoint+"/oauth2/token", strings.NewReader(form.Encode()))
-	if err != nil {
-		return token{}, fmt.Errorf("error creating token request: %w", err)
-	}
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Accept", "application/json")
-
-	resp, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return token{}, fmt.Errorf("error requesting an access token: %w", err)
-	}
-	defer resp.Body.Close() //nolint:errcheck // nothing useful to do with a close error on a read body.
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return token{}, fmt.Errorf("error reading the token response: %w", err)
-	}
-
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return token{}, &APIError{StatusCode: resp.StatusCode, Body: string(body)}
-	}
-
-	var issued struct {
-		AccessToken string `json:"access_token"`
-		ExpiresIn   int64  `json:"expires_in"`
-	}
-	if err := json.Unmarshal(body, &issued); err != nil {
-		return token{}, fmt.Errorf("the token response is not valid JSON: %w", err)
-	}
-	if issued.AccessToken == "" {
-		return token{}, fmt.Errorf("the token response carries no access_token: %s", string(body))
-	}
-
-	// An unspecified lifetime is treated as short rather than as forever: a
-	// token assumed to last is a provider that stops reconciling silently.
-	if issued.ExpiresIn <= 0 {
-		issued.ExpiresIn = 300
-	}
-
-	return token{
-		value:   issued.AccessToken,
-		expires: time.Now().Add(time.Duration(issued.ExpiresIn) * time.Second),
-	}, nil
-}
-
-// DeleteIDs is the body OrangeHRM's delete takes. There is no
+// DeleteIDs is the body {{providerTitle}}'s delete takes. There is no
 // `DELETE /admin/educations/{id}`: there is `DELETE /admin/educations` with
 // `{"ids": [7]}`, which is how the API deletes one and how it deletes fifty.
 //
 // The ids go out as NUMBERS where they are numbers, which is every id this API
-// assigns -- the schema says `integer`, and a quoted "7" is a 422. A
+// assigns -- the schema says `integer`, and a quoted "7" is refused. A
 // non-numeric external name is sent as the string it is, so a document that
 // starts naming things does not need this changed.
 func DeleteIDs(ids ...string) map[string]any {
@@ -277,9 +157,9 @@ func (c *Client) DoRequest(ctx context.Context, method, path string, body interf
 }
 
 // DoCreateRequest also hands back the Location header, for an API that answers
-// a create with nothing but one. OrangeHRM answers the created record, so this
-// is the fallback rather than the path -- but a create whose identifier goes
-// unrecorded is what leaks a resource, so both are read.
+// a create with nothing but one. {{providerTitle}} answers the created record,
+// so this is the fallback rather than the path -- but a create whose identifier
+// goes unrecorded is what leaks a resource, so both are read.
 func (c *Client) DoCreateRequest(ctx context.Context, method, path string, body interface{}) ([]byte, string, error) {
 	return c.doRequest(ctx, method, path, body)
 }
@@ -297,59 +177,42 @@ func IDFromLocation(location string) string {
 }
 
 func (c *Client) doRequest(ctx context.Context, method, path string, body interface{}) ([]byte, string, error) {
-	respBody, location, status, err := c.attempt(ctx, method, path, body)
-
-	// One retry, and only on a 401 with a minted token: the cached token was
-	// refused, so it is dropped and a new one asked for. Retrying anything
-	// else would repeat a write the server may well have applied.
-	if status == http.StatusUnauthorized && c.Token == "" {
-		c.invalidate()
-		respBody, location, _, err = c.attempt(ctx, method, path, body)
-	}
-
-	return respBody, location, err
-}
-
-func (c *Client) attempt(ctx context.Context, method, path string, body interface{}) ([]byte, string, int, error) {
 	var reqBody io.Reader
 	if body != nil {
 		jsonBody, err := json.Marshal(body)
 		if err != nil {
-			return nil, "", 0, fmt.Errorf("error marshaling request body: %w", err)
+			return nil, "", fmt.Errorf("error marshaling request body: %w", err)
 		}
 		reqBody = bytes.NewBuffer(jsonBody)
 	}
 
 	req, err := http.NewRequestWithContext(ctx, method, c.BaseURL+path, reqBody)
 	if err != nil {
-		return nil, "", 0, fmt.Errorf("error creating request: %w", err)
+		return nil, "", fmt.Errorf("error creating request: %w", err)
 	}
 
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
 	req.Header.Set("Accept", "application/json")
-
-	bearer, err := c.accessToken(ctx)
-	if err != nil {
-		return nil, "", 0, err
-	}
-	req.Header.Set("Authorization", "Bearer "+bearer)
+	req.Header.Set("Authorization", "Bearer "+c.Token)
 
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, "", 0, fmt.Errorf("error making request: %w", err)
+		return nil, "", fmt.Errorf("error making request: %w", err)
 	}
 	defer resp.Body.Close() //nolint:errcheck // nothing useful to do with a close error on a read body.
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, "", resp.StatusCode, fmt.Errorf("error reading response body: %w", err)
+		return nil, "", fmt.Errorf("error reading response body: %w", err)
 	}
 
+	// A 302 lands here rather than being followed (see NewClient), so a token
+	// the server does not recognise is an error with its own status on it.
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, "", resp.StatusCode, &APIError{StatusCode: resp.StatusCode, Body: string(respBody)}
+		return nil, "", &APIError{StatusCode: resp.StatusCode, Body: string(respBody)}
 	}
 
-	return respBody, resp.Header.Get("Location"), resp.StatusCode, nil
+	return respBody, resp.Header.Get("Location"), nil
 }

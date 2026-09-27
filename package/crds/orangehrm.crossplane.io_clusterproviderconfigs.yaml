@@ -22,6 +22,9 @@ spec:
     - jsonPath: .metadata.creationTimestamp
       name: AGE
       type: date
+    - jsonPath: .spec.endpoint
+      name: ENDPOINT
+      type: string
     - jsonPath: .spec.credentials.secretRef.name
       name: SECRET-NAME
       priority: 1
@@ -106,6 +109,21 @@ spec:
                 required:
                 - source
                 type: object
+              endpoint:
+                description: |-
+                  Endpoint is the base URL of the API, e.g.
+                  https://hr.example.com/web/index.php -- everything the API description
+                  spells is relative to it.
+
+                  HERE RATHER THAN IN THE SECRET, because it is not one. The credential is
+                  a bearer token and nothing else, which is what lets this point straight
+                  at a Secret something else already made: the token OrangeHRM
+                  issues is a bare string, and requiring a JSON document around it would
+                  mean copying that Secret into one.
+
+                  A credentials blob that IS a JSON document may carry an `endpoint` of its
+                  own; this wins where both are set.
+                type: string
             required:
             - credentials
             type: object

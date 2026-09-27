@@ -1,6 +1,6 @@
 // The one runnable check on the hand-written half of this client: the
-// generated code never exercises the token exchange, and a provider that
-// cannot mint a token does nothing at all.
+// generated code never exercises how a credential is read or what counts as a
+// failure, and both are how a provider silently does nothing.
 //
 //	go test ./internal/clients/orangehrm/
 
@@ -13,39 +13,6 @@ import (
 	"net/http/httptest"
 	"testing"
 )
-
-// The cache is process-wide, so a test that does not clear it reads another
-// test's token.
-func reset() {
-	tokensMu.Lock()
-	tokens = map[string]token{}
-	tokensMu.Unlock()
-}
-
-func credentials(t *testing.T, endpoint string, extra map[string]string) *Client {
-	t.Helper()
-
-	creds := map[string]string{
-		"endpoint":     endpoint,
-		"clientId":     "crossplane",
-		"clientSecret": "shh",
-	}
-	for k, v := range extra {
-		creds[k] = v
-	}
-
-	raw, err := json.Marshal(creds)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	client, err := NewClientFromCredentials(raw)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	return client
-}
 
 func TestDeleteIDs(t *testing.T) {
 	// Numbers, not strings: the schema says `integer` and OrangeHRM refuses a
@@ -60,98 +27,110 @@ func TestDeleteIDs(t *testing.T) {
 	}
 }
 
-func TestTokenIsMintedOnceAndSent(t *testing.T) {
-	reset()
-
-	mints, calls := 0, 0
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/oauth2/token" {
-			mints++
-			if grant := r.FormValue("grant_type"); grant != "password" {
-				t.Errorf("grant_type: got %q, want password", grant)
-			}
-			w.Header().Set("Content-Type", "application/json")
-			_, _ = w.Write([]byte(`{"access_token":"minted","expires_in":3600}`))
-			return
-		}
-
-		calls++
-		if got := r.Header.Get("Authorization"); got != "Bearer minted" {
-			t.Errorf("Authorization: got %q, want Bearer minted", got)
-		}
-		_, _ = w.Write([]byte(`{"data":{"id":1},"meta":{}}`))
-	}))
-	defer server.Close()
-
-	client := credentials(t, server.URL, map[string]string{"username": "admin", "password": "pw"})
-
-	for range 2 {
-		if _, err := client.DoRequest(context.Background(), "GET", "/api/v2/admin/educations/1", nil); err != nil {
-			t.Fatal(err)
-		}
+// The credential OrangeHRM itself issues is a bare token, and the Secret
+// holding one was made by whatever provisioned the instance. Requiring a JSON
+// document around it would mean copying that Secret into one.
+func TestCredentialsAreATokenOrADocument(t *testing.T) {
+	bare, err := NewClientFromCredentials([]byte("  a-long-lived-token\n"), "https://hr.example.com/web/index.php/")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if bare.Token != "a-long-lived-token" {
+		t.Fatalf("bare token: got %q", bare.Token)
+	}
+	// Trailing slash off the endpoint, or every path would double it.
+	if bare.BaseURL != "https://hr.example.com/web/index.php" {
+		t.Fatalf("endpoint: got %q", bare.BaseURL)
 	}
 
-	if mints != 1 {
-		t.Fatalf("minted %d tokens for two requests, want 1", mints)
+	document, err := NewClientFromCredentials(
+		[]byte(`{"endpoint":"https://from-secret.example.com","token":"t"}`), "")
+	if err != nil {
+		t.Fatal(err)
 	}
-	if calls != 2 {
-		t.Fatalf("made %d API calls, want 2", calls)
+	if document.BaseURL != "https://from-secret.example.com" {
+		t.Fatalf("endpoint from document: got %q", document.BaseURL)
+	}
+
+	// spec.endpoint wins, so the ProviderConfig is where the instance is named
+	// even when the secret says something stale.
+	both, err := NewClientFromCredentials(
+		[]byte(`{"endpoint":"https://stale.example.com","token":"t"}`), "https://live.example.com")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if both.BaseURL != "https://live.example.com" {
+		t.Fatalf("spec.endpoint should win: got %q", both.BaseURL)
 	}
 }
 
-func TestA401MintsAgainAndRetriesOnce(t *testing.T) {
-	reset()
+func TestCredentialsNeedAnEndpointAndAToken(t *testing.T) {
+	if _, err := NewClientFromCredentials([]byte("a-token"), ""); err == nil {
+		t.Fatal("accepted a token with nowhere to send it")
+	}
+	if _, err := NewClientFromCredentials([]byte(`{"endpoint":"https://hr.example.com"}`), ""); err == nil {
+		t.Fatal("accepted a document with no token")
+	}
+}
 
-	mints, refusals := 0, 0
+func TestTheTokenIsSentAsABearer(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/oauth2/token" {
-			mints++
-			w.Header().Set("Content-Type", "application/json")
-			_, _ = w.Write([]byte(`{"access_token":"fresh","expires_in":3600}`))
-			return
+		if got := r.Header.Get("Authorization"); got != "Bearer a-token" {
+			t.Errorf("Authorization: got %q, want Bearer a-token", got)
 		}
-
-		// The first call is refused, as a restarted OrangeHRM refuses a token
-		// this process still thinks is valid.
-		if refusals == 0 {
-			refusals++
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
 		_, _ = w.Write([]byte(`{"data":{"id":1},"meta":{}}`))
 	}))
 	defer server.Close()
 
-	client := credentials(t, server.URL, nil)
-
-	body, err := client.DoRequest(context.Background(), "GET", "/api/v2/admin/educations/1", nil)
+	client, err := NewClientFromCredentials([]byte("a-token"), server.URL)
 	if err != nil {
-		t.Fatalf("a 401 should have been retried with a new token: %v", err)
+		t.Fatal(err)
 	}
-	if string(body) != `{"data":{"id":1},"meta":{}}` {
-		t.Fatalf("body: got %s", body)
+
+	if _, err := client.DoRequest(context.Background(), "GET", "/api/v2/admin/educations/1", nil); err != nil {
+		t.Fatal(err)
 	}
-	if mints != 2 {
-		t.Fatalf("minted %d tokens, want 2 -- the refused one should have been dropped", mints)
+}
+
+// The failure this API actually has: an unrecognised token is answered with a
+// redirect to the login page, which answers 200 with HTML. Followed, that is a
+// parse error somewhere far from the cause.
+func TestARedirectToLoginIsAnErrorRatherThanHTML(t *testing.T) {
+	login := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/auth/login" {
+			_, _ = w.Write([]byte("<html>login</html>"))
+			return
+		}
+		http.Redirect(w, r, "/auth/login", http.StatusFound)
+	}))
+	defer login.Close()
+
+	client, err := NewClientFromCredentials([]byte("stale-token"), login.URL)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = client.DoRequest(context.Background(), "GET", "/api/v2/admin/educations/1", nil)
+	if err == nil {
+		t.Fatal("a redirect to the login page was reported as success")
+	}
+	if IsNotFound(err) {
+		t.Fatalf("a redirect reported as not found: %v", err)
 	}
 }
 
 func TestNotFoundIsTheOnlyGone(t *testing.T) {
-	reset()
-
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/oauth2/token" {
-			_, _ = w.Write([]byte(`{"access_token":"minted","expires_in":3600}`))
-			return
-		}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}))
 	defer server.Close()
 
-	client := credentials(t, server.URL, nil)
+	client, err := NewClientFromCredentials([]byte("a-token"), server.URL)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	_, err := client.DoRequest(context.Background(), "GET", "/api/v2/admin/educations/1", nil)
+	_, err = client.DoRequest(context.Background(), "GET", "/api/v2/admin/educations/1", nil)
 	if err == nil {
 		t.Fatal("a 500 should be an error")
 	}
@@ -159,13 +138,5 @@ func TestNotFoundIsTheOnlyGone(t *testing.T) {
 	// resource and orphan the first.
 	if IsNotFound(err) {
 		t.Fatalf("a 500 reported as not found: %v", err)
-	}
-}
-
-func TestCredentialsNeedAnEndpointAndACredential(t *testing.T) {
-	for _, raw := range []string{`{}`, `{"endpoint":"https://hr.example.com/web/index.php"}`, `not json`} {
-		if _, err := NewClientFromCredentials([]byte(raw)); err == nil {
-			t.Fatalf("accepted %s", raw)
-		}
 	}
 }
