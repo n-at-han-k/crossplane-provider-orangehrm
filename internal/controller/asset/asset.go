@@ -401,22 +401,10 @@ func (c *external) Update(ctx context.Context, cr *v1alpha1.Asset) (managed.Exte
 }
 
 func (c *external) Delete(ctx context.Context, cr *v1alpha1.Asset) (managed.ExternalDelete, error) {
-	cr.Status.SetConditions(xpv2.Deleting())
-
-	id := meta.GetExternalName(cr)
-	if id == "" {
-		// Never created; nothing to destroy.
-		return managed.ExternalDelete{}, nil
-	}
-
-	// A 404 means someone else already did it, which is success as far as
-	// reconciliation is concerned.
-	_, err := c.service.DoRequest(ctx, "DELETE", fmt.Sprintf("/asset/%v", id), nil)
-	if err != nil && !rt.IsNotFound(err) {
-		return managed.ExternalDelete{}, errors.Wrap(err, errDelete)
-	}
-
-	return managed.ExternalDelete{}, nil
+	// This API offers no delete for a asset. Erroring rather than
+	// returning success, because success would let Crossplane remove the
+	// finalizer and forget a asset that still exists.
+	return managed.ExternalDelete{}, errors.New("this API offers no delete for a asset; it must be removed out of band")
 }
 
 func (c *external) Disconnect(_ context.Context) error {

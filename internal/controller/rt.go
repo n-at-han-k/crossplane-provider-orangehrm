@@ -22,11 +22,11 @@ import (
 
 	"github.com/n-at-han-k/crossplane-provider-rt/internal/controller/customfield"
 
+	"github.com/n-at-han-k/crossplane-provider-rt/internal/controller/customfield_appliesto"
+
 	"github.com/n-at-han-k/crossplane-provider-rt/internal/controller/customfield_right"
 
 	"github.com/n-at-han-k/crossplane-provider-rt/internal/controller/customfield_value"
-
-	"github.com/n-at-han-k/crossplane-provider-rt/internal/controller/customrole"
 
 	"github.com/n-at-han-k/crossplane-provider-rt/internal/controller/global_right"
 
@@ -71,11 +71,11 @@ func SetupGated(mgr ctrl.Manager, o controller.Options) error {
 
 		customfield.SetupGated,
 
+		customfield_appliesto.SetupGated,
+
 		customfield_right.SetupGated,
 
 		customfield_value.SetupGated,
-
-		customrole.SetupGated,
 
 		global_right.SetupGated,
 

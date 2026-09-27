@@ -2,12 +2,12 @@
 
 package rt
 
-// CustomfieldsPost200Response is the CustomfieldsPost200Response schema of the API description.
+// QueueIdCustomfieldsGet200Response is the QueueIdCustomfieldsGet200Response schema of the API description.
 //
 // allVars, not vars: a schema written as `allOf: [$ref, {...}]` keeps the
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
-type CustomfieldsPost200Response struct {
+type QueueIdCustomfieldsGet200Response struct {
 	Page    int32                  `json:"page,omitempty"`
 	Pages   int32                  `json:"pages,omitempty"`
 	PerPage int32                  `json:"per_page,omitempty"`

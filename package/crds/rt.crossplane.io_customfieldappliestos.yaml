@@ -4,7 +4,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.20.0
-  name: customroles.rt.crossplane.io
+  name: customfieldappliestos.rt.crossplane.io
 spec:
   group: rt.crossplane.io
   names:
@@ -12,10 +12,10 @@ spec:
     - crossplane
     - managed
     - rt
-    kind: Customrole
-    listKind: CustomroleList
-    plural: customroles
-    singular: customrole
+    kind: CustomfieldAppliesto
+    listKind: CustomfieldAppliestoList
+    plural: customfieldappliestos
+    singular: customfieldappliesto
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -34,7 +34,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: A Customrole is a managed RT customrole.
+        description: A CustomfieldAppliesto is a managed RT customfieldAppliesto.
         properties:
           apiVersion:
             description: |-
@@ -54,15 +54,34 @@ spec:
           metadata:
             type: object
           spec:
-            description: A CustomroleSpec defines the desired state of a Customrole.
+            description: A CustomfieldAppliestoSpec defines the desired state of a
+              CustomfieldAppliesto.
             properties:
               forProvider:
                 description: |-
-                  CustomroleParameters are the configurable fields of a Customrole.
+                  CustomfieldAppliestoParameters are the configurable fields of a CustomfieldAppliesto.
 
-                  These are the fields of the create request body (), which is
+                  These are the fields of the create request body (CustomfieldIdAppliestoPostRequest), which is
                   exactly what a person may write. Anything the server assigns is in
-                  CustomroleObservation instead.
+                  CustomfieldAppliestoObservation instead.
+                properties:
+                  ObjectId:
+                    description: ObjectId The id of the object to apply it to, or
+                      0 for every object of its lookup type.
+                    format: int64
+                    type: integer
+                  id:
+                    description: |-
+                      Id The identifier of the owning resource, from the path.
+                      IMMUTABLE: it is part of the resource's path, so changing it would
+                      address a different resource rather than modify this one.
+                    type: string
+                    x-kubernetes-validations:
+                    - message: id is immutable
+                      rule: self == oldSelf
+                required:
+                - ObjectId
+                - id
                 type: object
               managementPolicies:
                 default:
@@ -123,48 +142,28 @@ spec:
             - forProvider
             type: object
           status:
-            description: A CustomroleStatus represents the observed state of a Customrole.
+            description: A CustomfieldAppliestoStatus represents the observed state
+              of a CustomfieldAppliesto.
             properties:
               atProvider:
                 description: |-
-                  CustomroleObservation are the observable fields of a Customrole.
+                  CustomfieldAppliestoObservation are the observable fields of a CustomfieldAppliesto.
 
-                  These are the fields of the read response (CustomroleIdGet200Response) -- what IS,
+                  These are the fields of the read response (CustomfieldIdAppliestoPost201Response) -- what IS,
                   including the fields a person also writes. The controller diffs the two.
                 properties:
-                  Created:
-                    description: Created
+                  ObjectId:
+                    description: ObjectId
+                    format: int64
+                    type: integer
+                  ObjectName:
+                    description: ObjectName
                     type: string
-                  Creator:
-                    description: Creator
+                  ObjectType:
+                    description: ObjectType
                     type: string
-                  Description:
-                    description: Description
-                    type: string
-                  Disabled:
-                    description: Disabled
-                    type: string
-                  EntryHint:
-                    description: EntryHint
-                    type: string
-                  LastUpdated:
-                    description: LastUpdated
-                    type: string
-                  LastUpdatedBy:
-                    description: LastUpdatedBy
-                    type: string
-                  LookupType:
-                    description: LookupType What type of object this role applies
-                      to.
-                    type: string
-                  MaxValues:
-                    description: MaxValues Whether the role takes a single principal.
-                    type: string
-                  Name:
-                    description: Name
-                    type: string
-                  id:
-                    description: Id Integer identifier
+                  message:
+                    description: Message
                     type: string
                 type: object
               conditions:

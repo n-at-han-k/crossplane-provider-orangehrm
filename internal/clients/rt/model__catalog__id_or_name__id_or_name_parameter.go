@@ -2,8 +2,8 @@
 
 package rt
 
-// CustomFieldsAppliedInnerId is the CustomFieldsAppliedInnerId schema of the API description, which
+// CatalogIdOrNameIdOrNameParameter is the CatalogIdOrNameIdOrNameParameter schema of the API description, which
 // describes no fields of its own -- a union of scalars, or a shape the
 // document leaves open. An empty struct would refuse to hold what the API
 // sends; this holds whatever arrives.
-type CustomFieldsAppliedInnerId interface{}
+type CatalogIdOrNameIdOrNameParameter interface{}

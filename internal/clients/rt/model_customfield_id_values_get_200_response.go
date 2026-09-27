@@ -2,16 +2,16 @@
 
 package rt
 
-// UsersGet200Response is the UsersGet200Response schema of the API description.
+// CustomfieldIdValuesGet200Response is the CustomfieldIdValuesGet200Response schema of the API description.
 //
 // allVars, not vars: a schema written as `allOf: [$ref, {...}]` keeps the
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
-type UsersGet200Response struct {
+type CustomfieldIdValuesGet200Response struct {
 	Page    int32           `json:"page,omitempty"`
 	Pages   int32           `json:"pages,omitempty"`
 	PerPage int32           `json:"per_page,omitempty"`
 	Count   int32           `json:"count,omitempty"`
 	Total   int32           `json:"total,omitempty"`
-	Items   []UserReference `json:"items,omitempty"`
+	Items   []GenericObject `json:"items,omitempty"`
 }

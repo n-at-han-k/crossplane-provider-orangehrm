@@ -2,12 +2,11 @@
 
 package rt
 
-// LifecycleNameValidatePost200Response is the LifecycleNameValidatePost200Response schema of the API description.
+// CustomfieldIdAppliestoPostRequest is the CustomfieldIdAppliestoPostRequest schema of the API description.
 //
 // allVars, not vars: a schema written as `allOf: [$ref, {...}]` keeps the
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
-type LifecycleNameValidatePost200Response struct {
-	Valid    bool     `json:"valid,omitempty"`
-	Warnings []string `json:"warnings,omitempty"`
+type CustomfieldIdAppliestoPostRequest struct {
+	ObjectId int32 `json:"ObjectId,omitempty"`
 }

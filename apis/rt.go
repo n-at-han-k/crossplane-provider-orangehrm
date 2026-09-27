@@ -20,11 +20,11 @@ import (
 
 	customfieldv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/customfield/v1alpha1"
 
+	customfield_appliestov1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/customfield_appliesto/v1alpha1"
+
 	customfield_rightv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/customfield_right/v1alpha1"
 
 	customfield_valuev1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/customfield_value/v1alpha1"
-
-	customrolev1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/customrole/v1alpha1"
 
 	global_rightv1alpha1 "github.com/n-at-han-k/crossplane-provider-rt/apis/global_right/v1alpha1"
 
@@ -71,11 +71,11 @@ func init() {
 
 		customfieldv1alpha1.SchemeBuilder.AddToScheme,
 
+		customfield_appliestov1alpha1.SchemeBuilder.AddToScheme,
+
 		customfield_rightv1alpha1.SchemeBuilder.AddToScheme,
 
 		customfield_valuev1alpha1.SchemeBuilder.AddToScheme,
-
-		customrolev1alpha1.SchemeBuilder.AddToScheme,
 
 		global_rightv1alpha1.SchemeBuilder.AddToScheme,
 
