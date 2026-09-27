@@ -159,6 +159,15 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
                 "internal" + File.separator + "version", "version.go"));
 
         supportingFiles.add(new SupportingFile("Makefile.mustache", "", "Makefile"));
+
+        // The image the xpkg wraps. build/makelib/imagelight.mk expects every
+        // image at cluster/images/<name>/, and without it `make build` fails
+        // after a clean compile with "No such file" -- a provider that cannot
+        // be packaged is not finished, so the scaffold generates this too.
+        String imageFolder = "cluster" + File.separator + "images"
+                + File.separator + "provider-" + providerName;
+        supportingFiles.add(new SupportingFile("image_dockerfile.mustache", imageFolder, "Dockerfile"));
+        supportingFiles.add(new SupportingFile("image_makefile.mustache", imageFolder, "Makefile"));
         supportingFiles.add(new SupportingFile("crossplane_yaml.mustache", "package", "crossplane.yaml"));
         supportingFiles.add(new SupportingFile("boilerplate.mustache", "hack", "boilerplate.go.txt"));
         supportingFiles.add(new SupportingFile("gitmodules.mustache", "", ".gitmodules"));

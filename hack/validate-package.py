@@ -37,8 +37,14 @@ except ImportError:
 EXPECTED_CAPABILITIES = {"SafeStart"}
 EXPECTED_META_API = "meta.pkg.crossplane.io/v1"
 
-# The five managed resources plus the four ProviderConfig kinds.
-EXPECTED_CRD_COUNT = 9
+# Not a hardcoded number: the count is whatever controller-gen wrote into
+# package/crds, and what this checks is that every one of them SURVIVED
+# packaging. A literal here would just be a second thing to bump whenever the
+# API description grows a resource.
+def expected_crd_count():
+    return len(glob.glob(os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "package", "crds", "*.yaml")))
 
 
 def package_yaml(xpkg_path):
@@ -105,9 +111,10 @@ def main():
             )
 
         crds = [d for d in docs if d and d.get("kind") == "CustomResourceDefinition"]
-        if len(crds) != EXPECTED_CRD_COUNT:
+        if len(crds) != expected_crd_count():
             failures.append(
-                f"{path}: package carries {len(crds)} CRDs, expected {EXPECTED_CRD_COUNT}"
+                f"{path}: package carries {len(crds)} CRDs, expected {expected_crd_count()} "
+                f"-- package/crds has that many, so packaging dropped some"
             )
 
         annotations = meta.get("metadata", {}).get("annotations", {}) or {}

@@ -47,6 +47,8 @@ apis/user_group/v1alpha1/user_group_types.go
 apis/v1alpha1/doc.go
 apis/v1alpha1/register.go
 apis/v1alpha1/types.go
+cluster/images/provider-rt/Dockerfile
+cluster/images/provider-rt/Makefile
 cmd/provider/main.go
 go.mod
 hack/boilerplate.go.txt
