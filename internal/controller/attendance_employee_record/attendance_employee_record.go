@@ -291,11 +291,14 @@ func (c *external) Create(ctx context.Context, cr *v1alpha1.AttendanceEmployeeRe
 			return managed.ExternalCreation{}, errors.Wrap(err, errParse)
 		}
 		created := envelope.Data
+		if created == nil {
+			return managed.ExternalCreation{}, errors.New(errParse)
+		}
 		// Through %v because OrangeHRM numbers its ids and an external name is
 		// a string -- the annotation has to hold what the member path spells.
 		id = fmt.Sprintf("%v", created.Id)
 
-		at, err := observation(&created)
+		at, err := observation(created)
 		if err != nil {
 			return managed.ExternalCreation{}, errors.Wrap(err, errParse)
 		}

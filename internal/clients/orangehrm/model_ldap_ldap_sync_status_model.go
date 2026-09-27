@@ -8,7 +8,7 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type LdapLdapSyncStatusModel struct {
-	SyncStartedAt  LdapLdapSyncStatusModelSyncStartedAt `json:"syncStartedAt,omitempty"`
-	SyncFinishedAt LdapLdapSyncStatusModelSyncStartedAt `json:"syncFinishedAt,omitempty"`
-	SyncStatus     string                               `json:"syncStatus,omitempty"`
+	SyncStartedAt  *LdapLdapSyncStatusModelSyncStartedAt `json:"syncStartedAt,omitempty"`
+	SyncFinishedAt *LdapLdapSyncStatusModelSyncStartedAt `json:"syncFinishedAt,omitempty"`
+	SyncStatus     string                                `json:"syncStatus,omitempty"`
 }

@@ -16,5 +16,5 @@ type TestLdapConnectionRequest struct {
 	BindUserDN         string                                             `json:"bindUserDN,omitempty"`
 	BindUserPassword   string                                             `json:"bindUserPassword,omitempty"`
 	UserLookupSettings []TestLdapConnectionRequestUserLookupSettingsInner `json:"userLookupSettings"`
-	DataMapping        UpdateLdapConfigurationRequestDataMapping          `json:"dataMapping,omitempty"`
+	DataMapping        *UpdateLdapConfigurationRequestDataMapping         `json:"dataMapping,omitempty"`
 }

@@ -8,15 +8,15 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type LeaveOverlapLeaveModel struct {
-	Id           int32                                      `json:"id,omitempty"`
-	Date         string                                     `json:"date,omitempty"`
-	LengthHours  int32                                      `json:"lengthHours,omitempty"`
-	LengthDays   int32                                      `json:"lengthDays,omitempty"`
-	Status       ClaimEmployeeClaimRequestModelClaimEvent   `json:"status,omitempty"`
-	LeaveRequest BuzzPostPhotoEditDeletedPhotosInner        `json:"leaveRequest,omitempty"`
-	LeaveType    DashboardEmployeeOnLeaveListModelLeaveType `json:"leaveType,omitempty"`
-	StartTime    string                                     `json:"startTime,omitempty"`
-	EndTime      string                                     `json:"endTime,omitempty"`
-	DurationType LeaveEmployeeLeaveModelDurationType        `json:"durationType,omitempty"`
-	LastComment  LeaveOverlapLeaveModelAllOfLastComment     `json:"lastComment,omitempty"`
+	Id           int32                                       `json:"id,omitempty"`
+	Date         string                                      `json:"date,omitempty"`
+	LengthHours  int32                                       `json:"lengthHours,omitempty"`
+	LengthDays   int32                                       `json:"lengthDays,omitempty"`
+	Status       *ClaimEmployeeClaimRequestModelClaimEvent   `json:"status,omitempty"`
+	LeaveRequest *BuzzPostPhotoEditDeletedPhotosInner        `json:"leaveRequest,omitempty"`
+	LeaveType    *DashboardEmployeeOnLeaveListModelLeaveType `json:"leaveType,omitempty"`
+	StartTime    string                                      `json:"startTime,omitempty"`
+	EndTime      string                                      `json:"endTime,omitempty"`
+	DurationType *LeaveEmployeeLeaveModelDurationType        `json:"durationType,omitempty"`
+	LastComment  *LeaveOverlapLeaveModelAllOfLastComment     `json:"lastComment,omitempty"`
 }

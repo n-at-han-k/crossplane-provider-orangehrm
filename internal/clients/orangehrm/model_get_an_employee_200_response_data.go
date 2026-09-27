@@ -14,8 +14,8 @@ type GetAnEmployee200ResponseData struct {
 	MiddleName    string                                     `json:"middleName,omitempty"`
 	EmployeeId    string                                     `json:"employeeId,omitempty"`
 	TerminationId int32                                      `json:"terminationId,omitempty"`
-	JobTitle      PimEmployeeDetailedModelJobTitle           `json:"jobTitle,omitempty"`
-	Subunit       PimEmployeeDetailedModelSubunit            `json:"subunit,omitempty"`
-	EmpStatus     PimEmployeeDetailedModelEmpStatus          `json:"empStatus,omitempty"`
+	JobTitle      *PimEmployeeDetailedModelJobTitle          `json:"jobTitle,omitempty"`
+	Subunit       *PimEmployeeDetailedModelSubunit           `json:"subunit,omitempty"`
+	EmpStatus     *PimEmployeeDetailedModelEmpStatus         `json:"empStatus,omitempty"`
 	Supervisors   []PimEmployeeDetailedModelSupervisorsInner `json:"supervisors"`
 }

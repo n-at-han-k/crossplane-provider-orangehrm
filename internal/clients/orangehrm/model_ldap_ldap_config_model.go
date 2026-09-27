@@ -8,16 +8,16 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type LdapLdapConfigModel struct {
-	Enable                                bool                           `json:"enable"`
-	Hostname                              string                         `json:"hostname,omitempty"`
-	Port                                  int32                          `json:"port,omitempty"`
-	Encryption                            string                         `json:"encryption,omitempty"`
-	LdapImplementation                    string                         `json:"ldapImplementation,omitempty"`
-	BindAnonymously                       bool                           `json:"bindAnonymously"`
-	BindUserDN                            string                         `json:"bindUserDN,omitempty"`
-	HasBindUserPassword                   bool                           `json:"hasBindUserPassword"`
-	UserLookupSettings                    []string                       `json:"userLookupSettings"`
-	DataMapping                           LdapLdapConfigModelDataMapping `json:"dataMapping,omitempty"`
-	MergeLDAPUsersWithExistingSystemUsers bool                           `json:"mergeLDAPUsersWithExistingSystemUsers"`
-	SyncInterval                          int32                          `json:"syncInterval,omitempty"`
+	Enable                                bool                            `json:"enable"`
+	Hostname                              string                          `json:"hostname,omitempty"`
+	Port                                  int32                           `json:"port,omitempty"`
+	Encryption                            string                          `json:"encryption,omitempty"`
+	LdapImplementation                    string                          `json:"ldapImplementation,omitempty"`
+	BindAnonymously                       bool                            `json:"bindAnonymously"`
+	BindUserDN                            string                          `json:"bindUserDN,omitempty"`
+	HasBindUserPassword                   bool                            `json:"hasBindUserPassword"`
+	UserLookupSettings                    []string                        `json:"userLookupSettings"`
+	DataMapping                           *LdapLdapConfigModelDataMapping `json:"dataMapping,omitempty"`
+	MergeLDAPUsersWithExistingSystemUsers bool                            `json:"mergeLDAPUsersWithExistingSystemUsers"`
+	SyncInterval                          int32                           `json:"syncInterval,omitempty"`
 }

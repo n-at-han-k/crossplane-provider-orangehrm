@@ -254,9 +254,14 @@ func (c *external) Observe(ctx context.Context, cr *v1alpha1.PimEmployeeSupervis
 	if err := json.Unmarshal(body, &envelope); err != nil {
 		return managed.ExternalObservation{}, errors.Wrap(err, errParse)
 	}
+	// A pointer, because a struct field is one (see the generator): an answer
+	// carrying no data at all is not something to project onto status.
 	observed := envelope.Data
+	if observed == nil {
+		return managed.ExternalObservation{}, errors.New(errParse)
+	}
 
-	at, err := observation(&observed)
+	at, err := observation(observed)
 	if err != nil {
 		return managed.ExternalObservation{}, errors.Wrap(err, errParse)
 	}
@@ -270,7 +275,7 @@ func (c *external) Observe(ctx context.Context, cr *v1alpha1.PimEmployeeSupervis
 
 	return managed.ExternalObservation{
 		ResourceExists:   true,
-		ResourceUpToDate: upToDate(cr, &observed),
+		ResourceUpToDate: upToDate(cr, observed),
 	}, nil
 }
 
@@ -297,11 +302,14 @@ func (c *external) Create(ctx context.Context, cr *v1alpha1.PimEmployeeSuperviso
 			return managed.ExternalCreation{}, errors.Wrap(err, errParse)
 		}
 		created := envelope.Data
+		if created == nil {
+			return managed.ExternalCreation{}, errors.New(errParse)
+		}
 		// The document describes no identifier on what this create answers, so
 		// the Location header is all there is.
 		id = orangehrm.IDFromLocation(location)
 
-		at, err := observation(&created)
+		at, err := observation(created)
 		if err != nil {
 			return managed.ExternalCreation{}, errors.Wrap(err, errParse)
 		}

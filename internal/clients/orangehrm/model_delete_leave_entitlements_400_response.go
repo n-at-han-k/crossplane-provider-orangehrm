@@ -8,5 +8,5 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type DeleteLeaveEntitlements400Response struct {
-	Error DeleteLeaveEntitlements400ResponseError `json:"error,omitempty"`
+	Error *DeleteLeaveEntitlements400ResponseError `json:"error,omitempty"`
 }

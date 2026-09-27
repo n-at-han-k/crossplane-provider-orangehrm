@@ -8,9 +8,9 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type GetLeaveReport200ResponseDataInnerHeadersInner struct {
-	Name           string                                                       `json:"name,omitempty"`
-	Prop           string                                                       `json:"prop,omitempty"`
-	Size           int32                                                        `json:"size,omitempty"`
-	Pin            string                                                       `json:"pin,omitempty"`
-	CellProperties GetLeaveReport200ResponseDataInnerHeadersInnerCellProperties `json:"cellProperties,omitempty"`
+	Name           string                                                        `json:"name,omitempty"`
+	Prop           string                                                        `json:"prop,omitempty"`
+	Size           int32                                                         `json:"size,omitempty"`
+	Pin            string                                                        `json:"pin,omitempty"`
+	CellProperties *GetLeaveReport200ResponseDataInnerHeadersInnerCellProperties `json:"cellProperties,omitempty"`
 }

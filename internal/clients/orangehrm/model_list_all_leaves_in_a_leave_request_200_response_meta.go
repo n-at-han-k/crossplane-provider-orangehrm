@@ -8,8 +8,8 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type ListAllLeavesInALeaveRequest200ResponseMeta struct {
-	Total     int32                                             `json:"total,omitempty"`
-	Employee  GetAnEmployeesClaimRequest200ResponseMetaEmployee `json:"employee,omitempty"`
-	StartDate string                                            `json:"startDate,omitempty"`
-	EndDate   string                                            `json:"endDate,omitempty"`
+	Total     int32                                              `json:"total,omitempty"`
+	Employee  *GetAnEmployeesClaimRequest200ResponseMetaEmployee `json:"employee,omitempty"`
+	StartDate string                                             `json:"startDate,omitempty"`
+	EndDate   string                                             `json:"endDate,omitempty"`
 }

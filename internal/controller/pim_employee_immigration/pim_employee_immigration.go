@@ -295,9 +295,14 @@ func (c *external) Observe(ctx context.Context, cr *v1alpha1.PimEmployeeImmigrat
 	if err := json.Unmarshal(body, &envelope); err != nil {
 		return managed.ExternalObservation{}, errors.Wrap(err, errParse)
 	}
+	// A pointer, because a struct field is one (see the generator): an answer
+	// carrying no data at all is not something to project onto status.
 	observed := envelope.Data
+	if observed == nil {
+		return managed.ExternalObservation{}, errors.New(errParse)
+	}
 
-	at, err := observation(&observed)
+	at, err := observation(observed)
 	if err != nil {
 		return managed.ExternalObservation{}, errors.Wrap(err, errParse)
 	}
@@ -311,7 +316,7 @@ func (c *external) Observe(ctx context.Context, cr *v1alpha1.PimEmployeeImmigrat
 
 	return managed.ExternalObservation{
 		ResourceExists:   true,
-		ResourceUpToDate: upToDate(cr, &observed),
+		ResourceUpToDate: upToDate(cr, observed),
 	}, nil
 }
 
@@ -338,11 +343,14 @@ func (c *external) Create(ctx context.Context, cr *v1alpha1.PimEmployeeImmigrati
 			return managed.ExternalCreation{}, errors.Wrap(err, errParse)
 		}
 		created := envelope.Data
+		if created == nil {
+			return managed.ExternalCreation{}, errors.New(errParse)
+		}
 		// Through %v because OrangeHRM numbers its ids and an external name is
 		// a string -- the annotation has to hold what the member path spells.
 		id = fmt.Sprintf("%v", created.Id)
 
-		at, err := observation(&created)
+		at, err := observation(created)
 		if err != nil {
 			return managed.ExternalCreation{}, errors.Wrap(err, errParse)
 		}

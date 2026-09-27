@@ -254,9 +254,14 @@ func (c *external) Observe(ctx context.Context, cr *v1alpha1.AttendanceRecord) (
 	if err := json.Unmarshal(body, &envelope); err != nil {
 		return managed.ExternalObservation{}, errors.Wrap(err, errParse)
 	}
+	// A pointer, because a struct field is one (see the generator): an answer
+	// carrying no data at all is not something to project onto status.
 	observed := envelope.Data
+	if observed == nil {
+		return managed.ExternalObservation{}, errors.New(errParse)
+	}
 
-	at, err := observation(&observed)
+	at, err := observation(observed)
 	if err != nil {
 		return managed.ExternalObservation{}, errors.Wrap(err, errParse)
 	}
@@ -270,7 +275,7 @@ func (c *external) Observe(ctx context.Context, cr *v1alpha1.AttendanceRecord) (
 
 	return managed.ExternalObservation{
 		ResourceExists:   true,
-		ResourceUpToDate: upToDate(cr, &observed),
+		ResourceUpToDate: upToDate(cr, observed),
 	}, nil
 }
 

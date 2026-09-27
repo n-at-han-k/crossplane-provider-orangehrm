@@ -8,15 +8,15 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type LeaveLeaveEntitlementModel struct {
-	Id              int32                                             `json:"id,omitempty"`
-	Employee        GetAnEmployeesClaimRequest200ResponseMetaEmployee `json:"employee,omitempty"`
-	Entitlement     int32                                             `json:"entitlement,omitempty"`
-	DaysUsed        int32                                             `json:"daysUsed,omitempty"`
-	LeaveType       DashboardEmployeeOnLeaveListModelLeaveType        `json:"leaveType,omitempty"`
-	FromDate        float32                                           `json:"fromDate,omitempty"`
-	ToDate          float32                                           `json:"toDate,omitempty"`
-	CreditedDate    float32                                           `json:"creditedDate,omitempty"`
-	EntitlementType ClaimEmployeeClaimRequestModelClaimEvent          `json:"entitlementType,omitempty"`
-	Deleted         bool                                              `json:"deleted"`
-	Deletable       bool                                              `json:"deletable"`
+	Id              int32                                              `json:"id,omitempty"`
+	Employee        *GetAnEmployeesClaimRequest200ResponseMetaEmployee `json:"employee,omitempty"`
+	Entitlement     int32                                              `json:"entitlement,omitempty"`
+	DaysUsed        int32                                              `json:"daysUsed,omitempty"`
+	LeaveType       *DashboardEmployeeOnLeaveListModelLeaveType        `json:"leaveType,omitempty"`
+	FromDate        float32                                            `json:"fromDate,omitempty"`
+	ToDate          float32                                            `json:"toDate,omitempty"`
+	CreditedDate    float32                                            `json:"creditedDate,omitempty"`
+	EntitlementType *ClaimEmployeeClaimRequestModelClaimEvent          `json:"entitlementType,omitempty"`
+	Deleted         bool                                               `json:"deleted"`
+	Deletable       bool                                               `json:"deletable"`
 }

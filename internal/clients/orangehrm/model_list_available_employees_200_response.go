@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type ListAvailableEmployees200Response struct {
 	Data []PimEmployeeAllowedReportToEmployeeModel `json:"data"`
-	Meta ListAvailableEmployees200ResponseMeta     `json:"meta,omitempty"`
+	Meta *ListAvailableEmployees200ResponseMeta    `json:"meta,omitempty"`
 }

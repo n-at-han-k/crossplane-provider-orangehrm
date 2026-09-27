@@ -18,7 +18,7 @@ type RecruitmentCandidateDetailedModel struct {
 	Keywords          string                                         `json:"keywords,omitempty"`
 	ModeOfApplication string                                         `json:"modeOfApplication,omitempty"`
 	DateOfApplication string                                         `json:"dateOfApplication,omitempty"`
-	Vacancy           RecruitmentCandidateDetailedModelVacancy       `json:"vacancy,omitempty"`
+	Vacancy           *RecruitmentCandidateDetailedModelVacancy      `json:"vacancy,omitempty"`
 	Status            []RecruitmentCandidateDetailedModelStatusInner `json:"status"`
 	HasAttachment     bool                                           `json:"hasAttachment"`
 	ConsentToKeepData bool                                           `json:"consentToKeepData"`

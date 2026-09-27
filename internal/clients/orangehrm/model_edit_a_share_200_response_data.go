@@ -8,18 +8,18 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type EditAShare200ResponseData struct {
-	Share        BuzzPostPhotoEditDeletedPhotosInner               `json:"share,omitempty"`
-	Post         BuzzPostPhotoEditDeletedPhotosInner               `json:"post,omitempty"`
-	Employee     GetAnEmployeesClaimRequest200ResponseMetaEmployee `json:"employee,omitempty"`
-	Id           int32                                             `json:"id,omitempty"`
-	Type         string                                            `json:"type,omitempty"`
-	Liked        bool                                              `json:"liked"`
-	Text         string                                            `json:"text,omitempty"`
-	Stats        BuzzFeedPostModelTextStats                        `json:"stats,omitempty"`
-	CreatedDate  string                                            `json:"createdDate,omitempty"`
-	CreatedTime  string                                            `json:"createdTime,omitempty"`
-	OriginalPost BuzzFeedPostModelShareOriginalPost                `json:"originalPost,omitempty"`
-	Permission   BuzzBuzzDetailedCommentModelPermission            `json:"permission,omitempty"`
-	PhotoIds     []int32                                           `json:"photoIds"`
-	Video        BuzzFeedPostModelVideoVideo                       `json:"video,omitempty"`
+	Share        *BuzzPostPhotoEditDeletedPhotosInner               `json:"share,omitempty"`
+	Post         *BuzzPostPhotoEditDeletedPhotosInner               `json:"post,omitempty"`
+	Employee     *GetAnEmployeesClaimRequest200ResponseMetaEmployee `json:"employee,omitempty"`
+	Id           int32                                              `json:"id,omitempty"`
+	Type         string                                             `json:"type,omitempty"`
+	Liked        bool                                               `json:"liked"`
+	Text         string                                             `json:"text,omitempty"`
+	Stats        *BuzzFeedPostModelTextStats                        `json:"stats,omitempty"`
+	CreatedDate  string                                             `json:"createdDate,omitempty"`
+	CreatedTime  string                                             `json:"createdTime,omitempty"`
+	OriginalPost *BuzzFeedPostModelShareOriginalPost                `json:"originalPost,omitempty"`
+	Permission   *BuzzBuzzDetailedCommentModelPermission            `json:"permission,omitempty"`
+	PhotoIds     []int32                                            `json:"photoIds"`
+	Video        *BuzzFeedPostModelVideoVideo                       `json:"video,omitempty"`
 }

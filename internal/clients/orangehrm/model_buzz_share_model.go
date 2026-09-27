@@ -8,7 +8,7 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type BuzzShareModel struct {
-	Share    BuzzPostPhotoEditDeletedPhotosInner               `json:"share,omitempty"`
-	Post     BuzzPostPhotoEditDeletedPhotosInner               `json:"post,omitempty"`
-	Employee GetAnEmployeesClaimRequest200ResponseMetaEmployee `json:"employee,omitempty"`
+	Share    *BuzzPostPhotoEditDeletedPhotosInner               `json:"share,omitempty"`
+	Post     *BuzzPostPhotoEditDeletedPhotosInner               `json:"post,omitempty"`
+	Employee *GetAnEmployeesClaimRequest200ResponseMetaEmployee `json:"employee,omitempty"`
 }

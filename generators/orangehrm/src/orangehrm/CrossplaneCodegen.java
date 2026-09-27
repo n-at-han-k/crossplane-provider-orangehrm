@@ -858,7 +858,12 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
             if (property.dataType == null || isNotAStruct(property.dataType)) {
                 return null;
             }
-            return modelNamed(allModels, property.dataType);
+            // Without the star: a struct field is a POINTER (see
+            // postProcessAllModels), and `*AdminEducationModel` is not the name
+            // of a model. Looked up as it stands, every envelope's data comes
+            // back null, every Kind loses its read, and hack/check-coverage.py
+            // is the only thing that notices.
+            return modelNamed(allModels, property.dataType.replace("*", ""));
         }
 
         return null;
@@ -1078,6 +1083,39 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
             }
         }
 
+        // A STRUCT FIELD IS A POINTER, because omitempty does nothing for a
+        // struct. encoding/json omits an empty string, number, bool, slice or
+        // map -- and never a struct, however empty it is. So a job title's
+        // `specification`, which is an attachment nobody set, went out as
+        //
+        //   {"title":"Software Engineer","specification":{}}
+        //
+        // and OrangeHRM answered 422 Invalid Parameter ["specification"]: the
+        // param is allowed to be ABSENT and not allowed to be an empty object.
+        // Every job title failed to create, for a field the CR never mentioned.
+        //
+        // A pointer is the only shape that can say "not set" here, which is the
+        // same reason the fix for the scalars is a pointer too -- see the tag
+        // note in postProcessModels.
+        for (CodegenModel model : byName.values()) {
+            for (CodegenProperty property : propertiesOf(model)) {
+                String type = property.dataType;
+
+                if (type == null || type.startsWith("*") || type.startsWith("[")
+                        || type.startsWith("map[") || !byName.containsKey(type)) {
+                    continue;
+                }
+
+                CodegenModel referenced = byName.get(type);
+                boolean struct = !referenced.isEnum && !referenced.isAlias
+                        && !Boolean.TRUE.equals(referenced.vendorExtensions.get("x-opaque"));
+
+                if (struct) {
+                    property.dataType = "*" + type;
+                }
+            }
+        }
+
         // A property whose type NAMES SOMETHING THE DOCUMENT NEVER DESCRIBES.
         // swagger-php writes out whatever the annotation said, and three
         // annotations in this document are wrong: `type: "description"`,
@@ -1089,6 +1127,14 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
         for (CodegenModel model : byName.values()) {
             for (CodegenProperty property : propertiesOf(model)) {
                 String element = property.dataType == null ? "" : property.dataType;
+
+                // A struct field is a pointer by now, and `*AdminEducationModel`
+                // is not a name this can look up -- read as undescribed it would
+                // be replaced with interface{}, which is how every envelope's
+                // `data` stopped being a model and every Kind lost its read.
+                if (element.startsWith("*")) {
+                    element = element.substring(1);
+                }
 
                 while (element.startsWith("[]")) {
                     element = element.substring(2);

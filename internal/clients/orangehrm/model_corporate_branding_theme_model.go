@@ -8,10 +8,10 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type CorporateBrandingThemeModel struct {
-	Name                  string                               `json:"name,omitempty"`
-	Variables             CorporateBrandingThemeModelVariables `json:"variables,omitempty"`
-	ShowSocialMediaImages bool                                 `json:"showSocialMediaImages"`
-	ClientLogo            string                               `json:"clientLogo,omitempty"`
-	ClientBanner          string                               `json:"clientBanner,omitempty"`
-	LoginBanner           string                               `json:"loginBanner,omitempty"`
+	Name                  string                                `json:"name,omitempty"`
+	Variables             *CorporateBrandingThemeModelVariables `json:"variables,omitempty"`
+	ShowSocialMediaImages bool                                  `json:"showSocialMediaImages"`
+	ClientLogo            string                                `json:"clientLogo,omitempty"`
+	ClientBanner          string                                `json:"clientBanner,omitempty"`
+	LoginBanner           string                                `json:"loginBanner,omitempty"`
 }

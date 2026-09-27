@@ -9,15 +9,15 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type GetALeaveRequest200ResponseData struct {
 	Id                int32                                                     `json:"id,omitempty"`
-	LeaveType         DashboardEmployeeOnLeaveListModelLeaveType                `json:"leaveType,omitempty"`
+	LeaveType         *DashboardEmployeeOnLeaveListModelLeaveType               `json:"leaveType,omitempty"`
 	DateApplied       float32                                                   `json:"dateApplied,omitempty"`
-	Dates             LeaveLeaveRequestDetailedModelDates                       `json:"dates,omitempty"`
+	Dates             *LeaveLeaveRequestDetailedModelDates                      `json:"dates,omitempty"`
 	NoOfDays          int32                                                     `json:"noOfDays,omitempty"`
 	LeaveBalances     []LeaveLeaveRequestDetailedModelLeaveBalancesInner        `json:"leaveBalances"`
 	MultiPeriod       bool                                                      `json:"multiPeriod"`
-	LeaveBreakdown    LeaveLeaveRequestDetailedModelLeaveBreakdown              `json:"leaveBreakdown,omitempty"`
+	LeaveBreakdown    *LeaveLeaveRequestDetailedModelLeaveBreakdown             `json:"leaveBreakdown,omitempty"`
 	AllowedActions    []GetATimesheetsEntries200ResponseMetaAllowedActionsInner `json:"allowedActions"`
 	HasMultipleStatus bool                                                      `json:"hasMultipleStatus"`
-	Employee          GetAnEmployeesClaimRequest200ResponseMetaEmployee         `json:"employee,omitempty"`
-	LastComment       LeaveLeaveRequestDetailedModelLastComment                 `json:"lastComment,omitempty"`
+	Employee          *GetAnEmployeesClaimRequest200ResponseMetaEmployee        `json:"employee,omitempty"`
+	LastComment       *LeaveLeaveRequestDetailedModelLastComment                `json:"lastComment,omitempty"`
 }

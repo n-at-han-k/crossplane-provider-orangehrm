@@ -8,13 +8,13 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type PimEmployeeJobDetailModel struct {
-	EmpNumber                  int32                                               `json:"empNumber,omitempty"`
-	JoinedDate                 string                                              `json:"joinedDate,omitempty"`
-	JobTitle                   BuzzEmployeeAnniversaryModelJobTitle                `json:"jobTitle,omitempty"`
-	JobSpecificationAttachment PimEmployeeJobDetailModelJobSpecificationAttachment `json:"jobSpecificationAttachment,omitempty"`
-	EmpStatus                  ClaimEmployeeClaimRequestModelClaimEvent            `json:"empStatus,omitempty"`
-	JobCategory                ClaimEmployeeClaimRequestModelClaimEvent            `json:"jobCategory,omitempty"`
-	Subunit                    PimEmployeeJobDetailModelSubunit                    `json:"subunit,omitempty"`
-	Location                   ClaimEmployeeClaimRequestModelClaimEvent            `json:"location,omitempty"`
-	EmployeeTerminationRecord  PimEmployeeJobDetailModelEmployeeTerminationRecord  `json:"employeeTerminationRecord,omitempty"`
+	EmpNumber                  int32                                                `json:"empNumber,omitempty"`
+	JoinedDate                 string                                               `json:"joinedDate,omitempty"`
+	JobTitle                   *BuzzEmployeeAnniversaryModelJobTitle                `json:"jobTitle,omitempty"`
+	JobSpecificationAttachment *PimEmployeeJobDetailModelJobSpecificationAttachment `json:"jobSpecificationAttachment,omitempty"`
+	EmpStatus                  *ClaimEmployeeClaimRequestModelClaimEvent            `json:"empStatus,omitempty"`
+	JobCategory                *ClaimEmployeeClaimRequestModelClaimEvent            `json:"jobCategory,omitempty"`
+	Subunit                    *PimEmployeeJobDetailModelSubunit                    `json:"subunit,omitempty"`
+	Location                   *ClaimEmployeeClaimRequestModelClaimEvent            `json:"location,omitempty"`
+	EmployeeTerminationRecord  *PimEmployeeJobDetailModelEmployeeTerminationRecord  `json:"employeeTerminationRecord,omitempty"`
 }

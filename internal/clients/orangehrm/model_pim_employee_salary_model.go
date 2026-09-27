@@ -8,12 +8,12 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type PimEmployeeSalaryModel struct {
-	Id           int32                                    `json:"id,omitempty"`
-	Amount       float32                                  `json:"amount,omitempty"`
-	SalaryName   string                                   `json:"salaryName,omitempty"`
-	Comment      string                                   `json:"comment,omitempty"`
-	PayPeriod    ClaimEmployeeClaimRequestModelClaimEvent `json:"payPeriod,omitempty"`
-	PayGrade     ClaimEmployeeClaimRequestModelClaimEvent `json:"payGrade,omitempty"`
-	CurrencyType ClaimEmployeeClaimRequestModelClaimEvent `json:"currencyType,omitempty"`
-	DirectDebit  PimEmployeeSalaryModelDirectDebit        `json:"directDebit,omitempty"`
+	Id           int32                                     `json:"id,omitempty"`
+	Amount       float32                                   `json:"amount,omitempty"`
+	SalaryName   string                                    `json:"salaryName,omitempty"`
+	Comment      string                                    `json:"comment,omitempty"`
+	PayPeriod    *ClaimEmployeeClaimRequestModelClaimEvent `json:"payPeriod,omitempty"`
+	PayGrade     *ClaimEmployeeClaimRequestModelClaimEvent `json:"payGrade,omitempty"`
+	CurrencyType *ClaimEmployeeClaimRequestModelClaimEvent `json:"currencyType,omitempty"`
+	DirectDebit  *PimEmployeeSalaryModelDirectDebit        `json:"directDebit,omitempty"`
 }

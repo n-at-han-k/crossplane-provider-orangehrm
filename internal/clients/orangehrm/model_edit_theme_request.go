@@ -8,12 +8,12 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type EditThemeRequest struct {
-	Variables             PreviewThemeRequest `json:"variables,omitempty"`
-	ShowSocialMediaImages bool                `json:"showSocialMediaImages"`
-	ClientLogo            Base64Attachment    `json:"clientLogo,omitempty"`
-	ClientBanner          Base64Attachment    `json:"clientBanner,omitempty"`
-	LoginBanner           Base64Attachment    `json:"loginBanner,omitempty"`
-	CurrentClientLogo     string              `json:"currentClientLogo,omitempty"`
-	CurrentClientBanner   string              `json:"currentClientBanner,omitempty"`
-	CurrentLoginBanner    string              `json:"currentLoginBanner,omitempty"`
+	Variables             *PreviewThemeRequest `json:"variables,omitempty"`
+	ShowSocialMediaImages bool                 `json:"showSocialMediaImages"`
+	ClientLogo            *Base64Attachment    `json:"clientLogo,omitempty"`
+	ClientBanner          *Base64Attachment    `json:"clientBanner,omitempty"`
+	LoginBanner           *Base64Attachment    `json:"loginBanner,omitempty"`
+	CurrentClientLogo     string               `json:"currentClientLogo,omitempty"`
+	CurrentClientBanner   string               `json:"currentClientBanner,omitempty"`
+	CurrentLoginBanner    string               `json:"currentLoginBanner,omitempty"`
 }

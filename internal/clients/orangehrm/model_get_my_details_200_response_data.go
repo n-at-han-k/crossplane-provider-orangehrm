@@ -16,6 +16,6 @@ type GetMyDetails200ResponseData struct {
 	TerminationId int32                                      `json:"terminationId,omitempty"`
 	JobTitle      interface{}                                `json:"jobTitle,omitempty"`
 	Subunit       interface{}                                `json:"subunit,omitempty"`
-	EmpStatus     PimEmployeeDetailedModelEmpStatus          `json:"empStatus,omitempty"`
+	EmpStatus     *PimEmployeeDetailedModelEmpStatus         `json:"empStatus,omitempty"`
 	Supervisors   []PimEmployeeDetailedModelSupervisorsInner `json:"supervisors"`
 }

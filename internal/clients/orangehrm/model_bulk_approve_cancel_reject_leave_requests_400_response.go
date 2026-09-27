@@ -8,5 +8,5 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type BulkApproveCancelRejectLeaveRequests400Response struct {
-	Error BulkApproveCancelRejectLeaveRequests400ResponseError `json:"error,omitempty"`
+	Error *BulkApproveCancelRejectLeaveRequests400ResponseError `json:"error,omitempty"`
 }

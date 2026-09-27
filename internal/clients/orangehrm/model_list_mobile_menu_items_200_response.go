@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type ListMobileMenuItems200Response struct {
 	Data []ListMobileMenuItems200ResponseDataInner `json:"data"`
-	Meta ListMobileMenuItems200ResponseMeta        `json:"meta,omitempty"`
+	Meta *ListMobileMenuItems200ResponseMeta       `json:"meta,omitempty"`
 }

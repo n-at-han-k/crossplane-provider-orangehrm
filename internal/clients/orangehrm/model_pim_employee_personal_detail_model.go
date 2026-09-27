@@ -8,22 +8,22 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type PimEmployeePersonalDetailModel struct {
-	EmpNumber                 int32                                    `json:"empNumber,omitempty"`
-	LastName                  string                                   `json:"lastName,omitempty"`
-	FirstName                 string                                   `json:"firstName,omitempty"`
-	MiddleName                string                                   `json:"middleName,omitempty"`
-	EmployeeId                string                                   `json:"employeeId,omitempty"`
-	OtherId                   string                                   `json:"otherId,omitempty"`
-	DrivingLicenseNo          string                                   `json:"drivingLicenseNo,omitempty"`
-	DrivingLicenseExpiredDate string                                   `json:"drivingLicenseExpiredDate,omitempty"`
-	Gender                    string                                   `json:"gender,omitempty"`
-	MaritalStatus             string                                   `json:"maritalStatus,omitempty"`
-	Birthday                  string                                   `json:"birthday,omitempty"`
-	TerminationId             int32                                    `json:"terminationId,omitempty"`
-	Nationality               ClaimEmployeeClaimRequestModelClaimEvent `json:"nationality,omitempty"`
-	SsnNumber                 string                                   `json:"ssnNumber,omitempty"`
-	SinNumber                 string                                   `json:"sinNumber,omitempty"`
-	Nickname                  string                                   `json:"nickname,omitempty"`
-	Smoker                    int32                                    `json:"smoker,omitempty"`
-	MilitaryService           string                                   `json:"militaryService,omitempty"`
+	EmpNumber                 int32                                     `json:"empNumber,omitempty"`
+	LastName                  string                                    `json:"lastName,omitempty"`
+	FirstName                 string                                    `json:"firstName,omitempty"`
+	MiddleName                string                                    `json:"middleName,omitempty"`
+	EmployeeId                string                                    `json:"employeeId,omitempty"`
+	OtherId                   string                                    `json:"otherId,omitempty"`
+	DrivingLicenseNo          string                                    `json:"drivingLicenseNo,omitempty"`
+	DrivingLicenseExpiredDate string                                    `json:"drivingLicenseExpiredDate,omitempty"`
+	Gender                    string                                    `json:"gender,omitempty"`
+	MaritalStatus             string                                    `json:"maritalStatus,omitempty"`
+	Birthday                  string                                    `json:"birthday,omitempty"`
+	TerminationId             int32                                     `json:"terminationId,omitempty"`
+	Nationality               *ClaimEmployeeClaimRequestModelClaimEvent `json:"nationality,omitempty"`
+	SsnNumber                 string                                    `json:"ssnNumber,omitempty"`
+	SinNumber                 string                                    `json:"sinNumber,omitempty"`
+	Nickname                  string                                    `json:"nickname,omitempty"`
+	Smoker                    int32                                     `json:"smoker,omitempty"`
+	MilitaryService           string                                    `json:"militaryService,omitempty"`
 }

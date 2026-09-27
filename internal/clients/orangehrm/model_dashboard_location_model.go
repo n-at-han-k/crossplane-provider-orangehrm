@@ -8,6 +8,6 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type DashboardLocationModel struct {
-	Location ClaimEmployeeClaimRequestModelClaimEvent `json:"location,omitempty"`
-	Count    int32                                    `json:"count,omitempty"`
+	Location *ClaimEmployeeClaimRequestModelClaimEvent `json:"location,omitempty"`
+	Count    int32                                     `json:"count,omitempty"`
 }

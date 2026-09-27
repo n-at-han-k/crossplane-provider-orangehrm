@@ -17,7 +17,7 @@ type UpdateLdapConfigurationRequest struct {
 	BindUserDN                            string                                                  `json:"bindUserDN,omitempty"`
 	BindUserPassword                      string                                                  `json:"bindUserPassword,omitempty"`
 	UserLookupSettings                    []UpdateLdapConfigurationRequestUserLookupSettingsInner `json:"userLookupSettings"`
-	DataMapping                           UpdateLdapConfigurationRequestDataMapping               `json:"dataMapping,omitempty"`
+	DataMapping                           *UpdateLdapConfigurationRequestDataMapping              `json:"dataMapping,omitempty"`
 	MergeLDAPUsersWithExistingSystemUsers bool                                                    `json:"mergeLDAPUsersWithExistingSystemUsers"`
 	SyncInterval                          string                                                  `json:"syncInterval,omitempty"`
 }

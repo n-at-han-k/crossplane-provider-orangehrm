@@ -8,11 +8,11 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type PerformanceKpiModel struct {
-	Id        int32                                      `json:"id,omitempty"`
-	Title     string                                     `json:"title,omitempty"`
-	JobTitle  DashboardEmployeeOnLeaveListModelLeaveType `json:"jobTitle,omitempty"`
-	MinRating int32                                      `json:"minRating,omitempty"`
-	MaxRating int32                                      `json:"maxRating,omitempty"`
-	IsDefault bool                                       `json:"isDefault"`
-	Deletable bool                                       `json:"deletable"`
+	Id        int32                                       `json:"id,omitempty"`
+	Title     string                                      `json:"title,omitempty"`
+	JobTitle  *DashboardEmployeeOnLeaveListModelLeaveType `json:"jobTitle,omitempty"`
+	MinRating int32                                       `json:"minRating,omitempty"`
+	MaxRating int32                                       `json:"maxRating,omitempty"`
+	IsDefault bool                                        `json:"isDefault"`
+	Deletable bool                                        `json:"deletable"`
 }
