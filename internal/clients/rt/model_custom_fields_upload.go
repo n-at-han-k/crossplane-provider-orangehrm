@@ -3,6 +3,10 @@
 package rt
 
 // CustomFieldsUpload is the CustomFieldsUpload schema of the API description.
+//
+// allVars, not vars: a schema written as `allOf: [$ref, {...}]` keeps the
+// inherited half in the parent, and a struct built from `vars` alone would
+// silently drop `ref` and `_url` from every hyperlink.
 type CustomFieldsUpload struct {
 	CustomFields map[string]CustomFieldsUploadCustomFieldsValue `json:"CustomFields,omitempty"`
 }

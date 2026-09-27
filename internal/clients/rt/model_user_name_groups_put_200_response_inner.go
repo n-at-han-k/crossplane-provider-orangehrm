@@ -2,6 +2,8 @@
 
 package rt
 
-// UserNameGroupsPut200ResponseInner is the UserNameGroupsPut200ResponseInner schema of the API description.
-type UserNameGroupsPut200ResponseInner struct {
-}
+// UserNameGroupsPut200ResponseInner is the UserNameGroupsPut200ResponseInner schema of the API description, which
+// describes no fields of its own -- a union of scalars, or a shape the
+// document leaves open. An empty struct would refuse to hold what the API
+// sends; this holds whatever arrives.
+type UserNameGroupsPut200ResponseInner interface{}

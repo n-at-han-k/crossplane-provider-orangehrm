@@ -2,6 +2,8 @@
 
 package rt
 
-// PerlBooleanInteger is the PerlBooleanInteger schema of the API description.
-type PerlBooleanInteger struct {
-}
+// PerlBooleanInteger is the PerlBooleanInteger schema of the API description: an enum,
+// so a named int32 rather than a struct. Rendered as a struct it would
+// be an EMPTY one, and every response carrying the field would fail to parse
+// with "cannot unmarshal string into Go struct field".
+type PerlBooleanInteger int32

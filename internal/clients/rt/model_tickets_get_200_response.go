@@ -3,6 +3,10 @@
 package rt
 
 // TicketsGet200Response is the TicketsGet200Response schema of the API description.
+//
+// allVars, not vars: a schema written as `allOf: [$ref, {...}]` keeps the
+// inherited half in the parent, and a struct built from `vars` alone would
+// silently drop `ref` and `_url` from every hyperlink.
 type TicketsGet200Response struct {
 	Page    int32             `json:"page,omitempty"`
 	Pages   int32             `json:"pages,omitempty"`

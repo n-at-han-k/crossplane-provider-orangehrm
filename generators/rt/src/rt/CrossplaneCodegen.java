@@ -776,7 +776,28 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
         ModelsMap processed = super.postProcessModels(objs);
 
         for (ModelMap map : processed.getModels()) {
-            for (CodegenProperty property : map.getModel().vars) {
+            CodegenModel model = map.getModel();
+
+            // A schema with no fields of its own OR inherited is not an
+            // object this client can hold: `ticketLink` is `anyOf: [integer,
+            // array]` and the parameter schemas are `oneOf: [integer,
+            // string]`. Rendered as an empty struct, unmarshalling a number
+            // into it fails outright -- which is the same failure that
+            // duplicated seven assets, one level down.
+            model.vendorExtensions.put("x-opaque",
+                    !model.isEnum && !model.isAlias
+                            && (model.allVars == null || model.allVars.isEmpty()));
+
+            // vars AND allVars: the inherited half of an `allOf` is a
+            // SEPARATE CodegenProperty instance, and the template renders
+            // allVars. Rewriting only vars leaves those without a json tag
+            // and with the types this fixes up below.
+            List<CodegenProperty> properties = new ArrayList<>(model.vars);
+            if (model.allVars != null) {
+                properties.addAll(model.allVars);
+            }
+
+            for (CodegenProperty property : properties) {
                 // OpenAPI 3.1 lets a schema carry a type AND an `anyOf` that
                 // only narrows it: RT's EmailAddress is `type: string` with
                 // an anyOf of {format: email, maxLength: 0}, meaning "an
@@ -894,7 +915,12 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
                 continue;
             }
 
-            for (CodegenProperty property : model.vars) {
+            List<CodegenProperty> properties = new ArrayList<>(model.vars);
+            if (model.allVars != null) {
+                properties.addAll(model.allVars);
+            }
+
+            for (CodegenProperty property : properties) {
                 Set<String> types = new LinkedHashSet<>();
 
                 for (String branch : branches) {

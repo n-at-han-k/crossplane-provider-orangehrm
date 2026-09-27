@@ -2,6 +2,8 @@
 
 package rt
 
-// ConstantTicket is the ConstantTicket schema of the API description.
-type ConstantTicket struct {
-}
+// ConstantTicket is the ConstantTicket schema of the API description: an enum,
+// so a named string rather than a struct. Rendered as a struct it would
+// be an EMPTY one, and every response carrying the field would fail to parse
+// with "cannot unmarshal string into Go struct field".
+type ConstantTicket string

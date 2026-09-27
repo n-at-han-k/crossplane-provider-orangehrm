@@ -3,7 +3,13 @@
 package rt
 
 // HyperlinkLifecycle is the HyperlinkLifecycle schema of the API description.
+//
+// allVars, not vars: a schema written as `allOf: [$ref, {...}]` keeps the
+// inherited half in the parent, and a struct built from `vars` alone would
+// silently drop `ref` and `_url` from every hyperlink.
 type HyperlinkLifecycle struct {
+	Ref    string `json:"ref,omitempty"`
+	Url    string `json:"_url,omitempty"`
 	From   string `json:"from,omitempty"`
 	To     string `json:"to,omitempty"`
 	Update string `json:"update,omitempty"`

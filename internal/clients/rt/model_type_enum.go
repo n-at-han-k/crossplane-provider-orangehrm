@@ -2,6 +2,8 @@
 
 package rt
 
-// TypeEnum is the TypeEnum schema of the API description.
-type TypeEnum struct {
-}
+// TypeEnum is the TypeEnum schema of the API description: an enum,
+// so a named string rather than a struct. Rendered as a struct it would
+// be an EMPTY one, and every response carrying the field would fail to parse
+// with "cannot unmarshal string into Go struct field".
+type TypeEnum string

@@ -3,6 +3,10 @@
 package rt
 
 // CustomFieldsArrayInner is the CustomFieldsArrayInner schema of the API description.
+//
+// allVars, not vars: a schema written as `allOf: [$ref, {...}]` keeps the
+// inherited half in the parent, and a struct built from `vars` alone would
+// silently drop `ref` and `_url` from every hyperlink.
 type CustomFieldsArrayInner struct {
 	Id     RTID          `json:"id,omitempty"`
 	Name   string        `json:"name,omitempty"`

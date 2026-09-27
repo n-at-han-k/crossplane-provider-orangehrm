@@ -3,6 +3,10 @@
 package rt
 
 // RightsListAllOfItems is the RightsListAllOfItems schema of the API description.
+//
+// allVars, not vars: a schema written as `allOf: [$ref, {...}]` keeps the
+// inherited half in the parent, and a struct built from `vars` alone would
+// silently drop `ref` and `_url` from every hyperlink.
 type RightsListAllOfItems struct {
 	Right string         `json:"Right,omitempty"`
 	Group GroupReference `json:"Group,omitempty"`

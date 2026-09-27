@@ -3,6 +3,10 @@
 package rt
 
 // UserIdNameGet200Response is the UserIdNameGet200Response schema of the API description.
+//
+// allVars, not vars: a schema written as `allOf: [$ref, {...}]` keeps the
+// inherited half in the parent, and a struct built from `vars` alone would
+// silently drop `ref` and `_url` from every hyperlink.
 type UserIdNameGet200Response struct {
 	CustomFields        []CustomFieldsArrayInner                       `json:"CustomFields,omitempty"`
 	Id                  RTID                                           `json:"id,omitempty"`

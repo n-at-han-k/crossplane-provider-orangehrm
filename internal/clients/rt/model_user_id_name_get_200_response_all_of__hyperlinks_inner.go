@@ -3,6 +3,10 @@
 package rt
 
 // UserIdNameGet200ResponseAllOfHyperlinksInner is the UserIdNameGet200ResponseAllOfHyperlinksInner schema of the API description.
+//
+// allVars, not vars: a schema written as `allOf: [$ref, {...}]` keeps the
+// inherited half in the parent, and a struct built from `vars` alone would
+// silently drop `ref` and `_url` from every hyperlink.
 type UserIdNameGet200ResponseAllOfHyperlinksInner struct {
 	Ref  string   `json:"ref,omitempty"`
 	Url  string   `json:"_url,omitempty"`

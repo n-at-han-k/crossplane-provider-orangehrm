@@ -3,6 +3,10 @@
 package rt
 
 // QueuePostRequest is the QueuePostRequest schema of the API description.
+//
+// allVars, not vars: a schema written as `allOf: [$ref, {...}]` keeps the
+// inherited half in the parent, and a struct built from `vars` alone would
+// silently drop `ref` and `_url` from every hyperlink.
 type QueuePostRequest struct {
 	Name              string      `json:"Name,omitempty"`
 	Description       string      `json:"Description,omitempty"`

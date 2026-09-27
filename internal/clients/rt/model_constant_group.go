@@ -2,6 +2,8 @@
 
 package rt
 
-// ConstantGroup is the ConstantGroup schema of the API description.
-type ConstantGroup struct {
-}
+// ConstantGroup is the ConstantGroup schema of the API description: an enum,
+// so a named string rather than a struct. Rendered as a struct it would
+// be an EMPTY one, and every response carrying the field would fail to parse
+// with "cannot unmarshal string into Go struct field".
+type ConstantGroup string
