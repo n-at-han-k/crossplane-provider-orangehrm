@@ -931,6 +931,20 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
                 if (property.dataType != null
                         && (property.dataType.startsWith("AnyOf") || property.dataType.startsWith("OneOf"))) {
                     property.dataType = unionType(property);
+                } else if ("map[string]interface{}".equals(property.dataType)) {
+                    // AN OBJECT WITH NO PROPERTIES ARRIVES AS AN ARRAY WHEN IT
+                    // IS EMPTY. PHP's json_encode writes an empty associative
+                    // array as `[]`, and OrangeHRM's envelope does exactly that:
+                    //
+                    //   {"data":{…},"meta":[]}
+                    //
+                    // while the document says `meta` is an object. Unmarshalling
+                    // that into a map fails, so the WHOLE response is
+                    // unparseable -- and for a create that means the record
+                    // exists with nothing here recording it, so the next
+                    // reconcile creates another one. Ten identical locations,
+                    // in the first minute.
+                    property.dataType = "interface{}";
                 } else if (isGenuineUnion(property)) {
                     // A composition with BRANCHES, as opposed to the
                     // validation-only kind above. openapi-generator collapses

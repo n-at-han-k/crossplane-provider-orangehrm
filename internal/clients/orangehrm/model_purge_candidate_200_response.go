@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type PurgeCandidate200Response struct {
 	Data MaintenancePurgeCandidateModel `json:"data,omitempty"`
-	Meta map[string]interface{}         `json:"meta,omitempty"`
+	Meta interface{}                    `json:"meta,omitempty"`
 }

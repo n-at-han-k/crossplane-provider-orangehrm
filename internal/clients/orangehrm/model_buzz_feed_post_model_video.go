@@ -17,7 +17,7 @@ type BuzzFeedPostModelVideo struct {
 	Stats        BuzzFeedPostModelTextStats                        `json:"stats,omitempty"`
 	CreatedDate  string                                            `json:"createdDate,omitempty"`
 	CreatedTime  string                                            `json:"createdTime,omitempty"`
-	OriginalPost map[string]interface{}                            `json:"originalPost,omitempty"`
+	OriginalPost interface{}                                       `json:"originalPost,omitempty"`
 	Permission   BuzzBuzzDetailedCommentModelPermission            `json:"permission,omitempty"`
 	Video        BuzzFeedPostModelVideoVideo                       `json:"video,omitempty"`
 }

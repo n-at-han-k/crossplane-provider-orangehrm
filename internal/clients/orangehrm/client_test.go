@@ -159,3 +159,23 @@ func TestOnlyANumberCanBeAnID(t *testing.T) {
 		}
 	}
 }
+
+// PHP's json_encode writes an empty associative array as `[]`, and OrangeHRM's
+// envelope does exactly that -- {"data":{…},"meta":[]} -- while the document
+// says `meta` is an object. Typed as a map it fails to unmarshal, which makes
+// the WHOLE response unparseable: for a create, the record then exists with
+// nothing recording it and the next reconcile makes another. It made ten
+// identical locations before this was fixed.
+//
+// GetALocation200Response is generated, so a rename here is a real signal
+// rather than a broken test.
+func TestAnEmptyMetaIsNotAnObject(t *testing.T) {
+	var envelope GetALocation200Response
+
+	if err := json.Unmarshal([]byte(`{"data":{"id":7,"name":"Head Office"},"meta":[]}`), &envelope); err != nil {
+		t.Fatalf("an empty meta should parse: %v", err)
+	}
+	if envelope.Data.Id != 7 {
+		t.Fatalf("data lost: %+v", envelope.Data)
+	}
+}

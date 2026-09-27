@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type CreateAPimReport200Response struct {
 	Data PimPimDefinedReportModel `json:"data,omitempty"`
-	Meta map[string]interface{}   `json:"meta,omitempty"`
+	Meta interface{}              `json:"meta,omitempty"`
 }
