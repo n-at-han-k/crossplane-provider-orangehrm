@@ -151,8 +151,18 @@ spec:
                 description: |-
                   ClassRightObservation are the observable fields of a ClassRight.
 
-                  These are the fields of the read response ([]string) -- what IS,
+                  These are the fields of the read response (QueueIdNameRightsPost201Response) -- what IS,
                   including the fields a person also writes. The controller diffs the two.
+                properties:
+                  Group:
+                    description: Group
+                    type: string
+                  Right:
+                    description: Right
+                    type: string
+                  User:
+                    description: User
+                    type: string
                 type: object
               conditions:
                 description: Conditions of the resource.

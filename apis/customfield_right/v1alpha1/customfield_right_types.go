@@ -46,9 +46,17 @@ type CustomfieldRightParameters struct {
 
 // CustomfieldRightObservation are the observable fields of a CustomfieldRight.
 //
-// These are the fields of the read response ([]string) -- what IS,
+// These are the fields of the read response (QueueIdNameRightsPost201Response) -- what IS,
 // including the fields a person also writes. The controller diffs the two.
 type CustomfieldRightObservation struct {
+	// Right
+	Right string `json:"Right,omitempty"`
+
+	// Group
+	Group string `json:"Group,omitempty"`
+
+	// User
+	User string `json:"User,omitempty"`
 }
 
 // A CustomfieldRightSpec defines the desired state of a CustomfieldRight.

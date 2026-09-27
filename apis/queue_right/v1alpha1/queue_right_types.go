@@ -46,9 +46,17 @@ type QueueRightParameters struct {
 
 // QueueRightObservation are the observable fields of a QueueRight.
 //
-// These are the fields of the read response ([]string) -- what IS,
+// These are the fields of the read response (QueueIdNameRightsPost201Response) -- what IS,
 // including the fields a person also writes. The controller diffs the two.
 type QueueRightObservation struct {
+	// Right
+	Right string `json:"Right,omitempty"`
+
+	// Group
+	Group string `json:"Group,omitempty"`
+
+	// User
+	User string `json:"User,omitempty"`
 }
 
 // A QueueRightSpec defines the desired state of a QueueRight.

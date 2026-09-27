@@ -35,7 +35,7 @@ type LifecycleParameters struct {
 
 // LifecycleObservation are the observable fields of a Lifecycle.
 //
-// These are the fields of the read response (LifecycleConfiguration) -- what IS,
+// These are the fields of the read response (LifecycleDocument) -- what IS,
 // including the fields a person also writes. The controller diffs the two.
 type LifecycleObservation struct {
 	// Type
@@ -64,6 +64,15 @@ type LifecycleObservation struct {
 
 	// Colors A colour per status, as shown in the UI.
 	Colors string `json:"colors,omitempty"`
+
+	// Name
+	Name string `json:"name,omitempty"`
+
+	// CanonicalCase The capitalisation RT treats as canonical for each status, keyed by the lower-case form.
+	CanonicalCase string `json:"canonical_case,omitempty"`
+
+	// Url An URL pointing somewhere in the web
+	Url string `json:"_url,omitempty"`
 }
 
 // A LifecycleSpec defines the desired state of a Lifecycle.

@@ -34,7 +34,7 @@ type LifecycleMapParameters struct {
 
 // LifecycleMapObservation are the observable fields of a LifecycleMap.
 //
-// These are the fields of the read response ([]string) -- what IS,
+// These are the fields of the read response (map[string]map[string]string) -- what IS,
 // including the fields a person also writes. The controller diffs the two.
 type LifecycleMapObservation struct {
 }

@@ -605,16 +605,18 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
         boolean hasRequestModel = request != null && !requestModel.isEmpty() && !"null".equals(requestModel);
         boolean hasResponseModel = !responseModel.isEmpty() && !"null".equals(responseModel);
 
-        // An operation can answer a LIST: RT's membership PUT answers one
-        // message per group it touched. There is no single object to project
-        // onto status.atProvider -- `rt.[]Thing` is not even a type name --
-        // and a list of messages is not state anyway, so it is treated as no
-        // response at all rather than emitted as something that will not
+        // An operation can answer something that is not a struct at all: a
+        // LIST (RT's membership PUT answers one message per group it
+        // touched) or a MAP (a lifecycle's status maps are keyed by
+        // "<from> -> <to>"). There is no single object to project onto
+        // status.atProvider, `rt.[]Thing` and `rt.map[string]string` are not
+        // type names, and neither is state anyway -- so both are treated as
+        // no response rather than emitted as something that will not
         // compile.
-        if (responseModel.startsWith("[")) {
+        if (isNotAStruct(responseModel)) {
             hasResponseModel = false;
         }
-        if (requestModel.startsWith("[")) {
+        if (isNotAStruct(requestModel)) {
             hasRequestModel = false;
         }
 
@@ -1031,6 +1033,12 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
     // dropped. RT spells tickets, users, groups, queues, customfields and
     // members, all of which it gets right; a document spelling "addresses" or
     // "people" wants a real inflector.
+    /** A Go type that cannot be qualified with a package name. */
+    private boolean isNotAStruct(String dataType) {
+        return dataType.startsWith("[") || dataType.startsWith("map[")
+                || dataType.startsWith("interface{");
+    }
+
     /** A segment naming several of something -- the search paths, in RT. */
     private boolean isPlural(String name) {
         return !singular(name).equals(name);

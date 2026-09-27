@@ -216,7 +216,11 @@ func observation(in *rt.ArticleIdGet200Response) (v1alpha1.ArticleObservation, e
 	} else {
 		return out, errors.Wrap(err, "Class")
 	}
-	out.Parent = int64(in.Parent)
+	if raw, err := json.Marshal(in.Parent); err == nil {
+		out.Parent = string(raw)
+	} else {
+		return out, errors.Wrap(err, "Parent")
+	}
 	out.URI = in.URI
 	if raw, err := json.Marshal(in.Disabled); err == nil {
 		out.Disabled = string(raw)
@@ -245,11 +249,6 @@ func upToDate(cr *v1alpha1.Article, observed *rt.ArticleIdGet200Response) bool {
 	// Only what the person actually set: an optional field left empty is not
 	// a difference from whatever the server chose to put there.
 	if cr.Spec.ForProvider.SortOrder != "" && cr.Spec.ForProvider.SortOrder != observed.SortOrder {
-		return false
-	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Parent != 0 && cr.Spec.ForProvider.Parent != int64(observed.Parent) {
 		return false
 	}
 	// Only what the person actually set: an optional field left empty is not

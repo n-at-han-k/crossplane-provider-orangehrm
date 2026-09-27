@@ -192,8 +192,7 @@ spec:
                     type: string
                   Parent:
                     description: Parent
-                    format: int64
-                    type: integer
+                    type: string
                   SortOrder:
                     description: SortOrder Seems to be an enumeration of some kind.
                     type: string

@@ -4,6 +4,7 @@ package queue_right
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/crossplane/crossplane-runtime/v2/pkg/controller"
@@ -172,10 +173,62 @@ func desired(cr *v1alpha1.QueueRight) (*rt.RightGrant, error) {
 	return body, nil
 }
 
+// observation projects the read response onto status.atProvider.
+func observation(in *rt.QueueIdNameRightsPost201Response) (v1alpha1.QueueRightObservation, error) {
+	out := v1alpha1.QueueRightObservation{}
+
+	out.Right = in.Right
+	if raw, err := json.Marshal(in.Group); err == nil {
+		out.Group = string(raw)
+	} else {
+		return out, errors.Wrap(err, "Group")
+	}
+	if raw, err := json.Marshal(in.User); err == nil {
+		out.User = string(raw)
+	} else {
+		return out, errors.Wrap(err, "User")
+	}
+
+	return out, nil
+}
+
 // upToDate compares only the fields the server answers under the same name
 // and the same shape. A field it does not echo back -- a password, a body the
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
+func upToDate(cr *v1alpha1.QueueRight, observed *rt.QueueIdNameRightsPost201Response) bool {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Right != "" && cr.Spec.ForProvider.Right != observed.Right {
+		return false
+	}
+
+	return true
+}
+
+// jsonEqual compares two JSON documents by value rather than by text, so that
+// a server re-ordering an object's keys is not a permanent diff.
+func jsonEqual(a, b string) bool {
+	var left, right any
+
+	if err := json.Unmarshal([]byte(a), &left); err != nil {
+		return false
+	}
+	if err := json.Unmarshal([]byte(b), &right); err != nil {
+		return false
+	}
+
+	x, err := json.Marshal(left)
+	if err != nil {
+		return false
+	}
+	y, err := json.Marshal(right)
+	if err != nil {
+		return false
+	}
+
+	return string(x) == string(y)
+}
 
 func (c *external) Observe(ctx context.Context, cr *v1alpha1.QueueRight) (managed.ExternalObservation, error) {
 	// This API offers no read for a queueRight, so nothing can be observed
@@ -219,10 +272,21 @@ func (c *external) Create(ctx context.Context, cr *v1alpha1.QueueRight) (managed
 	// A create that answers 201 with nothing but a Location header. The
 	// identifier is in that header, and everything else the server assigned
 	// has to be fetched.
-	// Nothing to parse the answer into; the identifier is the Location header
-	// or there is none.
-	id = rt.IDFromLocation(location)
-	_ = respBody
+	if len(respBody) == 0 {
+		id = rt.IDFromLocation(location)
+	} else {
+		var created rt.QueueIdNameRightsPost201Response
+		if err := json.Unmarshal(respBody, &created); err != nil {
+			return managed.ExternalCreation{}, errors.Wrap(err, errParse)
+		}
+		id = rt.IDFromLocation(location)
+
+		at, err := observation(&created)
+		if err != nil {
+			return managed.ExternalCreation{}, errors.Wrap(err, errParse)
+		}
+		cr.Status.AtProvider = at
+	}
 
 	if id == "" {
 		return managed.ExternalCreation{}, errors.New(errNoID)

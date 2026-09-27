@@ -39,9 +39,17 @@ type GlobalRightParameters struct {
 
 // GlobalRightObservation are the observable fields of a GlobalRight.
 //
-// These are the fields of the read response ([]string) -- what IS,
+// These are the fields of the read response (QueueIdNameRightsPost201Response) -- what IS,
 // including the fields a person also writes. The controller diffs the two.
 type GlobalRightObservation struct {
+	// Right
+	Right string `json:"Right,omitempty"`
+
+	// Group
+	Group string `json:"Group,omitempty"`
+
+	// User
+	User string `json:"User,omitempty"`
 }
 
 // A GlobalRightSpec defines the desired state of a GlobalRight.

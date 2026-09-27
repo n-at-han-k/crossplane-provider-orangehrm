@@ -46,9 +46,17 @@ type GroupRightParameters struct {
 
 // GroupRightObservation are the observable fields of a GroupRight.
 //
-// These are the fields of the read response ([]string) -- what IS,
+// These are the fields of the read response (QueueIdNameRightsPost201Response) -- what IS,
 // including the fields a person also writes. The controller diffs the two.
 type GroupRightObservation struct {
+	// Right
+	Right string `json:"Right,omitempty"`
+
+	// Group
+	Group string `json:"Group,omitempty"`
+
+	// User
+	User string `json:"User,omitempty"`
 }
 
 // A GroupRightSpec defines the desired state of a GroupRight.

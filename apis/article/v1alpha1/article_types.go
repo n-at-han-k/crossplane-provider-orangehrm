@@ -97,7 +97,7 @@ type ArticleObservation struct {
 	Class string `json:"Class,omitempty"`
 
 	// Parent
-	Parent int64 `json:"Parent,omitempty"`
+	Parent string `json:"Parent,omitempty"`
 
 	// URI
 	URI string `json:"URI,omitempty"`

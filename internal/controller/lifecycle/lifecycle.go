@@ -173,7 +173,7 @@ func desired(cr *v1alpha1.Lifecycle) (*rt.LifecyclesPostRequest, error) {
 }
 
 // observation projects the read response onto status.atProvider.
-func observation(in *rt.LifecycleConfiguration) (v1alpha1.LifecycleObservation, error) {
+func observation(in *rt.LifecycleDocument) (v1alpha1.LifecycleObservation, error) {
 	out := v1alpha1.LifecycleObservation{}
 
 	out.Type = in.Type
@@ -217,6 +217,13 @@ func observation(in *rt.LifecycleConfiguration) (v1alpha1.LifecycleObservation, 
 	} else {
 		return out, errors.Wrap(err, "colors")
 	}
+	out.Name = in.Name
+	if raw, err := json.Marshal(in.CanonicalCase); err == nil {
+		out.CanonicalCase = string(raw)
+	} else {
+		return out, errors.Wrap(err, "canonical_case")
+	}
+	out.Url = in.Url
 
 	return out, nil
 }
@@ -225,7 +232,12 @@ func observation(in *rt.LifecycleConfiguration) (v1alpha1.LifecycleObservation, 
 // and the same shape. A field it does not echo back -- a password, a body the
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
-func upToDate(cr *v1alpha1.Lifecycle, observed *rt.LifecycleConfiguration) bool {
+func upToDate(cr *v1alpha1.Lifecycle, observed *rt.LifecycleDocument) bool {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Name != "" && cr.Spec.ForProvider.Name != observed.Name {
+		return false
+	}
 	// Only what the person actually set: an optional field left empty is not
 	// a difference from whatever the server chose to put there.
 	if cr.Spec.ForProvider.Type != "" && cr.Spec.ForProvider.Type != observed.Type {
@@ -277,7 +289,7 @@ func (c *external) Observe(ctx context.Context, cr *v1alpha1.Lifecycle) (managed
 		return managed.ExternalObservation{}, errors.Wrap(err, errGet)
 	}
 
-	var observed rt.LifecycleConfiguration
+	var observed rt.LifecycleDocument
 	if err := json.Unmarshal(body, &observed); err != nil {
 		return managed.ExternalObservation{}, errors.Wrap(err, errParse)
 	}
@@ -321,11 +333,14 @@ func (c *external) Create(ctx context.Context, cr *v1alpha1.Lifecycle) (managed.
 	if len(respBody) == 0 {
 		id = rt.IDFromLocation(location)
 	} else {
-		var created rt.LifecycleConfiguration
+		var created rt.LifecycleDocument
 		if err := json.Unmarshal(respBody, &created); err != nil {
 			return managed.ExternalCreation{}, errors.Wrap(err, errParse)
 		}
-		id = rt.IDFromLocation(location)
+		// Through %v because RT numbers its ids and an external name is a
+		// string -- the annotation has to hold what the member path spells,
+		// whichever of the two the document declared.
+		id = fmt.Sprintf("%v", created.Name)
 
 		at, err := observation(&created)
 		if err != nil {

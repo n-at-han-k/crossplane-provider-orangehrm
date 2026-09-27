@@ -139,15 +139,22 @@ spec:
                 description: |-
                   LifecycleObservation are the observable fields of a Lifecycle.
 
-                  These are the fields of the read response (LifecycleConfiguration) -- what IS,
+                  These are the fields of the read response (LifecycleDocument) -- what IS,
                   including the fields a person also writes. The controller diffs the two.
                 properties:
+                  _url:
+                    description: Url An URL pointing somewhere in the web
+                    type: string
                   actions:
                     description: Actions The transitions offered in the UI, as alternating
                       \&quot;from -&gt; to\&quot; strings and their configuration.
                     type: string
                   active:
                     description: Active Statuses meaning work is ongoing.
+                    type: string
+                  canonical_case:
+                    description: CanonicalCase The capitalisation RT treats as canonical
+                      for each status, keyed by the lower-case form.
                     type: string
                   colors:
                     description: Colors A colour per status, as shown in the UI.
@@ -160,6 +167,9 @@ spec:
                     type: string
                   initial:
                     description: Initial Statuses a new object may start in.
+                    type: string
+                  name:
+                    description: Name
                     type: string
                   rights:
                     description: Rights The right required to make a transition.

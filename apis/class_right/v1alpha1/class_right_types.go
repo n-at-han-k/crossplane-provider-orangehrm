@@ -46,9 +46,17 @@ type ClassRightParameters struct {
 
 // ClassRightObservation are the observable fields of a ClassRight.
 //
-// These are the fields of the read response ([]string) -- what IS,
+// These are the fields of the read response (QueueIdNameRightsPost201Response) -- what IS,
 // including the fields a person also writes. The controller diffs the two.
 type ClassRightObservation struct {
+	// Right
+	Right string `json:"Right,omitempty"`
+
+	// Group
+	Group string `json:"Group,omitempty"`
+
+	// User
+	User string `json:"User,omitempty"`
 }
 
 // A ClassRightSpec defines the desired state of a ClassRight.
