@@ -217,13 +217,19 @@ func observation(in *rt.CatalogIdNameGet200Response) (v1alpha1.CatalogObservatio
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.Catalog, observed *rt.CatalogIdNameGet200Response) bool {
-	if cr.Spec.ForProvider.Name != observed.Name {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Name != "" && cr.Spec.ForProvider.Name != observed.Name {
 		return false
 	}
-	if cr.Spec.ForProvider.Description != observed.Description {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Description != "" && cr.Spec.ForProvider.Description != observed.Description {
 		return false
 	}
-	if cr.Spec.ForProvider.Lifecycle != observed.Lifecycle {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Lifecycle != "" && cr.Spec.ForProvider.Lifecycle != observed.Lifecycle {
 		return false
 	}
 	if cr.Spec.ForProvider.Disabled != "" {
@@ -362,20 +368,12 @@ func (c *external) Update(ctx context.Context, cr *v1alpha1.Catalog) (managed.Ex
 		return managed.ExternalUpdate{}, errors.Wrap(err, errUpdate)
 	}
 
-	// An update that answers no body is success; status.atProvider is left as
-	// the last read rather than wiped with a zero value.
-	if len(respBody) > 0 {
-		var updated rt.CatalogIdNameGet200Response
-		if err := json.Unmarshal(respBody, &updated); err != nil {
-			return managed.ExternalUpdate{}, errors.Wrap(err, errParse)
-		}
-
-		at, err := observation(&updated)
-		if err != nil {
-			return managed.ExternalUpdate{}, errors.Wrap(err, errParse)
-		}
-		cr.Status.AtProvider = at
-	}
+	// The update's answer is NOT the read's. RT replies to a PUT with a list
+	// of what it changed -- ["Queue Description changed from 'a' to 'b'"] --
+	// and parsing that as the object fails on every successful update. The
+	// next Observe reports the new state, which is where status.atProvider
+	// comes from anyway.
+	_ = respBody
 
 	return managed.ExternalUpdate{}, nil
 }

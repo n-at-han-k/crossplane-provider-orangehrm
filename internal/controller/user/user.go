@@ -277,64 +277,104 @@ func observation(in *rt.UserIdNameGet200Response) (v1alpha1.UserObservation, err
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.User, observed *rt.UserIdNameGet200Response) bool {
-	if cr.Spec.ForProvider.RealName != observed.RealName {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.RealName != "" && cr.Spec.ForProvider.RealName != observed.RealName {
 		return false
 	}
-	if cr.Spec.ForProvider.NickName != observed.NickName {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.NickName != "" && cr.Spec.ForProvider.NickName != observed.NickName {
 		return false
 	}
-	if cr.Spec.ForProvider.EmailAddress != observed.EmailAddress {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.EmailAddress != "" && cr.Spec.ForProvider.EmailAddress != observed.EmailAddress {
 		return false
 	}
-	if cr.Spec.ForProvider.Gecos != observed.Gecos {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Gecos != "" && cr.Spec.ForProvider.Gecos != observed.Gecos {
 		return false
 	}
-	if cr.Spec.ForProvider.Lang != observed.Lang {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Lang != "" && cr.Spec.ForProvider.Lang != observed.Lang {
 		return false
 	}
-	if cr.Spec.ForProvider.Timezone != observed.Timezone {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Timezone != "" && cr.Spec.ForProvider.Timezone != observed.Timezone {
 		return false
 	}
-	if cr.Spec.ForProvider.FreeformContactInfo != observed.FreeformContactInfo {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.FreeformContactInfo != "" && cr.Spec.ForProvider.FreeformContactInfo != observed.FreeformContactInfo {
 		return false
 	}
-	if cr.Spec.ForProvider.Comments != observed.Comments {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Comments != "" && cr.Spec.ForProvider.Comments != observed.Comments {
 		return false
 	}
-	if cr.Spec.ForProvider.WorkPhone != observed.WorkPhone {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.WorkPhone != "" && cr.Spec.ForProvider.WorkPhone != observed.WorkPhone {
 		return false
 	}
-	if cr.Spec.ForProvider.MobilePhone != observed.MobilePhone {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.MobilePhone != "" && cr.Spec.ForProvider.MobilePhone != observed.MobilePhone {
 		return false
 	}
-	if cr.Spec.ForProvider.HomePhone != observed.HomePhone {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.HomePhone != "" && cr.Spec.ForProvider.HomePhone != observed.HomePhone {
 		return false
 	}
-	if cr.Spec.ForProvider.PagerPhone != observed.PagerPhone {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.PagerPhone != "" && cr.Spec.ForProvider.PagerPhone != observed.PagerPhone {
 		return false
 	}
-	if cr.Spec.ForProvider.Organization != observed.Organization {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Organization != "" && cr.Spec.ForProvider.Organization != observed.Organization {
 		return false
 	}
-	if cr.Spec.ForProvider.Address1 != observed.Address1 {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Address1 != "" && cr.Spec.ForProvider.Address1 != observed.Address1 {
 		return false
 	}
-	if cr.Spec.ForProvider.Address2 != observed.Address2 {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Address2 != "" && cr.Spec.ForProvider.Address2 != observed.Address2 {
 		return false
 	}
-	if cr.Spec.ForProvider.City != observed.City {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.City != "" && cr.Spec.ForProvider.City != observed.City {
 		return false
 	}
-	if cr.Spec.ForProvider.Zip != observed.Zip {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Zip != "" && cr.Spec.ForProvider.Zip != observed.Zip {
 		return false
 	}
-	if cr.Spec.ForProvider.State != observed.State {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.State != "" && cr.Spec.ForProvider.State != observed.State {
 		return false
 	}
-	if cr.Spec.ForProvider.Country != observed.Country {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Country != "" && cr.Spec.ForProvider.Country != observed.Country {
 		return false
 	}
-	if cr.Spec.ForProvider.Name != observed.Name {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Name != "" && cr.Spec.ForProvider.Name != observed.Name {
 		return false
 	}
 	if cr.Spec.ForProvider.Disabled != "" {
@@ -478,20 +518,12 @@ func (c *external) Update(ctx context.Context, cr *v1alpha1.User) (managed.Exter
 		return managed.ExternalUpdate{}, errors.Wrap(err, errUpdate)
 	}
 
-	// An update that answers no body is success; status.atProvider is left as
-	// the last read rather than wiped with a zero value.
-	if len(respBody) > 0 {
-		var updated rt.UserIdNameGet200Response
-		if err := json.Unmarshal(respBody, &updated); err != nil {
-			return managed.ExternalUpdate{}, errors.Wrap(err, errParse)
-		}
-
-		at, err := observation(&updated)
-		if err != nil {
-			return managed.ExternalUpdate{}, errors.Wrap(err, errParse)
-		}
-		cr.Status.AtProvider = at
-	}
+	// The update's answer is NOT the read's. RT replies to a PUT with a list
+	// of what it changed -- ["Queue Description changed from 'a' to 'b'"] --
+	// and parsing that as the object fails on every successful update. The
+	// next Observe reports the new state, which is where status.atProvider
+	// comes from anyway.
+	_ = respBody
 
 	return managed.ExternalUpdate{}, nil
 }

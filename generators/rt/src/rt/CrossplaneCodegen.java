@@ -721,6 +721,20 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
             field.put("clientType", scalar ? dataType : "");
             field.put("needsCast", scalar && !goType.equals(dataType));
         }
+        // What "the person did not set this" looks like for this type, so
+        // upToDate can tell an unset optional field from a difference. RT
+        // answers a queue's Lifecycle as "default" whether or not anyone
+        // asked for one, and without this every such field is permanent
+        // drift and the controller updates on every single reconcile.
+        //
+        // A bool has no spare value to mean unset, so it is always compared.
+        switch (goType) {
+            case "string":  field.put("zeroCheck", "!= \"\""); break;
+            case "int64":
+            case "float64": field.put("zeroCheck", "!= 0"); break;
+            default:        break;
+        }
+
         field.put("description", description == null || "null".equals(description) ? "" : description);
         field.put("isRequired", required);
         field.put("isJson", !scalar);

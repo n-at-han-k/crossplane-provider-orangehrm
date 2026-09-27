@@ -229,9 +229,18 @@ func upToDate(cr *{{apiVersion}}.{{kind}}, observed *{{providerName}}.{{response
 	}
 {{/isJson}}
 {{^isJson}}
+{{#zeroCheck}}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.{{goName}} {{{zeroCheck}}} && cr.Spec.ForProvider.{{goName}} != {{#needsCast}}{{goType}}({{/needsCast}}observed.{{goName}}{{#needsCast}}){{/needsCast}} {
+		return false
+	}
+{{/zeroCheck}}
+{{^zeroCheck}}
 	if cr.Spec.ForProvider.{{goName}} != {{#needsCast}}{{goType}}({{/needsCast}}observed.{{goName}}{{#needsCast}}){{/needsCast}} {
 		return false
 	}
+{{/zeroCheck}}
 {{/isJson}}
 {{/comparables}}
 
@@ -452,25 +461,12 @@ func (c *external) Update(ctx context.Context, cr *{{apiVersion}}.{{kind}}) (man
 		return managed.ExternalUpdate{}, errors.Wrap(err, errUpdate)
 	}
 
-{{^hasResponseModel}}
+	// The update's answer is NOT the read's. RT replies to a PUT with a list
+	// of what it changed -- ["Queue Description changed from 'a' to 'b'"] --
+	// and parsing that as the object fails on every successful update. The
+	// next Observe reports the new state, which is where status.atProvider
+	// comes from anyway.
 	_ = respBody
-{{/hasResponseModel}}
-{{#hasResponseModel}}
-	// An update that answers no body is success; status.atProvider is left as
-	// the last read rather than wiped with a zero value.
-	if len(respBody) > 0 {
-		var updated {{providerName}}.{{responseModel}}
-		if err := json.Unmarshal(respBody, &updated); err != nil {
-			return managed.ExternalUpdate{}, errors.Wrap(err, errParse)
-		}
-
-		at, err := observation(&updated)
-		if err != nil {
-			return managed.ExternalUpdate{}, errors.Wrap(err, errParse)
-		}
-		cr.Status.AtProvider = at
-	}
-{{/hasResponseModel}}
 
 	return managed.ExternalUpdate{}, nil
 {{/hasUpdate}}

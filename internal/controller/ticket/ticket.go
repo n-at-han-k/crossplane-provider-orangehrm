@@ -299,19 +299,29 @@ func observation(in *rt.TicketIdGet200Response) (v1alpha1.TicketObservation, err
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.Ticket, observed *rt.TicketIdGet200Response) bool {
-	if cr.Spec.ForProvider.Subject != observed.Subject {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Subject != "" && cr.Spec.ForProvider.Subject != observed.Subject {
 		return false
 	}
-	if cr.Spec.ForProvider.Starts != observed.Starts {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Starts != "" && cr.Spec.ForProvider.Starts != observed.Starts {
 		return false
 	}
-	if cr.Spec.ForProvider.Due != observed.Due {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Due != "" && cr.Spec.ForProvider.Due != observed.Due {
 		return false
 	}
-	if cr.Spec.ForProvider.Priority != observed.Priority {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Priority != "" && cr.Spec.ForProvider.Priority != observed.Priority {
 		return false
 	}
-	if cr.Spec.ForProvider.Status != observed.Status {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Status != "" && cr.Spec.ForProvider.Status != observed.Status {
 		return false
 	}
 
@@ -445,20 +455,12 @@ func (c *external) Update(ctx context.Context, cr *v1alpha1.Ticket) (managed.Ext
 		return managed.ExternalUpdate{}, errors.Wrap(err, errUpdate)
 	}
 
-	// An update that answers no body is success; status.atProvider is left as
-	// the last read rather than wiped with a zero value.
-	if len(respBody) > 0 {
-		var updated rt.TicketIdGet200Response
-		if err := json.Unmarshal(respBody, &updated); err != nil {
-			return managed.ExternalUpdate{}, errors.Wrap(err, errParse)
-		}
-
-		at, err := observation(&updated)
-		if err != nil {
-			return managed.ExternalUpdate{}, errors.Wrap(err, errParse)
-		}
-		cr.Status.AtProvider = at
-	}
+	// The update's answer is NOT the read's. RT replies to a PUT with a list
+	// of what it changed -- ["Queue Description changed from 'a' to 'b'"] --
+	// and parsing that as the object fails on every successful update. The
+	// next Observe reports the new state, which is where status.atProvider
+	// comes from anyway.
+	_ = respBody
 
 	return managed.ExternalUpdate{}, nil
 }

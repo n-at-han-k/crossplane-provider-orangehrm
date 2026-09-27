@@ -260,25 +260,39 @@ func observation(in *rt.QueueIdNameGet200Response) (v1alpha1.QueueObservation, e
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.Queue, observed *rt.QueueIdNameGet200Response) bool {
-	if cr.Spec.ForProvider.Name != observed.Name {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Name != "" && cr.Spec.ForProvider.Name != observed.Name {
 		return false
 	}
-	if cr.Spec.ForProvider.Description != observed.Description {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Description != "" && cr.Spec.ForProvider.Description != observed.Description {
 		return false
 	}
-	if cr.Spec.ForProvider.Lifecycle != observed.Lifecycle {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Lifecycle != "" && cr.Spec.ForProvider.Lifecycle != observed.Lifecycle {
 		return false
 	}
-	if cr.Spec.ForProvider.SubjectTag != observed.SubjectTag {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.SubjectTag != "" && cr.Spec.ForProvider.SubjectTag != observed.SubjectTag {
 		return false
 	}
-	if cr.Spec.ForProvider.SortOrder != observed.SortOrder {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.SortOrder != "" && cr.Spec.ForProvider.SortOrder != observed.SortOrder {
 		return false
 	}
-	if cr.Spec.ForProvider.CorrespondAddress != observed.CorrespondAddress {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.CorrespondAddress != "" && cr.Spec.ForProvider.CorrespondAddress != observed.CorrespondAddress {
 		return false
 	}
-	if cr.Spec.ForProvider.CommentAddress != observed.CommentAddress {
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.CommentAddress != "" && cr.Spec.ForProvider.CommentAddress != observed.CommentAddress {
 		return false
 	}
 	if cr.Spec.ForProvider.SLADisabled != "" {
@@ -422,20 +436,12 @@ func (c *external) Update(ctx context.Context, cr *v1alpha1.Queue) (managed.Exte
 		return managed.ExternalUpdate{}, errors.Wrap(err, errUpdate)
 	}
 
-	// An update that answers no body is success; status.atProvider is left as
-	// the last read rather than wiped with a zero value.
-	if len(respBody) > 0 {
-		var updated rt.QueueIdNameGet200Response
-		if err := json.Unmarshal(respBody, &updated); err != nil {
-			return managed.ExternalUpdate{}, errors.Wrap(err, errParse)
-		}
-
-		at, err := observation(&updated)
-		if err != nil {
-			return managed.ExternalUpdate{}, errors.Wrap(err, errParse)
-		}
-		cr.Status.AtProvider = at
-	}
+	// The update's answer is NOT the read's. RT replies to a PUT with a list
+	// of what it changed -- ["Queue Description changed from 'a' to 'b'"] --
+	// and parsing that as the object fails on every successful update. The
+	// next Observe reports the new state, which is where status.atProvider
+	// comes from anyway.
+	_ = respBody
 
 	return managed.ExternalUpdate{}, nil
 }
