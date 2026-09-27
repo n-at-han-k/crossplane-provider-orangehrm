@@ -1,9 +1,9 @@
 module github.com/n-at-han-k/crossplane-provider-rt
-
 // The whole module graph of a provider that is known to build, not only its
 // direct dependencies: `go mod tidy` otherwise floats k8s.io/* past what
 // controller-runtime v0.23.1 accepts, and the build fails inside the module
 // cache rather than in anything this repo generated.
+
 
 go 1.25.11
 
@@ -16,6 +16,7 @@ require (
 	github.com/crossplane/crossplane-runtime/v2 v2.3.3
 	github.com/crossplane/crossplane/apis/v2 v2.3.3
 	google.golang.org/grpc v1.79.3
+	k8s.io/api v0.35.1
 	k8s.io/apiextensions-apiserver v0.35.0
 	k8s.io/apimachinery v0.35.1
 	k8s.io/client-go v0.35.1
@@ -97,7 +98,6 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/api v0.35.1 // indirect
 	k8s.io/code-generator v0.35.0 // indirect
 	k8s.io/component-base v0.35.0 // indirect
 	k8s.io/gengo/v2 v2.0.0-20251215205346-5ee0d033ba5b // indirect

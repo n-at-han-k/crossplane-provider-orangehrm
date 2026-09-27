@@ -164,3 +164,12 @@ coverage:
 	@python3 hack/check-coverage.py
 
 .PHONY: coverage
+
+# Validate the BUILT xpkg, not just the source. A source-level check cannot
+# see the packaging CLI silently dropping a field it does not understand --
+# which is exactly how a provider ships without its SafeStart capability and
+# CrashLoopBackOffs on install. Run after `make build`; CI does.
+package.check:
+	@python3 hack/validate-package.py
+
+.PHONY: package.check
