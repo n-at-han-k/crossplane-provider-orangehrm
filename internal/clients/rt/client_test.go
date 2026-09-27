@@ -7,6 +7,7 @@ package rt
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -80,6 +81,41 @@ func TestIDFromLocation(t *testing.T) {
 		if got := IDFromLocation(in); got != want {
 			t.Errorf("IDFromLocation(%q) = %q, want %q", in, got, want)
 		}
+	}
+}
+
+func TestRTIDAcceptsBothOfRTsSpellings(t *testing.T) {
+	// The bug this exists for: POST /asset answers "id":"5" while GET
+	// /ticket/1 answers "id":1, and a model that commits to one of them
+	// fails to parse the other. When that happens on a CREATE response the
+	// resource exists in RT with nothing recording it here, and the next
+	// reconcile makes another one. Seven assets became twenty-eight.
+	var doc struct {
+		Id    RTID `json:"id"`
+		Inner []struct {
+			Id RTID `json:"id"`
+		} `json:"_hyperlinks"`
+	}
+
+	// Both spellings, and both in the same array -- which is exactly what a
+	// ticket answers.
+	body := `{"id":1,"_hyperlinks":[{"id":1},{"id":"2"},{"id":null}]}`
+	if err := json.Unmarshal([]byte(body), &doc); err != nil {
+		t.Fatal(err)
+	}
+
+	if doc.Id != "1" {
+		t.Errorf("number id = %q, want \"1\"", doc.Id)
+	}
+	for i, want := range []RTID{"1", "2", ""} {
+		if doc.Inner[i].Id != want {
+			t.Errorf("_hyperlinks[%d].id = %q, want %q", i, doc.Inner[i].Id, want)
+		}
+	}
+
+	// Out again as a string, which is what RT takes in a body.
+	if out, err := json.Marshal(RTID("5")); err != nil || string(out) != `"5"` {
+		t.Errorf("marshal = %s, %v; want \"5\"", out, err)
 	}
 }
 

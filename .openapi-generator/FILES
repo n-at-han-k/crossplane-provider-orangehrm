@@ -114,6 +114,7 @@ internal/clients/rt/model_hyperlink_history.go
 internal/clients/rt/model_hyperlink_lifecycle.go
 internal/clients/rt/model_hyperlink_members.go
 internal/clients/rt/model_hyperlink_memberships.go
+internal/clients/rt/model_hyperlink_rights.go
 internal/clients/rt/model_hyperlink_self.go
 internal/clients/rt/model_hyperlink_ticket_link.go
 internal/clients/rt/model_just_message.go

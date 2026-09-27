@@ -4,7 +4,7 @@ package rt
 
 // ObjectMetadata is the ObjectMetadata schema of the API description.
 type ObjectMetadata struct {
-	Id            int32         `json:"id,omitempty"`
+	Id            RTID          `json:"id,omitempty"`
 	Created       string        `json:"Created,omitempty"`
 	Creator       UserReference `json:"Creator,omitempty"`
 	LastUpdated   string        `json:"LastUpdated,omitempty"`

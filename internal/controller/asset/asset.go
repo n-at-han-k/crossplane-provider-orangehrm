@@ -194,7 +194,7 @@ func desired(cr *v1alpha1.Asset) (*rt.AssetPostRequest, error) {
 func observation(in *rt.AssetIdGet200Response) (v1alpha1.AssetObservation, error) {
 	out := v1alpha1.AssetObservation{}
 
-	out.Id = int64(in.Id)
+	out.Id = string(in.Id)
 	out.Created = in.Created
 	if raw, err := json.Marshal(in.Creator); err == nil {
 		out.Creator = string(raw)

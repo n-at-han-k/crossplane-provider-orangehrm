@@ -5,6 +5,6 @@ package rt
 // UserReference is the UserReference schema of the API description.
 type UserReference struct {
 	Url  string `json:"_url,omitempty"`
-	Id   string `json:"id,omitempty"`
+	Id   RTID   `json:"id,omitempty"`
 	Type string `json:"type,omitempty"`
 }

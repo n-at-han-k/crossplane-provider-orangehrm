@@ -694,7 +694,7 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
     private Map<String, Object> field(String baseName, String dataType, String description, boolean required) {
         Map<String, Object> field = new HashMap<>();
 
-        boolean scalar = isScalar(dataType);
+        boolean scalar = isScalar(dataType) || isIdentifier(baseName);
 
         field.put("name", baseName);
         // The JSON tag is the wire name VERBATIM, so the CRD field, the Go
@@ -709,8 +709,18 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
         // because Kubernetes has no int32. So the two disagree for exactly the
         // narrow numbers, and the controller converts rather than the schema
         // lying about what the API takes.
-        field.put("clientType", scalar ? dataType : "");
-        field.put("needsCast", scalar && !goType.equals(dataType));
+        // An identifier is RTID on the client and a plain string in the CRD:
+        // `string(in.Id)` converts, and Kubernetes never sees a field whose
+        // type depends on which endpoint answered.
+        if (isIdentifier(baseName)) {
+            goType = "string";
+            field.put("goType", goType);
+            field.put("clientType", "RTID");
+            field.put("needsCast", true);
+        } else {
+            field.put("clientType", scalar ? dataType : "");
+            field.put("needsCast", scalar && !goType.equals(dataType));
+        }
         field.put("description", description == null || "null".equals(description) ? "" : description);
         field.put("isRequired", required);
         field.put("isJson", !scalar);
@@ -779,6 +789,24 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
                 if (property.dataType != null
                         && (property.dataType.startsWith("AnyOf") || property.dataType.startsWith("OneOf"))) {
                     property.dataType = unionType(property);
+                } else if (isIdentifier(property.baseName)) {
+                    // See RTID in client.go: RT types its identifiers
+                    // inconsistently -- a number in one response, a quoted
+                    // string in the next, both in one array -- and every
+                    // model that commits to one of them fails to parse the
+                    // other. This is a rule about the API, not a list of
+                    // exceptions: RT spells every identifier `id`.
+                    property.dataType = "RTID";
+                } else if (isGenuineUnion(property)) {
+                    // A composition with BRANCHES, as opposed to the
+                    // validation-only kind above: RT answers a queue's
+                    // `_hyperlinks[].id` as the number 3 and the same
+                    // object's `TicketCustomFields[].id` as the string "2",
+                    // so the document says `anyOf: [integer, string]`.
+                    // openapi-generator collapses that to whichever branch it
+                    // saw last, and the client then fails to parse half the
+                    // responses the API actually sends.
+                    property.dataType = "interface{}";
                 }
 
                 property.vendorExtensions.put("x-go-datatag",
@@ -787,6 +815,23 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
         }
 
         return processed;
+    }
+
+    /** RT spells every identifier `id`, and types it however it feels. */
+    private boolean isIdentifier(String baseName) {
+        return "id".equalsIgnoreCase(baseName);
+    }
+
+    /** A composition with branches that disagree, not one that only narrows. */
+    private boolean isGenuineUnion(CodegenProperty property) {
+        if (property.getComposedSchemas() == null) {
+            return false;
+        }
+
+        List<CodegenProperty> anyOf = property.getComposedSchemas().getAnyOf();
+        List<CodegenProperty> oneOf = property.getComposedSchemas().getOneOf();
+
+        return (anyOf != null && anyOf.size() > 1) || (oneOf != null && oneOf.size() > 1);
     }
 
     /** The declared type behind a composition, or {@code interface{}}. */
@@ -804,6 +849,71 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
             return "bool";
         }
         return "interface{}";
+    }
+
+    /**
+     * A field whose type disagrees across a union's branches holds neither.
+     *
+     * openapi-generator flattens an inline {@code anyOf} into ONE struct and
+     * gives each field the type of whichever branch it saw last. RT sends a
+     * ticket's {@code _hyperlinks} as one array of both kinds at once:
+     *
+     * <pre>
+     *   {"ref":"self","id":1}          &lt;- a number
+     *   {"ref":"customfield","id":"2"} &lt;- a string
+     * </pre>
+     *
+     * So the flattened {@code Id} is a string, and unmarshalling the array
+     * fails on the first element -- which is what the API answers to a read
+     * of a queue this provider just created. Whichever branch had won, half
+     * the responses would fail.
+     *
+     * This runs over ALL models, because the branches are models of their own
+     * and a single model cannot see them.
+     */
+    @Override
+    public Map<String, ModelsMap> postProcessAllModels(Map<String, ModelsMap> models) {
+        Map<String, ModelsMap> processed = super.postProcessAllModels(models);
+
+        Map<String, CodegenModel> byName = new LinkedHashMap<>();
+        for (ModelsMap entry : processed.values()) {
+            for (ModelMap map : entry.getModels()) {
+                byName.put(map.getModel().classname, map.getModel());
+            }
+        }
+
+        for (CodegenModel model : byName.values()) {
+            Set<String> branches = new LinkedHashSet<>();
+            if (model.anyOf != null) {
+                branches.addAll(model.anyOf);
+            }
+            if (model.oneOf != null) {
+                branches.addAll(model.oneOf);
+            }
+            if (branches.isEmpty()) {
+                continue;
+            }
+
+            for (CodegenProperty property : model.vars) {
+                Set<String> types = new LinkedHashSet<>();
+
+                for (String branch : branches) {
+                    CodegenModel source = byName.get(branch);
+                    if (source == null) {
+                        continue;
+                    }
+                    source.vars.stream()
+                            .filter(candidate -> candidate.baseName.equals(property.baseName))
+                            .forEach(candidate -> types.add(candidate.dataType));
+                }
+
+                if (types.size() > 1 && !isIdentifier(property.baseName)) {
+                    property.dataType = "interface{}";
+                }
+            }
+        }
+
+        return processed;
     }
 
     /**

@@ -4,7 +4,7 @@ package rt
 
 // GroupIdGet200ResponseAllOfMembersInner is the GroupIdGet200ResponseAllOfMembersInner schema of the API description.
 type GroupIdGet200ResponseAllOfMembersInner struct {
-	Url  string        `json:"_url,omitempty"`
-	Id   string        `json:"id,omitempty"`
-	Type ConstantGroup `json:"type,omitempty"`
+	Url  string      `json:"_url,omitempty"`
+	Id   RTID        `json:"id,omitempty"`
+	Type interface{} `json:"type,omitempty"`
 }

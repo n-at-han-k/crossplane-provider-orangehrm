@@ -5,7 +5,7 @@ package rt
 // UserIdNameGet200Response is the UserIdNameGet200Response schema of the API description.
 type UserIdNameGet200Response struct {
 	CustomFields        []CustomFieldsArrayInner                       `json:"CustomFields,omitempty"`
-	Id                  int32                                          `json:"id,omitempty"`
+	Id                  RTID                                           `json:"id,omitempty"`
 	Created             string                                         `json:"Created,omitempty"`
 	Creator             UserReference                                  `json:"Creator,omitempty"`
 	LastUpdated         string                                         `json:"LastUpdated,omitempty"`

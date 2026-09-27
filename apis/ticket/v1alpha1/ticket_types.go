@@ -117,7 +117,7 @@ type TicketParameters struct {
 // including the fields a person also writes. The controller diffs the two.
 type TicketObservation struct {
 	// Id Integer identifier
-	Id int64 `json:"id,omitempty"`
+	Id string `json:"id,omitempty"`
 
 	// Created
 	Created string `json:"Created,omitempty"`

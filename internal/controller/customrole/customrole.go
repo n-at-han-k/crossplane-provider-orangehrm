@@ -164,7 +164,7 @@ type external struct {
 func observation(in *rt.CustomroleIdGet200Response) (v1alpha1.CustomroleObservation, error) {
 	out := v1alpha1.CustomroleObservation{}
 
-	out.Id = int64(in.Id)
+	out.Id = string(in.Id)
 	out.Created = in.Created
 	if raw, err := json.Marshal(in.Creator); err == nil {
 		out.Creator = string(raw)

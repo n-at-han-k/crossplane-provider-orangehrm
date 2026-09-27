@@ -181,7 +181,7 @@ func desired(cr *v1alpha1.Group) (*rt.GroupPostRequest, error) {
 func observation(in *rt.GroupIdGet200Response) (v1alpha1.GroupObservation, error) {
 	out := v1alpha1.GroupObservation{}
 
-	out.Id = int64(in.Id)
+	out.Id = string(in.Id)
 	out.Created = in.Created
 	if raw, err := json.Marshal(in.Creator); err == nil {
 		out.Creator = string(raw)

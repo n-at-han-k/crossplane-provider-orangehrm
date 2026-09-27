@@ -194,7 +194,7 @@ func desired(cr *v1alpha1.Customfield) (*rt.CustomfieldPostRequest, error) {
 func observation(in *rt.CustomfieldIdGet200Response) (v1alpha1.CustomfieldObservation, error) {
 	out := v1alpha1.CustomfieldObservation{}
 
-	out.Id = int64(in.Id)
+	out.Id = string(in.Id)
 	out.Created = in.Created
 	if raw, err := json.Marshal(in.Creator); err == nil {
 		out.Creator = string(raw)

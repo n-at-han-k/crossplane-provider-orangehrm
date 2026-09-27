@@ -4,7 +4,7 @@ package rt
 
 // GroupIdGet200Response is the GroupIdGet200Response schema of the API description.
 type GroupIdGet200Response struct {
-	Id            int32                                       `json:"id,omitempty"`
+	Id            RTID                                        `json:"id,omitempty"`
 	Created       string                                      `json:"Created,omitempty"`
 	Creator       UserReference                               `json:"Creator,omitempty"`
 	LastUpdated   string                                      `json:"LastUpdated,omitempty"`

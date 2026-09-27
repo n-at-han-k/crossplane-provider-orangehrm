@@ -191,7 +191,7 @@ func desired(cr *v1alpha1.Queue) (*rt.QueuePostRequest, error) {
 func observation(in *rt.QueueIdNameGet200Response) (v1alpha1.QueueObservation, error) {
 	out := v1alpha1.QueueObservation{}
 
-	out.Id = int64(in.Id)
+	out.Id = string(in.Id)
 	out.Created = in.Created
 	if raw, err := json.Marshal(in.Creator); err == nil {
 		out.Creator = string(raw)

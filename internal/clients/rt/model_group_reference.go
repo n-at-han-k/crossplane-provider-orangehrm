@@ -5,6 +5,6 @@ package rt
 // GroupReference is the GroupReference schema of the API description.
 type GroupReference struct {
 	Url  string        `json:"_url,omitempty"`
-	Id   string        `json:"id,omitempty"`
+	Id   RTID          `json:"id,omitempty"`
 	Type ConstantGroup `json:"type,omitempty"`
 }

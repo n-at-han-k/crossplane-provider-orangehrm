@@ -220,7 +220,7 @@ func desired(cr *v1alpha1.Ticket) (*rt.TicketPostRequest, error) {
 func observation(in *rt.TicketIdGet200Response) (v1alpha1.TicketObservation, error) {
 	out := v1alpha1.TicketObservation{}
 
-	out.Id = int64(in.Id)
+	out.Id = string(in.Id)
 	out.Created = in.Created
 	if raw, err := json.Marshal(in.Creator); err == nil {
 		out.Creator = string(raw)

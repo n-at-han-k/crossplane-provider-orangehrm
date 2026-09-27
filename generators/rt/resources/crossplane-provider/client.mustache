@@ -75,6 +75,54 @@ func NewClientFromCredentials(raw []byte) (*Client, error) {
 	return client, nil
 }
 
+// RTID is an identifier as RT actually sends it: sometimes a JSON number,
+// sometimes a quoted string, sometimes both in one array.
+//
+//	GET /ticket/1  ->  "id": 1        and  "_hyperlinks":[{"ref":"self","id":1},
+//	                                                      {"ref":"customfield","id":"2"}]
+//	POST /asset    ->  "id": "5"
+//
+// A model that commits to either one fails to parse half of what the API
+// answers. This accepts both and keeps the text, because an external name is
+// a string whatever the wire said.
+//
+// This matters more than it sounds: a create whose RESPONSE will not parse is
+// a resource that exists in RT with nothing recording it here, so the next
+// reconcile creates another one, and another.
+type RTID string
+
+func (i RTID) String() string { return string(i) }
+
+func (i *RTID) UnmarshalJSON(data []byte) error {
+	text := strings.TrimSpace(string(data))
+
+	if text == "null" {
+		*i = ""
+		return nil
+	}
+
+	// A quoted string: unquote it rather than keeping the quotes.
+	if strings.HasPrefix(text, `"`) {
+		var unquoted string
+		if err := json.Unmarshal(data, &unquoted); err != nil {
+			return err
+		}
+		*i = RTID(unquoted)
+		return nil
+	}
+
+	// Anything else is a bare JSON literal -- a number, in practice.
+	*i = RTID(text)
+
+	return nil
+}
+
+// MarshalJSON writes a string, which is what RT accepts everywhere it takes
+// an id in a body.
+func (i RTID) MarshalJSON() ([]byte, error) {
+	return json.Marshal(string(i))
+}
+
 // APIError is an unsuccessful response, carrying the status so that a caller
 // can tell "it is gone" from "it did not answer".
 type APIError struct {

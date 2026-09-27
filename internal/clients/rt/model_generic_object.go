@@ -5,6 +5,6 @@ package rt
 // GenericObject is the GenericObject schema of the API description.
 type GenericObject struct {
 	Url  string   `json:"_url,omitempty"`
-	Id   string   `json:"id,omitempty"`
+	Id   RTID     `json:"id,omitempty"`
 	Type TypeEnum `json:"type,omitempty"`
 }

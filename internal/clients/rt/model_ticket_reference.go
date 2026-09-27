@@ -5,6 +5,6 @@ package rt
 // TicketReference is the TicketReference schema of the API description.
 type TicketReference struct {
 	Url  string         `json:"_url,omitempty"`
-	Id   string         `json:"id,omitempty"`
+	Id   RTID           `json:"id,omitempty"`
 	Type ConstantTicket `json:"type,omitempty"`
 }

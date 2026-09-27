@@ -4,6 +4,6 @@ package rt
 
 // HyperlinkTicketLink is the HyperlinkTicketLink schema of the API description.
 type HyperlinkTicketLink struct {
-	Id   string         `json:"id,omitempty"`
+	Id   RTID           `json:"id,omitempty"`
 	Type ConstantTicket `json:"type,omitempty"`
 }

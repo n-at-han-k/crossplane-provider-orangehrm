@@ -215,7 +215,7 @@ func observation(in *rt.UserIdNameGet200Response) (v1alpha1.UserObservation, err
 	} else {
 		return out, errors.Wrap(err, "CustomFields")
 	}
-	out.Id = int64(in.Id)
+	out.Id = string(in.Id)
 	out.Created = in.Created
 	if raw, err := json.Marshal(in.Creator); err == nil {
 		out.Creator = string(raw)

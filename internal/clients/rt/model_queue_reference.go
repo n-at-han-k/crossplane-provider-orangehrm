@@ -5,6 +5,6 @@ package rt
 // QueueReference is the QueueReference schema of the API description.
 type QueueReference struct {
 	Url  string `json:"_url,omitempty"`
-	Id   string `json:"id,omitempty"`
+	Id   RTID   `json:"id,omitempty"`
 	Type string `json:"type,omitempty"`
 }

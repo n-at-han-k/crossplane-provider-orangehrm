@@ -4,13 +4,13 @@ package rt
 
 // TicketIdGet200ResponseAllOfHyperlinksInner is the TicketIdGet200ResponseAllOfHyperlinksInner schema of the API description.
 type TicketIdGet200ResponseAllOfHyperlinksInner struct {
-	Ref    string   `json:"ref,omitempty"`
-	Url    string   `json:"_url,omitempty"`
-	Id     string   `json:"id,omitempty"`
-	Name   string   `json:"name,omitempty"`
-	Type   TypeEnum `json:"type,omitempty"`
-	From   string   `json:"from,omitempty"`
-	To     string   `json:"to,omitempty"`
-	Update string   `json:"update,omitempty"`
-	Label  string   `json:"label,omitempty"`
+	Ref    string      `json:"ref,omitempty"`
+	Url    string      `json:"_url,omitempty"`
+	Id     RTID        `json:"id,omitempty"`
+	Name   string      `json:"name,omitempty"`
+	Type   interface{} `json:"type,omitempty"`
+	From   string      `json:"from,omitempty"`
+	To     string      `json:"to,omitempty"`
+	Update string      `json:"update,omitempty"`
+	Label  string      `json:"label,omitempty"`
 }

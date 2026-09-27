@@ -178,7 +178,7 @@ func desired(cr *v1alpha1.CustomfieldValue) (*rt.CustomfieldIdValuePostRequest, 
 func observation(in *rt.CustomfieldIdValueIdGet200Response) (v1alpha1.CustomfieldValueObservation, error) {
 	out := v1alpha1.CustomfieldValueObservation{}
 
-	out.Id = int64(in.Id)
+	out.Id = string(in.Id)
 	out.Created = in.Created
 	if raw, err := json.Marshal(in.Creator); err == nil {
 		out.Creator = string(raw)

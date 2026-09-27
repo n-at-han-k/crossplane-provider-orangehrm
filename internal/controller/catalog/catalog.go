@@ -182,7 +182,7 @@ func desired(cr *v1alpha1.Catalog) (*rt.CatalogPostRequest, error) {
 func observation(in *rt.CatalogIdNameGet200Response) (v1alpha1.CatalogObservation, error) {
 	out := v1alpha1.CatalogObservation{}
 
-	out.Id = int64(in.Id)
+	out.Id = string(in.Id)
 	out.Created = in.Created
 	if raw, err := json.Marshal(in.Creator); err == nil {
 		out.Creator = string(raw)

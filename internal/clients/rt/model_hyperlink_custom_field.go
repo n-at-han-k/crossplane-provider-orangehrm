@@ -4,7 +4,7 @@ package rt
 
 // HyperlinkCustomField is the HyperlinkCustomField schema of the API description.
 type HyperlinkCustomField struct {
-	Id   string              `json:"id,omitempty"`
+	Id   RTID                `json:"id,omitempty"`
 	Name string              `json:"name,omitempty"`
 	Type ConstantCustomField `json:"type,omitempty"`
 }

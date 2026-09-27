@@ -240,8 +240,7 @@ spec:
                     type: string
                   id:
                     description: Id Integer identifier
-                    format: int64
-                    type: integer
+                    type: string
                 type: object
               conditions:
                 description: Conditions of the resource.

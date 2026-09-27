@@ -4,6 +4,6 @@ package rt
 
 // HyperlinkSelf is the HyperlinkSelf schema of the API description.
 type HyperlinkSelf struct {
-	Id   string   `json:"id,omitempty"`
+	Id   RTID     `json:"id,omitempty"`
 	Type TypeEnum `json:"type,omitempty"`
 }

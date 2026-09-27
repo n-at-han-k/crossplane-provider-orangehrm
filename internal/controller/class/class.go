@@ -182,7 +182,7 @@ func desired(cr *v1alpha1.Class) (*rt.ClassPostRequest, error) {
 func observation(in *rt.ClassIdNameGet200Response) (v1alpha1.ClassObservation, error) {
 	out := v1alpha1.ClassObservation{}
 
-	out.Id = int64(in.Id)
+	out.Id = string(in.Id)
 	out.Created = in.Created
 	if raw, err := json.Marshal(in.Creator); err == nil {
 		out.Creator = string(raw)

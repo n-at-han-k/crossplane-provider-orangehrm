@@ -136,7 +136,7 @@ type UserObservation struct {
 	CustomFields string `json:"CustomFields,omitempty"`
 
 	// Id Integer identifier
-	Id int64 `json:"id,omitempty"`
+	Id string `json:"id,omitempty"`
 
 	// Created
 	Created string `json:"Created,omitempty"`

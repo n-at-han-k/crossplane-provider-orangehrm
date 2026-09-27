@@ -4,7 +4,7 @@ package rt
 
 // CustomFieldsArrayInner is the CustomFieldsArrayInner schema of the API description.
 type CustomFieldsArrayInner struct {
-	Id     string        `json:"id,omitempty"`
+	Id     RTID          `json:"id,omitempty"`
 	Name   string        `json:"name,omitempty"`
 	Values []interface{} `json:"values,omitempty"`
 	Url    string        `json:"_url,omitempty"`

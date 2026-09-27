@@ -6,6 +6,6 @@ package rt
 type UserIdNameGet200ResponseAllOfHyperlinksInner struct {
 	Ref  string   `json:"ref,omitempty"`
 	Url  string   `json:"_url,omitempty"`
-	Id   string   `json:"id,omitempty"`
+	Id   RTID     `json:"id,omitempty"`
 	Type TypeEnum `json:"type,omitempty"`
 }

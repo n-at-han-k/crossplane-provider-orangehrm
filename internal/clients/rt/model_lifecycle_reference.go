@@ -5,6 +5,6 @@ package rt
 // LifecycleReference is the LifecycleReference schema of the API description.
 type LifecycleReference struct {
 	Url  string `json:"_url,omitempty"`
-	Id   string `json:"id,omitempty"`
+	Id   RTID   `json:"id,omitempty"`
 	Type string `json:"type,omitempty"`
 }

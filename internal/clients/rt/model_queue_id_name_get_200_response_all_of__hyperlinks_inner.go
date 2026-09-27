@@ -4,8 +4,8 @@ package rt
 
 // QueueIdNameGet200ResponseAllOfHyperlinksInner is the QueueIdNameGet200ResponseAllOfHyperlinksInner schema of the API description.
 type QueueIdNameGet200ResponseAllOfHyperlinksInner struct {
-	Ref  string   `json:"ref,omitempty"`
-	Url  string   `json:"_url,omitempty"`
-	Type TypeEnum `json:"type,omitempty"`
-	Id   string   `json:"id,omitempty"`
+	Ref  string      `json:"ref,omitempty"`
+	Url  string      `json:"_url,omitempty"`
+	Type interface{} `json:"type,omitempty"`
+	Id   RTID        `json:"id,omitempty"`
 }

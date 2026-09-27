@@ -5,6 +5,6 @@ package rt
 // CustomFieldReference is the CustomFieldReference schema of the API description.
 type CustomFieldReference struct {
 	Url  string              `json:"_url,omitempty"`
-	Id   string              `json:"id,omitempty"`
+	Id   RTID                `json:"id,omitempty"`
 	Type ConstantCustomField `json:"type,omitempty"`
 }
