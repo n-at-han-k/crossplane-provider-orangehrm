@@ -18,7 +18,7 @@ type AssetIdGet200Response struct {
 	Description   string                   `json:"Description,omitempty"`
 	Catalog       CatalogReference         `json:"Catalog,omitempty"`
 	Status        string                   `json:"Status,omitempty"`
-	Owner         []UserReference          `json:"Owner,omitempty"`
+	Owner         UserReference            `json:"Owner,omitempty"`
 	HeldBy        []UserReference          `json:"HeldBy,omitempty"`
 	Contact       []UserReference          `json:"Contact,omitempty"`
 }

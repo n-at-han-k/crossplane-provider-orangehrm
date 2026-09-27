@@ -20,7 +20,7 @@ type QueueIdNameGet200Response struct {
 	SortOrder                     string                                          `json:"SortOrder,omitempty"`
 	Name                          string                                          `json:"Name,omitempty"`
 	Description                   string                                          `json:"Description,omitempty"`
-	TicketCustomFields            []CustomFieldsArrayInner                        `json:"TicketCustomFields,omitempty"`
+	TicketCustomFields            []CustomFieldsAppliedInner                      `json:"TicketCustomFields,omitempty"`
 	CommentAddress                string                                          `json:"CommentAddress,omitempty"`
 	Disabled                      PerlBoolean                                     `json:"Disabled,omitempty"`
 	Lifecycle                     string                                          `json:"Lifecycle,omitempty"`

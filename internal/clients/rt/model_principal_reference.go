@@ -2,13 +2,13 @@
 
 package rt
 
-// RightsListAllOfItems is the RightsListAllOfItems schema of the API description.
+// PrincipalReference is the PrincipalReference schema of the API description.
 //
 // allVars, not vars: a schema written as `allOf: [$ref, {...}]` keeps the
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
-type RightsListAllOfItems struct {
-	Right string             `json:"Right,omitempty"`
-	Group PrincipalReference `json:"Group,omitempty"`
-	User  PrincipalReference `json:"User,omitempty"`
+type PrincipalReference struct {
+	Id   RTID   `json:"id,omitempty"`
+	Name string `json:"Name,omitempty"`
+	Url  string `json:"_url,omitempty"`
 }

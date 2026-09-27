@@ -13,7 +13,13 @@ SPEC=reference/openapi-schema-rt/request_tracker_rest2.yaml
 # is recorded rather than described in prose: `git submodule status` says
 # which spec the committed provider came from, and a regeneration after
 # `git submodule update --remote` is a diff with the spec bump beside it.
-git submodule update --init reference/openapi-schema-rt
+# Only when it is not checked out. `git submodule update` would otherwise
+# reset a deliberate bump -- checking out a newer spec and then regenerating
+# is exactly what this script is for, and silently rewinding it means
+# regenerating from the old document and wondering why nothing changed.
+if [ ! -f "$SPEC" ]; then
+  git submodule update --init reference/openapi-schema-rt
+fi
 
 test -f "$SPEC" || { echo "missing $SPEC -- the spec submodule did not check out"; exit 1; }
 

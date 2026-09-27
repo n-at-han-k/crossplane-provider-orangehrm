@@ -59,7 +59,7 @@ type LifecycleObservation struct {
 	// Rights The right required to make a transition.
 	Rights string `json:"rights,omitempty"`
 
-	// Actions The transitions offered in the UI.
+	// Actions The transitions offered in the UI, as alternating \&quot;from -&gt; to\&quot; strings and their configuration.
 	Actions string `json:"actions,omitempty"`
 
 	// Colors A colour per status, as shown in the UI.

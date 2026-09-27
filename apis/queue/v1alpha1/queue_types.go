@@ -106,7 +106,7 @@ type QueueObservation struct {
 	// Description
 	Description string `json:"Description,omitempty"`
 
-	// TicketCustomFields Customfields with their values, as returned by the server.
+	// TicketCustomFields The custom fields applied to an object, as a queue lists the ones its tickets have. No values -- these are the fields themselves.
 	TicketCustomFields string `json:"TicketCustomFields,omitempty"`
 
 	// CommentAddress May be empty.

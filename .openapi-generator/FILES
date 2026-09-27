@@ -83,6 +83,8 @@ internal/clients/rt/model_custom_field_common.go
 internal/clients/rt/model_custom_field_reference.go
 internal/clients/rt/model_custom_field_value_properties_common.go
 internal/clients/rt/model_custom_fields.go
+internal/clients/rt/model_custom_fields_applied_inner.go
+internal/clients/rt/model_custom_fields_applied_inner_id.go
 internal/clients/rt/model_custom_fields_array_inner.go
 internal/clients/rt/model_custom_fields_upload.go
 internal/clients/rt/model_custom_fields_upload_custom_fields_value.go
@@ -119,15 +121,17 @@ internal/clients/rt/model_hyperlink_self.go
 internal/clients/rt/model_hyperlink_ticket_link.go
 internal/clients/rt/model_just_message.go
 internal/clients/rt/model_lifecycle_configuration.go
+internal/clients/rt/model_lifecycle_configuration_actions_inner.go
 internal/clients/rt/model_lifecycle_name_validate_post_200_response.go
 internal/clients/rt/model_lifecycle_reference.go
-internal/clients/rt/model_lifecycles_get_200_response.go
+internal/clients/rt/model_lifecycles_get_200_response_inner.go
 internal/clients/rt/model_lifecycles_post_request.go
 internal/clients/rt/model_object_metadata.go
 internal/clients/rt/model_object_type.go
 internal/clients/rt/model_paginated.go
 internal/clients/rt/model_perl_boolean.go
 internal/clients/rt/model_perl_boolean_integer.go
+internal/clients/rt/model_principal_reference.go
 internal/clients/rt/model_queue_id_name_get_200_response.go
 internal/clients/rt/model_queue_id_name_get_200_response_all_of__hyperlinks_inner.go
 internal/clients/rt/model_queue_id_name_put_request.go

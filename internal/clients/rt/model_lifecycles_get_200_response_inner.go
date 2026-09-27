@@ -2,12 +2,12 @@
 
 package rt
 
-// LifecycleConfiguration is the LifecycleConfiguration schema of the API description.
+// LifecyclesGet200ResponseInner is the LifecyclesGet200ResponseInner schema of the API description.
 //
 // allVars, not vars: a schema written as `allOf: [$ref, {...}]` keeps the
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
-type LifecycleConfiguration struct {
+type LifecyclesGet200ResponseInner struct {
 	Type        string                               `json:"type,omitempty"`
 	Initial     []string                             `json:"initial,omitempty"`
 	Active      []string                             `json:"active,omitempty"`
@@ -17,4 +17,6 @@ type LifecycleConfiguration struct {
 	Rights      map[string]string                    `json:"rights,omitempty"`
 	Actions     []LifecycleConfigurationActionsInner `json:"actions,omitempty"`
 	Colors      map[string]string                    `json:"colors,omitempty"`
+	Name        string                               `json:"Name,omitempty"`
+	Url         string                               `json:"_url,omitempty"`
 }
