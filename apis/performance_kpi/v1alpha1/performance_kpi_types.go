@@ -42,7 +42,7 @@ type PerformanceKpiParameters struct {
 
 	// IsDefault
 	// +optional
-	IsDefault bool `json:"isDefault,omitempty"`
+	IsDefault bool `json:"isDefault"`
 }
 
 // PerformanceKpiObservation are the observable fields of a PerformanceKpi.

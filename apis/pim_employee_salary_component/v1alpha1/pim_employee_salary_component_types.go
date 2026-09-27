@@ -57,7 +57,7 @@ type PimEmployeeSalaryComponentParameters struct {
 
 	// AddDirectDeposit
 	// +optional
-	AddDirectDeposit bool `json:"addDirectDeposit,omitempty"`
+	AddDirectDeposit bool `json:"addDirectDeposit"`
 
 	// DirectDepositAccount
 	// +optional

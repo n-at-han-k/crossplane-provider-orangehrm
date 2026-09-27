@@ -65,7 +65,7 @@ type PimEmployeeImmigrationParameters struct {
 
 	// AdditionalPropertiesField
 	// +optional
-	AdditionalPropertiesField bool `json:"additionalProperties,omitempty"`
+	AdditionalPropertiesField bool `json:"additionalProperties"`
 }
 
 // PimEmployeeImmigrationObservation are the observable fields of a PimEmployeeImmigration.

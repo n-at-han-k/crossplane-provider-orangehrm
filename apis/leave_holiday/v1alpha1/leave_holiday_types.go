@@ -38,7 +38,7 @@ type LeaveHolidayParameters struct {
 
 	// Recurring
 	// +optional
-	Recurring bool `json:"recurring,omitempty"`
+	Recurring bool `json:"recurring"`
 }
 
 // LeaveHolidayObservation are the observable fields of a LeaveHoliday.

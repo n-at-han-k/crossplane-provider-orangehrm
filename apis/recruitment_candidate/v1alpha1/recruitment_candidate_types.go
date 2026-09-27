@@ -62,7 +62,7 @@ type RecruitmentCandidateParameters struct {
 
 	// ConsentToKeepData
 	// +optional
-	ConsentToKeepData bool `json:"consentToKeepData,omitempty"`
+	ConsentToKeepData bool `json:"consentToKeepData"`
 }
 
 // RecruitmentCandidateObservation are the observable fields of a RecruitmentCandidate.

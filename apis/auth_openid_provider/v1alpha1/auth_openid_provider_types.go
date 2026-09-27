@@ -34,7 +34,7 @@ type AuthOpenidProviderParameters struct {
 
 	// Status
 	// +optional
-	Status bool `json:"status,omitempty"`
+	Status bool `json:"status"`
 
 	// ClientId
 	// +kubebuilder:validation:Required

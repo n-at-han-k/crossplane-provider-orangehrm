@@ -46,7 +46,7 @@ type PerformanceManageReviewParameters struct {
 
 	// Activate
 	// +optional
-	Activate bool `json:"activate,omitempty"`
+	Activate bool `json:"activate"`
 }
 
 // PerformanceManageReviewObservation are the observable fields of a PerformanceManageReview.

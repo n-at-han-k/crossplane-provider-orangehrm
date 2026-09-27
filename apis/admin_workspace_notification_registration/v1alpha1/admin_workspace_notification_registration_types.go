@@ -56,7 +56,7 @@ type AdminWorkspaceNotificationRegistrationParameters struct {
 
 	// Active
 	// +optional
-	Active bool `json:"active,omitempty"`
+	Active bool `json:"active"`
 }
 
 // AdminWorkspaceNotificationRegistrationObservation are the observable fields of a AdminWorkspaceNotificationRegistration.

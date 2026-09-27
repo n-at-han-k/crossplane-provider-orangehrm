@@ -51,7 +51,11 @@ type {{kind}}Parameters struct {
 	// address a different resource rather than modify this one.
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="{{jsonName}} is immutable"
 {{/isParent}}
-	{{goName}} {{goType}} `json:"{{jsonName}}{{^isRequired}},omitempty{{/isRequired}}"`
+{{! No omitempty on a bool, however optional it is. Crossplane re-serialises the
+    whole object through these types when it records an external name, and
+    omitempty drops a false -- so `recurring: false` disappeared from the STORED
+    spec of every holiday, and the controller then sent a body without it. }}
+	{{goName}} {{goType}} `json:"{{jsonName}}{{^isRequired}}{{^sendAlways}},omitempty{{/sendAlways}}{{/isRequired}}"`
 
 {{/parameters}}
 }

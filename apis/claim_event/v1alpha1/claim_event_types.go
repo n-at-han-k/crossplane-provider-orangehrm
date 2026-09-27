@@ -34,7 +34,7 @@ type ClaimEventParameters struct {
 
 	// Status
 	// +optional
-	Status bool `json:"status,omitempty"`
+	Status bool `json:"status"`
 }
 
 // ClaimEventObservation are the observable fields of a ClaimEvent.

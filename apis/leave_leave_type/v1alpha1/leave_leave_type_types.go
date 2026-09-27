@@ -30,7 +30,7 @@ type LeaveLeaveTypeParameters struct {
 
 	// Situational
 	// +optional
-	Situational bool `json:"situational,omitempty"`
+	Situational bool `json:"situational"`
 }
 
 // LeaveLeaveTypeObservation are the observable fields of a LeaveLeaveType.

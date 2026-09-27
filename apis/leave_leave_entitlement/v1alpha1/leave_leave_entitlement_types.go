@@ -46,7 +46,7 @@ type LeaveLeaveEntitlementParameters struct {
 
 	// BulkAssign
 	// +optional
-	BulkAssign bool `json:"bulkAssign,omitempty"`
+	BulkAssign bool `json:"bulkAssign"`
 
 	// LocationId
 	// +optional

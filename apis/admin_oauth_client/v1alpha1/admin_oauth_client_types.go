@@ -34,7 +34,7 @@ type AdminOauthClientParameters struct {
 
 	// Enabled
 	// +optional
-	Enabled bool `json:"enabled,omitempty"`
+	Enabled bool `json:"enabled"`
 }
 
 // AdminOauthClientObservation are the observable fields of a AdminOauthClient.

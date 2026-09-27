@@ -34,7 +34,7 @@ type ClaimExpensesTypeParameters struct {
 
 	// Status
 	// +optional
-	Status bool `json:"status,omitempty"`
+	Status bool `json:"status"`
 }
 
 // ClaimExpensesTypeObservation are the observable fields of a ClaimExpensesType.

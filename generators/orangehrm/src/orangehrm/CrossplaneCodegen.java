@@ -808,6 +808,10 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
 
         field.put("description", description == null || "null".equals(description) ? "" : description);
         field.put("isRequired", required);
+        // A bool has no spare value for "unset", so it is written out always --
+        // in the CRD as well as on the wire. See the tag notes in types.mustache
+        // and postProcessModels.
+        field.put("sendAlways", "bool".equals(goType));
         field.put("isJson", !scalar);
         field.put("isSensitive", false);
 
