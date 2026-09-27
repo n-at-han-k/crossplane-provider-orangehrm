@@ -374,8 +374,10 @@ func (c *external) Create(ctx context.Context, cr *v1alpha1.BuzzPost) (managed.E
 }
 
 func (c *external) Update(ctx context.Context, cr *v1alpha1.BuzzPost) (managed.ExternalUpdate, error) {
+	// Same guard as Observe: without an id there is nothing to address, and
+	// Observe would not have reported the resource as existing.
 	id := meta.GetExternalName(cr)
-	if id == "" {
+	if !orangehrm.IsID(id) {
 		return managed.ExternalUpdate{}, errors.New(errUpdate)
 	}
 

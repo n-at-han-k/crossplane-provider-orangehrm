@@ -303,8 +303,10 @@ func (c *external) Create(ctx context.Context, cr *v1alpha1.RecruitmentCandidate
 }
 
 func (c *external) Update(ctx context.Context, cr *v1alpha1.RecruitmentCandidate) (managed.ExternalUpdate, error) {
+	// Same guard as Observe: without an id there is nothing to address, and
+	// Observe would not have reported the resource as existing.
 	id := meta.GetExternalName(cr)
-	if id == "" {
+	if !orangehrm.IsID(id) {
 		return managed.ExternalUpdate{}, errors.New(errUpdate)
 	}
 
@@ -330,9 +332,13 @@ func (c *external) Update(ctx context.Context, cr *v1alpha1.RecruitmentCandidate
 func (c *external) Delete(ctx context.Context, cr *v1alpha1.RecruitmentCandidate) (managed.ExternalDelete, error) {
 	cr.Status.SetConditions(xpv2.Deleting())
 
+	// NOT AN ID MEANS NOTHING WAS EVER CREATED (see IsID), and calling the API
+	// with the resource's Kubernetes name is a 422 -- an error Delete would
+	// return for ever, so crossplane-runtime would never remove the finalizer
+	// and the object could not be deleted from the cluster either. Four of them
+	// sat Terminating for an hour that way.
 	id := meta.GetExternalName(cr)
-	if id == "" {
-		// Never created; nothing to destroy.
+	if !orangehrm.IsID(id) {
 		return managed.ExternalDelete{}, nil
 	}
 
