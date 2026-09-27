@@ -1,0 +1,120 @@
+{{!
+    A managed resource. spec.forProvider is the CREATE REQUEST BODY and
+    status.atProvider is the READ RESPONSE, which is the whole classification
+    -- a Crossplane resource does not have to guess which of a person and the
+    server owns a field, the way a single Terraform schema does.
+
+    Anything that is not a scalar is a JSON string, as in the Terraform
+    provider. See the README.
+}}
+{{#operations}}
+{{>partial_header}}
+
+package {{apiVersion}}
+
+import (
+	"reflect"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+
+	xpv2 "github.com/crossplane/crossplane/apis/v2/core/v2"
+)
+
+// NOTE: no `var _ resource.ModernManaged = &{{kind}}{}` assertion here, unlike
+// a hand-written provider. The methods that satisfy it are the ones angryjet
+// writes, and angryjet LOADS this package to write them -- an assertion that
+// fails until it has run is a package that cannot compile until it has run,
+// and angryjet then cannot run. The provider still fails to build if the
+// methods are missing, because cmd/provider registers these types.
+
+// {{kind}}Parameters are the configurable fields of a {{kind}}.
+//
+// These are the fields of the create request body ({{requestModel}}), which is
+// exactly what a person may write. Anything the server assigns is in
+// {{kind}}Observation instead.
+type {{kind}}Parameters struct {
+{{#parameters}}
+	// {{goName}} {{description}}
+{{#isRequired}}
+	// +kubebuilder:validation:Required
+{{/isRequired}}
+{{^isRequired}}
+	// +optional
+{{/isRequired}}
+{{#isJson}}
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
+{{/isJson}}
+{{#isParent}}
+	// IMMUTABLE: it is part of the resource's path, so changing it would
+	// address a different resource rather than modify this one.
+	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="{{jsonName}} is immutable"
+{{/isParent}}
+	{{goName}} {{goType}} `json:"{{jsonName}}{{^isRequired}},omitempty{{/isRequired}}"`
+
+{{/parameters}}
+}
+
+// {{kind}}Observation are the observable fields of a {{kind}}.
+//
+// These are the fields of the read response ({{responseModel}}) -- what IS,
+// including the fields a person also writes. The controller diffs the two.
+type {{kind}}Observation struct {
+{{#observations}}
+	// {{goName}} {{description}}
+	{{goName}} {{goType}} `json:"{{jsonName}},omitempty"`
+
+{{/observations}}
+}
+
+// A {{kind}}Spec defines the desired state of a {{kind}}.
+type {{kind}}Spec struct {
+	xpv2.ManagedResourceSpec `json:",inline"`
+	ForProvider              {{kind}}Parameters `json:"forProvider"`
+}
+
+// A {{kind}}Status represents the observed state of a {{kind}}.
+type {{kind}}Status struct {
+	xpv2.ManagedResourceStatus `json:",inline"`
+	AtProvider                 {{kind}}Observation `json:"atProvider,omitempty"`
+}
+
+// +kubebuilder:object:root=true
+
+// A {{kind}} is a managed {{providerTitle}} {{kindCamel}}.
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
+// +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
+// +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
+// +kubebuilder:subresource:status
+// +kubebuilder:resource:scope=Namespaced,categories={crossplane,managed,{{providerName}}}
+type {{kind}} struct {
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+
+	Spec   {{kind}}Spec   `json:"spec"`
+	Status {{kind}}Status `json:"status,omitempty"`
+}
+
+// +kubebuilder:object:root=true
+
+// {{kind}}List contains a list of {{kind}}
+type {{kind}}List struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata,omitempty"`
+	Items           []{{kind}} `json:"items"`
+}
+
+// {{kind}} type metadata.
+var (
+	{{kind}}Kind             = reflect.TypeOf({{kind}}{}).Name()
+	{{kind}}GroupKind        = schema.GroupKind{Group: CRDGroup, Kind: {{kind}}Kind}.String()
+	{{kind}}KindAPIVersion   = {{kind}}Kind + "." + SchemeGroupVersion.String()
+	{{kind}}GroupVersionKind = SchemeGroupVersion.WithKind({{kind}}Kind)
+)
+
+func init() {
+	SchemeBuilder.Register(&{{kind}}{}, &{{kind}}List{})
+}
+{{/operations}}

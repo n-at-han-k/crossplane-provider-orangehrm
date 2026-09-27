@@ -1,0 +1,11 @@
+{{>partial_header}}
+package {{providerName}}
+{{#models}}{{#model}}
+
+// {{classname}} is the {{classname}} schema of the API description.
+type {{classname}} struct {
+{{#vars}}
+	{{name}} {{dataType}}{{{vendorExtensions.x-go-datatag}}}
+{{/vars}}
+}
+{{/model}}{{/models}}

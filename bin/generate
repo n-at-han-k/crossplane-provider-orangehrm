@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# The whole build: one RT document in, one Crossplane provider out.
+#
+# What lands in the repo is COMMITTED -- the image compiles what is here, not
+# what a regeneration would produce. Run this, look at the diff, commit it.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+SPEC=reference/request-tracker-openapi/request_tracker_rest2.yaml
+
+test -f "$SPEC" || { echo "missing $SPEC -- see reference/ in the README"; exit 1; }
+
+openapi-generator-rt generate \
+  -i "$SPEC" \
+  -g rt-crossplane \
+  -o . \
+  --git-host github.com \
+  --git-user-id n-at-han-k \
+  --git-repo-id crossplane-provider-rt \
+  --additional-properties="providerName=rt,providerTitle=RT,groupName=rt.crossplane.io,apiVersion=v1alpha1"
+
+# Every operation in the document is either wired into a controller or a
+# search. A resource the generator silently stopped covering is a provider
+# that quietly does less than the document says it does.
+python3 hack/check-coverage.py
+
+# The build submodule is what the Makefile is written against; it is not in
+# the generator's output because it is not a file, it is a checkout.
+if [ ! -f build/makelib/common.mk ]; then
+  git submodule update --init --recursive
+fi
+
+# Which imports each generated file actually uses depends on which operations
+# the document described for it, and that is goimports' job rather than a
+# mustache conditional per import.
+goimports -w apis internal cmd
+
+# The generator cannot write a go.sum -- only the toolchain knows the hashes.
+CGO_ENABLED=0 go mod tidy
+
+# DeepCopy, the crossplane-runtime interface methods and the CRDs. A mustache
+# template cannot see a Go type, so these are the two tools that can.
+make generate
+
+CGO_ENABLED=0 go build ./...
+echo "built clean"
