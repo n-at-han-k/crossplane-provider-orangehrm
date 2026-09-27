@@ -10,5 +10,5 @@ package orangehrm
 type BuzzPostPhoto struct {
 	Text   string             `json:"text,omitempty"`
 	Type   string             `json:"type,omitempty"`
-	Photos []Base64Attachment `json:"photos,omitempty"`
+	Photos []Base64Attachment `json:"photos"`
 }

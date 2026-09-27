@@ -11,7 +11,7 @@ type ListAllProjects200ResponseData struct {
 	Id            int32                                       `json:"id,omitempty"`
 	Name          string                                      `json:"name,omitempty"`
 	Description   interface{}                                 `json:"description,omitempty"`
-	Deleted       bool                                        `json:"deleted,omitempty"`
+	Deleted       bool                                        `json:"deleted"`
 	Customer      DashboardEmployeeOnLeaveListModelLeaveType  `json:"customer,omitempty"`
-	ProjectAdmins []GetMyTimeAtWork200ResponseMetaCurrentUser `json:"projectAdmins,omitempty"`
+	ProjectAdmins []GetMyTimeAtWork200ResponseMetaCurrentUser `json:"projectAdmins"`
 }

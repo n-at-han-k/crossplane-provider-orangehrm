@@ -8,6 +8,6 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type ListMobileMenuItems200ResponseMeta struct {
-	IsLeavePeriodDefined     bool `json:"isLeavePeriodDefined,omitempty"`
-	IsTimesheetPeriodDefined bool `json:"isTimesheetPeriodDefined,omitempty"`
+	IsLeavePeriodDefined     bool `json:"isLeavePeriodDefined"`
+	IsTimesheetPeriodDefined bool `json:"isTimesheetPeriodDefined"`
 }

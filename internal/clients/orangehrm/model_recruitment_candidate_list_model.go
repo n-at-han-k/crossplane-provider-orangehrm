@@ -14,7 +14,7 @@ type RecruitmentCandidateListModel struct {
 	LastName          string                                     `json:"lastName,omitempty"`
 	DateOfApplication string                                     `json:"dateOfApplication,omitempty"`
 	Vacancy           RecruitmentCandidateListModelVacancy       `json:"vacancy,omitempty"`
-	Status            []RecruitmentCandidateListModelStatusInner `json:"status,omitempty"`
-	HasAttachment     bool                                       `json:"hasAttachment,omitempty"`
-	Deletable         bool                                       `json:"deletable,omitempty"`
+	Status            []RecruitmentCandidateListModelStatusInner `json:"status"`
+	HasAttachment     bool                                       `json:"hasAttachment"`
+	Deletable         bool                                       `json:"deletable"`
 }

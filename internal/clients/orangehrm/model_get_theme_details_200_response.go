@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type GetThemeDetails200Response struct {
 	Data CorporateBrandingThemeModel `json:"data,omitempty"`
-	Meta interface{}                 `json:"meta,omitempty"`
+	Meta interface{}                 `json:"meta"`
 }

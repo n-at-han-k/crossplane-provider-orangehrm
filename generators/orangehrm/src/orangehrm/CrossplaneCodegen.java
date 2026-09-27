@@ -953,8 +953,34 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
                     property.dataType = "interface{}";
                 }
 
+                // omitempty EXCEPT WHERE THE ZERO VALUE IS THE ANSWER.
+                //
+                // OrangeHRM validates a create body with
+                // Rules\Key($param, ...) for EVERY param its rule collection
+                // names (Api/V2/Validator/Validator.php), so a param the rules
+                // mention must be PRESENT -- absent is 422 Invalid Parameter,
+                // the same answer as a wrong type. omitempty drops exactly the
+                // values that are indistinguishable from unset in Go, so
+                //
+                //   situational: false   -> dropped -> 422 on `situational`
+                //   recurring:   false   -> dropped -> 422 on `recurring`
+                //   empNumbers:  []      -> dropped -> 422 on `empNumbers`
+                //
+                // and a leave type that is not situational could not be created
+                // at all. A bool and an array therefore go out always; a string
+                // and a number keep omitempty, because "" and 0 are almost
+                // never what an API means and absence usually is.
+                //
+                // ponytail: the real fix is a POINTER per field, which is the
+                // only way a Go struct can say "the person did not set this".
+                // That changes the CRD, `desired`, `upToDate` and every
+                // observation; this covers the values that are actually
+                // ambiguous in this document.
+                boolean sendAlways = property.isBoolean || property.isArray
+                        || property.isFreeFormObject || property.isMap;
+
                 property.vendorExtensions.put("x-go-datatag",
-                        " `json:\"" + property.baseName + ",omitempty\"`");
+                        " `json:\"" + property.baseName + (sendAlways ? "" : ",omitempty") + "\"`");
             }
         }
 

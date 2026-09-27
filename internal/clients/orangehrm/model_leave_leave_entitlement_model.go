@@ -17,6 +17,6 @@ type LeaveLeaveEntitlementModel struct {
 	ToDate          float32                                           `json:"toDate,omitempty"`
 	CreditedDate    float32                                           `json:"creditedDate,omitempty"`
 	EntitlementType ClaimEmployeeClaimRequestModelClaimEvent          `json:"entitlementType,omitempty"`
-	Deleted         bool                                              `json:"deleted,omitempty"`
-	Deletable       bool                                              `json:"deletable,omitempty"`
+	Deleted         bool                                              `json:"deleted"`
+	Deletable       bool                                              `json:"deletable"`
 }

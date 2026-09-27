@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type BulkUpdateI18nTranslations200Response struct {
 	Data AdminLanguageModel `json:"data,omitempty"`
-	Meta interface{}        `json:"meta,omitempty"`
+	Meta interface{}        `json:"meta"`
 }

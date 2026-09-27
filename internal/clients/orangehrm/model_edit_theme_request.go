@@ -9,7 +9,7 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type EditThemeRequest struct {
 	Variables             PreviewThemeRequest `json:"variables,omitempty"`
-	ShowSocialMediaImages bool                `json:"showSocialMediaImages,omitempty"`
+	ShowSocialMediaImages bool                `json:"showSocialMediaImages"`
 	ClientLogo            Base64Attachment    `json:"clientLogo,omitempty"`
 	ClientBanner          Base64Attachment    `json:"clientBanner,omitempty"`
 	LoginBanner           Base64Attachment    `json:"loginBanner,omitempty"`

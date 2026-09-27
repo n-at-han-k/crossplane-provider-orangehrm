@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type GetOverlappingLeaves200ResponseMeta struct {
 	EmpNumber                 int32 `json:"empNumber,omitempty"`
-	IsWorkShiftLengthExceeded bool  `json:"isWorkShiftLengthExceeded,omitempty"`
+	IsWorkShiftLengthExceeded bool  `json:"isWorkShiftLengthExceeded"`
 }

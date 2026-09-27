@@ -8,7 +8,7 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type ValidateI18nTranslation200ResponseData struct {
-	Valid   bool   `json:"valid,omitempty"`
+	Valid   bool   `json:"valid"`
 	Code    string `json:"code,omitempty"`
 	Message string `json:"message,omitempty"`
 }

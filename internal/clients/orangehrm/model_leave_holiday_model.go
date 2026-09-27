@@ -11,7 +11,7 @@ type LeaveHolidayModel struct {
 	Id         int32  `json:"id,omitempty"`
 	Name       string `json:"name,omitempty"`
 	Date       string `json:"date,omitempty"`
-	Recurring  bool   `json:"recurring,omitempty"`
+	Recurring  bool   `json:"recurring"`
 	Length     string `json:"length,omitempty"`
 	LengthName string `json:"lengthName,omitempty"`
 }

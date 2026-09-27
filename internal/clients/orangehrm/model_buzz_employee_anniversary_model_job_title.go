@@ -10,5 +10,5 @@ package orangehrm
 type BuzzEmployeeAnniversaryModelJobTitle struct {
 	Id        int32  `json:"id,omitempty"`
 	Title     string `json:"title,omitempty"`
-	IsDeleted bool   `json:"isDeleted,omitempty"`
+	IsDeleted bool   `json:"isDeleted"`
 }

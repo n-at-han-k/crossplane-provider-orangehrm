@@ -14,6 +14,6 @@ type GetLeaveReportData200ResponseDataInner struct {
 	ScheduledDays       string                                    `json:"scheduledDays,omitempty"`
 	TakenDays           string                                    `json:"takenDays,omitempty"`
 	BalanceDays         string                                    `json:"balanceDays,omitempty"`
-	LeaveTypeDeleted    bool                                      `json:"leaveTypeDeleted,omitempty"`
+	LeaveTypeDeleted    bool                                      `json:"leaveTypeDeleted"`
 	Url                 GetLeaveReportData200ResponseDataInnerUrl `json:"_url,omitempty"`
 }

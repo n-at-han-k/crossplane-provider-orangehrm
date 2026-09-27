@@ -15,12 +15,12 @@ type ListAllCandidates200ResponseDataInner struct {
 	Email             string      `json:"email,omitempty"`
 	DateOfApplication string      `json:"dateOfApplication,omitempty"`
 	Vacancy           interface{} `json:"vacancy,omitempty"`
-	Status            interface{} `json:"status,omitempty"`
-	HasAttachment     bool        `json:"hasAttachment,omitempty"`
-	Deletable         bool        `json:"deletable,omitempty"`
+	Status            interface{} `json:"status"`
+	HasAttachment     bool        `json:"hasAttachment"`
+	Deletable         bool        `json:"deletable"`
 	ContactNumber     string      `json:"contactNumber,omitempty"`
 	Comment           string      `json:"comment,omitempty"`
 	Keywords          string      `json:"keywords,omitempty"`
 	ModeOfApplication string      `json:"modeOfApplication,omitempty"`
-	ConsentToKeepData bool        `json:"consentToKeepData,omitempty"`
+	ConsentToKeepData bool        `json:"consentToKeepData"`
 }

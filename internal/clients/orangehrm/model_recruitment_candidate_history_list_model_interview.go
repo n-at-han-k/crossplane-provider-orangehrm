@@ -12,5 +12,5 @@ type RecruitmentCandidateHistoryListModelInterview struct {
 	Name         string                                      `json:"name,omitempty"`
 	Date         string                                      `json:"date,omitempty"`
 	Time         string                                      `json:"time,omitempty"`
-	Interviewers []GetMyTimeAtWork200ResponseMetaCurrentUser `json:"interviewers,omitempty"`
+	Interviewers []GetMyTimeAtWork200ResponseMetaCurrentUser `json:"interviewers"`
 }

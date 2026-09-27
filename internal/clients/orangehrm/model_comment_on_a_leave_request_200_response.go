@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type CommentOnALeaveRequest200Response struct {
 	Data LeaveLeaveRequestCommentModel `json:"data,omitempty"`
-	Meta interface{}                   `json:"meta,omitempty"`
+	Meta interface{}                   `json:"meta"`
 }

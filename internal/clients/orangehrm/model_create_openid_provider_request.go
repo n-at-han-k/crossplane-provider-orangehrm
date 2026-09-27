@@ -10,7 +10,7 @@ package orangehrm
 type CreateOpenidProviderRequest struct {
 	Name         string `json:"name,omitempty"`
 	Url          string `json:"url,omitempty"`
-	Status       bool   `json:"status,omitempty"`
+	Status       bool   `json:"status"`
 	ClientId     string `json:"clientId,omitempty"`
 	ClientSecret string `json:"clientSecret,omitempty"`
 }

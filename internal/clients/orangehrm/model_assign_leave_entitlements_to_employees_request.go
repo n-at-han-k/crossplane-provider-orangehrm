@@ -13,6 +13,6 @@ type AssignLeaveEntitlementsToEmployeesRequest struct {
 	FromDate    float32 `json:"fromDate,omitempty"`
 	ToDate      float32 `json:"toDate,omitempty"`
 	LeaveTypeId int32   `json:"leaveTypeId,omitempty"`
-	BulkAssign  bool    `json:"bulkAssign,omitempty"`
+	BulkAssign  bool    `json:"bulkAssign"`
 	LocationId  int32   `json:"locationId,omitempty"`
 }

@@ -13,5 +13,5 @@ type AdminWorkShiftDetailedModel struct {
 	HoursPerDay float32            `json:"hoursPerDay,omitempty"`
 	StartTime   string             `json:"startTime,omitempty"`
 	EndTime     string             `json:"endTime,omitempty"`
-	Employees   []PimEmployeeModel `json:"employees,omitempty"`
+	Employees   []PimEmployeeModel `json:"employees"`
 }

@@ -13,8 +13,8 @@ type SlackRegistrationModel struct {
 	EventType     string                                `json:"eventType,omitempty"`
 	WebhookUrl    string                                `json:"webhookUrl,omitempty"`
 	ChannelLabel  string                                `json:"channelLabel,omitempty"`
-	Subunits      []SlackRegistrationModelSubunitsInner `json:"subunits,omitempty"`
+	Subunits      []SlackRegistrationModelSubunitsInner `json:"subunits"`
 	Timezone      string                                `json:"timezone,omitempty"`
 	DailySendTime string                                `json:"dailySendTime,omitempty"`
-	Active        bool                                  `json:"active,omitempty"`
+	Active        bool                                  `json:"active"`
 }

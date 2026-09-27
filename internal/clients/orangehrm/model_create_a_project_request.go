@@ -11,5 +11,5 @@ type CreateAProjectRequest struct {
 	CustomerId              int32   `json:"customerId,omitempty"`
 	Name                    string  `json:"name,omitempty"`
 	Description             string  `json:"description,omitempty"`
-	ProjectAdminsEmpNumbers []int32 `json:"projectAdminsEmpNumbers,omitempty"`
+	ProjectAdminsEmpNumbers []int32 `json:"projectAdminsEmpNumbers"`
 }

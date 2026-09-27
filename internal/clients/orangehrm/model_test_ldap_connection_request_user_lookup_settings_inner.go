@@ -13,5 +13,5 @@ type TestLdapConnectionRequestUserLookupSettingsInner struct {
 	UserNameAttribute       string      `json:"userNameAttribute,omitempty"`
 	UserSearchFilter        string      `json:"userSearchFilter,omitempty"`
 	UserUniqueIdAttribute   string      `json:"userUniqueIdAttribute,omitempty"`
-	EmployeeSelectorMapping interface{} `json:"employeeSelectorMapping,omitempty"`
+	EmployeeSelectorMapping interface{} `json:"employeeSelectorMapping"`
 }

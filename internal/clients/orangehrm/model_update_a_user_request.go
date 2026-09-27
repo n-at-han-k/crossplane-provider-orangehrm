@@ -10,7 +10,7 @@ package orangehrm
 type UpdateAUserRequest struct {
 	Username   string `json:"username,omitempty"`
 	Password   string `json:"password,omitempty"`
-	Status     bool   `json:"status,omitempty"`
+	Status     bool   `json:"status"`
 	UserRoleId int32  `json:"userRoleId,omitempty"`
 	EmpNumber  int32  `json:"empNumber,omitempty"`
 }

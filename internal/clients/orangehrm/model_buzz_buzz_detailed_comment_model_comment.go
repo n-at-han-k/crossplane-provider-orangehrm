@@ -11,7 +11,7 @@ type BuzzBuzzDetailedCommentModelComment struct {
 	Id          int32  `json:"id,omitempty"`
 	Text        string `json:"text,omitempty"`
 	NumOfLikes  int32  `json:"numOfLikes,omitempty"`
-	Liked       bool   `json:"liked,omitempty"`
+	Liked       bool   `json:"liked"`
 	CreatedDate string `json:"createdDate,omitempty"`
 	CreatedTime string `json:"createdTime,omitempty"`
 }

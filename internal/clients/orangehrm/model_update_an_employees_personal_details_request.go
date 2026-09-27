@@ -22,6 +22,6 @@ type UpdateAnEmployeesPersonalDetailsRequest struct {
 	Birthday                  string `json:"birthday,omitempty"`
 	NationalityId             int32  `json:"nationalityId,omitempty"`
 	Nickname                  string `json:"nickname,omitempty"`
-	Smoker                    bool   `json:"smoker,omitempty"`
+	Smoker                    bool   `json:"smoker"`
 	MilitaryService           string `json:"militaryService,omitempty"`
 }

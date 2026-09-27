@@ -11,5 +11,5 @@ type ClaimExpenseTypeModel struct {
 	Id          int32  `json:"id,omitempty"`
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
-	Status      bool   `json:"status,omitempty"`
+	Status      bool   `json:"status"`
 }

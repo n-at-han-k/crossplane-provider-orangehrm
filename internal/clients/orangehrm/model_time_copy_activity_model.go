@@ -10,5 +10,5 @@ package orangehrm
 type TimeCopyActivityModel struct {
 	Id     int32  `json:"id,omitempty"`
 	Name   string `json:"name,omitempty"`
-	Unique bool   `json:"unique,omitempty"`
+	Unique bool   `json:"unique"`
 }

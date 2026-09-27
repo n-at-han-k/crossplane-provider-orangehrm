@@ -8,15 +8,15 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type UpdateAModuleRequest struct {
-	Admin       bool `json:"admin,omitempty"`
-	Pim         bool `json:"pim,omitempty"`
-	Leave       bool `json:"leave,omitempty"`
-	Time        bool `json:"time,omitempty"`
-	Recruitment bool `json:"recruitment,omitempty"`
-	Performance bool `json:"performance,omitempty"`
-	Maintenance bool `json:"maintenance,omitempty"`
-	Mobile      bool `json:"mobile,omitempty"`
-	Directory   bool `json:"directory,omitempty"`
-	Claim       bool `json:"claim,omitempty"`
-	Buzz        bool `json:"buzz,omitempty"`
+	Admin       bool `json:"admin"`
+	Pim         bool `json:"pim"`
+	Leave       bool `json:"leave"`
+	Time        bool `json:"time"`
+	Recruitment bool `json:"recruitment"`
+	Performance bool `json:"performance"`
+	Maintenance bool `json:"maintenance"`
+	Mobile      bool `json:"mobile"`
+	Directory   bool `json:"directory"`
+	Claim       bool `json:"claim"`
+	Buzz        bool `json:"buzz"`
 }

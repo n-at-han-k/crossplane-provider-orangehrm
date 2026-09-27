@@ -12,7 +12,7 @@ type RecruitmentCandidateInterviewModel struct {
 	Name          string                                           `json:"name,omitempty"`
 	Candidate     RecruitmentCandidateHistoryDefaultModelCandidate `json:"candidate,omitempty"`
 	Vacancy       ClaimEmployeeClaimRequestModelClaimEvent         `json:"vacancy,omitempty"`
-	Interviewers  []GetMyTimeAtWork200ResponseMetaCurrentUser      `json:"interviewers,omitempty"`
+	Interviewers  []GetMyTimeAtWork200ResponseMetaCurrentUser      `json:"interviewers"`
 	InterviewDate string                                           `json:"interviewDate,omitempty"`
 	InterviewTime string                                           `json:"interviewTime,omitempty"`
 	Note          string                                           `json:"note,omitempty"`

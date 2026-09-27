@@ -17,5 +17,5 @@ type PimEmployeeDetailedModel struct {
 	JobTitle      PimEmployeeDetailedModelJobTitle           `json:"jobTitle,omitempty"`
 	Subunit       PimEmployeeDetailedModelSubunit            `json:"subunit,omitempty"`
 	EmpStatus     PimEmployeeDetailedModelEmpStatus          `json:"empStatus,omitempty"`
-	Supervisors   []PimEmployeeDetailedModelSupervisorsInner `json:"supervisors,omitempty"`
+	Supervisors   []PimEmployeeDetailedModelSupervisorsInner `json:"supervisors"`
 }

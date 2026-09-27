@@ -12,6 +12,6 @@ type RecruitmentVacancyModel struct {
 	Name           string `json:"name,omitempty"`
 	Description    string `json:"description,omitempty"`
 	NumOfPositions int32  `json:"numOfPositions,omitempty"`
-	Status         bool   `json:"status,omitempty"`
-	IsPublished    bool   `json:"isPublished,omitempty"`
+	Status         bool   `json:"status"`
+	IsPublished    bool   `json:"isPublished"`
 }

@@ -10,7 +10,7 @@ package orangehrm
 type EditAPostRequest struct {
 	Text          string                                `json:"text,omitempty"`
 	Type          string                                `json:"type,omitempty"`
-	DeletedPhotos []BuzzPostPhotoEditDeletedPhotosInner `json:"deletedPhotos,omitempty"`
-	Photos        []Base64Attachment                    `json:"photos,omitempty"`
+	DeletedPhotos []BuzzPostPhotoEditDeletedPhotosInner `json:"deletedPhotos"`
+	Photos        []Base64Attachment                    `json:"photos"`
 	Link          string                                `json:"link,omitempty"`
 }

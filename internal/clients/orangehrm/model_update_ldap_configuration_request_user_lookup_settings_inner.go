@@ -13,5 +13,5 @@ type UpdateLdapConfigurationRequestUserLookupSettingsInner struct {
 	UserNameAttribute       string                                                                              `json:"userNameAttribute,omitempty"`
 	UserSearchFilter        string                                                                              `json:"userSearchFilter,omitempty"`
 	UserUniqueIdAttribute   string                                                                              `json:"userUniqueIdAttribute,omitempty"`
-	EmployeeSelectorMapping []UpdateLdapConfigurationRequestUserLookupSettingsInnerEmployeeSelectorMappingInner `json:"employeeSelectorMapping,omitempty"`
+	EmployeeSelectorMapping []UpdateLdapConfigurationRequestUserLookupSettingsInnerEmployeeSelectorMappingInner `json:"employeeSelectorMapping"`
 }

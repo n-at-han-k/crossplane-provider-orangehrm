@@ -10,5 +10,5 @@ package orangehrm
 type UpdateMyTimesheetEntriesRequestEntries struct {
 	ProjectId  int32                                                       `json:"projectId,omitempty"`
 	ActivityId int32                                                       `json:"activityId,omitempty"`
-	Dates      map[string]UpdateMyTimesheetEntriesRequestEntriesDatesValue `json:"dates,omitempty"`
+	Dates      map[string]UpdateMyTimesheetEntriesRequestEntriesDatesValue `json:"dates"`
 }

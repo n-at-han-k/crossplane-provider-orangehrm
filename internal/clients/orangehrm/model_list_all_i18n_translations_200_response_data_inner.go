@@ -9,8 +9,8 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type ListAllI18nTranslations200ResponseDataInner struct {
 	LangStringId int32 `json:"langStringId,omitempty"`
-	Source       bool  `json:"source,omitempty"`
-	Note         bool  `json:"note,omitempty"`
-	Target       bool  `json:"target,omitempty"`
-	Module       bool  `json:"module,omitempty"`
+	Source       bool  `json:"source"`
+	Note         bool  `json:"note"`
+	Target       bool  `json:"target"`
+	Module       bool  `json:"module"`
 }

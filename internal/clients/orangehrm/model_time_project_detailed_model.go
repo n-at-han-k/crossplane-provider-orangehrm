@@ -12,6 +12,6 @@ type TimeProjectDetailedModel struct {
 	Name          string                                      `json:"name,omitempty"`
 	Description   interface{}                                 `json:"description,omitempty"`
 	Customer      DashboardEmployeeOnLeaveListModelLeaveType  `json:"customer,omitempty"`
-	Deleted       bool                                        `json:"deleted,omitempty"`
-	ProjectAdmins []GetMyTimeAtWork200ResponseMetaCurrentUser `json:"projectAdmins,omitempty"`
+	Deleted       bool                                        `json:"deleted"`
+	ProjectAdmins []GetMyTimeAtWork200ResponseMetaCurrentUser `json:"projectAdmins"`
 }

@@ -13,6 +13,6 @@ type PerformanceKpiModel struct {
 	JobTitle  DashboardEmployeeOnLeaveListModelLeaveType `json:"jobTitle,omitempty"`
 	MinRating int32                                      `json:"minRating,omitempty"`
 	MaxRating int32                                      `json:"maxRating,omitempty"`
-	IsDefault bool                                       `json:"isDefault,omitempty"`
-	Deletable bool                                       `json:"deletable,omitempty"`
+	IsDefault bool                                       `json:"isDefault"`
+	Deletable bool                                       `json:"deletable"`
 }

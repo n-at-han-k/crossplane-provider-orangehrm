@@ -14,6 +14,6 @@ type PerformanceDetailedPerformanceTrackerModel struct {
 	ModifiedDate  float32                                           `json:"modifiedDate,omitempty"`
 	Status        int32                                             `json:"status,omitempty"`
 	Employee      GetAnEmployeesClaimRequest200ResponseMetaEmployee `json:"employee,omitempty"`
-	Reviewers     []PerformancePerformanceTrackReviewerModel        `json:"reviewers,omitempty"`
-	OwnerEditable bool                                              `json:"ownerEditable,omitempty"`
+	Reviewers     []PerformancePerformanceTrackReviewerModel        `json:"reviewers"`
+	OwnerEditable bool                                              `json:"ownerEditable"`
 }

@@ -11,5 +11,5 @@ type GetTimeReportData200ResponseMetaProject struct {
 	Id          int32  `json:"id,omitempty"`
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
-	Deleted     bool   `json:"deleted,omitempty"`
+	Deleted     bool   `json:"deleted"`
 }

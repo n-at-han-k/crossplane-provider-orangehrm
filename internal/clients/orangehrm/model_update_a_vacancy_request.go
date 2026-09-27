@@ -9,7 +9,7 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type UpdateAVacancyRequest struct {
 	Name           string `json:"name,omitempty"`
-	Status         bool   `json:"status,omitempty"`
+	Status         bool   `json:"status"`
 	JobTitleId     int32  `json:"jobTitleId,omitempty"`
 	IsPublished    bool   `json:"isPublished,omitempty"`
 	Description    string `json:"description,omitempty"`

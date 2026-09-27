@@ -17,5 +17,5 @@ type CreateACandidateRequest struct {
 	Keywords          string `json:"keywords,omitempty"`
 	Comment           string `json:"comment,omitempty"`
 	DateOfApplication string `json:"dateOfApplication,omitempty"`
-	ConsentToKeepData bool   `json:"consentToKeepData,omitempty"`
+	ConsentToKeepData bool   `json:"consentToKeepData"`
 }

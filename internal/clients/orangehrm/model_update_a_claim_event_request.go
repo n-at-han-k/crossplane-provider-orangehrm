@@ -10,5 +10,5 @@ package orangehrm
 type UpdateAClaimEventRequest struct {
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
-	Status      bool   `json:"status,omitempty"`
+	Status      bool   `json:"status"`
 }

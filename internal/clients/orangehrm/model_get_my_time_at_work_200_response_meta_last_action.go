@@ -10,8 +10,8 @@ package orangehrm
 type GetMyTimeAtWork200ResponseMetaLastAction struct {
 	State          string `json:"state,omitempty"`
 	UtcDate        string `json:"utcDate,omitempty"`
-	UtcTime        bool   `json:"utcTime,omitempty"`
+	UtcTime        bool   `json:"utcTime"`
 	UserDate       string `json:"userDate,omitempty"`
 	UserTime       string `json:"userTime,omitempty"`
-	TimezoneOffset bool   `json:"timezoneOffset,omitempty"`
+	TimezoneOffset bool   `json:"timezoneOffset"`
 }

@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type ListMobileMenuItems200ResponseDataInner struct {
 	Name     string                                                 `json:"name,omitempty"`
-	Children []ListMobileMenuItems200ResponseDataInnerChildrenInner `json:"children,omitempty"`
+	Children []ListMobileMenuItems200ResponseDataInnerChildrenInner `json:"children"`
 }

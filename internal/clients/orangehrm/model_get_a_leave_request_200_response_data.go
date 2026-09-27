@@ -13,11 +13,11 @@ type GetALeaveRequest200ResponseData struct {
 	DateApplied       float32                                                   `json:"dateApplied,omitempty"`
 	Dates             LeaveLeaveRequestDetailedModelDates                       `json:"dates,omitempty"`
 	NoOfDays          int32                                                     `json:"noOfDays,omitempty"`
-	LeaveBalances     []LeaveLeaveRequestDetailedModelLeaveBalancesInner        `json:"leaveBalances,omitempty"`
-	MultiPeriod       bool                                                      `json:"multiPeriod,omitempty"`
+	LeaveBalances     []LeaveLeaveRequestDetailedModelLeaveBalancesInner        `json:"leaveBalances"`
+	MultiPeriod       bool                                                      `json:"multiPeriod"`
 	LeaveBreakdown    LeaveLeaveRequestDetailedModelLeaveBreakdown              `json:"leaveBreakdown,omitempty"`
-	AllowedActions    []GetATimesheetsEntries200ResponseMetaAllowedActionsInner `json:"allowedActions,omitempty"`
-	HasMultipleStatus bool                                                      `json:"hasMultipleStatus,omitempty"`
+	AllowedActions    []GetATimesheetsEntries200ResponseMetaAllowedActionsInner `json:"allowedActions"`
+	HasMultipleStatus bool                                                      `json:"hasMultipleStatus"`
 	Employee          GetAnEmployeesClaimRequest200ResponseMetaEmployee         `json:"employee,omitempty"`
 	LastComment       LeaveLeaveRequestDetailedModelLastComment                 `json:"lastComment,omitempty"`
 }

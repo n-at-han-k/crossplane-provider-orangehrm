@@ -9,7 +9,7 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type ImportEmployeeRecords200ResponseMeta struct {
 	Failed     int32   `json:"failed,omitempty"`
-	FailedRows []int32 `json:"failedRows,omitempty"`
+	FailedRows []int32 `json:"failedRows"`
 	Success    int32   `json:"success,omitempty"`
 	Total      int32   `json:"total,omitempty"`
 }

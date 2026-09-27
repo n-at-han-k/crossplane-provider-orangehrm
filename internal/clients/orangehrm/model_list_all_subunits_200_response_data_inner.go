@@ -15,5 +15,5 @@ type ListAllSubunits200ResponseDataInner struct {
 	Level       int32                                `json:"level,omitempty"`
 	Left        int32                                `json:"left,omitempty"`
 	Right       int32                                `json:"right,omitempty"`
-	Children    []AdminSubunitTreeModelChildrenInner `json:"children,omitempty"`
+	Children    []AdminSubunitTreeModelChildrenInner `json:"children"`
 }

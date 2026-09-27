@@ -12,9 +12,9 @@ type LeaveLeaveDetailedModel struct {
 	Dates          LeaveLeaveDetailedModelDates               `json:"dates,omitempty"`
 	EndTime        string                                     `json:"endTime,omitempty"`
 	LengthHours    int32                                      `json:"lengthHours,omitempty"`
-	LeaveBalance   interface{}                                `json:"leaveBalance,omitempty"`
-	LeaveStatus    interface{}                                `json:"leaveStatus,omitempty"`
-	AllowedActions interface{}                                `json:"allowedActions,omitempty"`
+	LeaveBalance   interface{}                                `json:"leaveBalance"`
+	LeaveStatus    interface{}                                `json:"leaveStatus"`
+	AllowedActions interface{}                                `json:"allowedActions"`
 	LeaveType      DashboardEmployeeOnLeaveListModelLeaveType `json:"leaveType,omitempty"`
 	LastComment    LeaveLeaveDetailedModelLastComment         `json:"lastComment,omitempty"`
 }

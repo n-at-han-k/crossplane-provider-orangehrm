@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type GetLdapConfiguration200Response struct {
 	Data LdapLdapConfigModel `json:"data,omitempty"`
-	Meta interface{}         `json:"meta,omitempty"`
+	Meta interface{}         `json:"meta"`
 }

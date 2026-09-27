@@ -13,5 +13,5 @@ type CreateAPerformanceReviewRequest struct {
 	StartDate         float32 `json:"startDate,omitempty"`
 	EndDate           float32 `json:"endDate,omitempty"`
 	DueDate           float32 `json:"dueDate,omitempty"`
-	Activate          bool    `json:"activate,omitempty"`
+	Activate          bool    `json:"activate"`
 }

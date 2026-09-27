@@ -14,5 +14,5 @@ type UpdateAnEmployeesSalaryComponentRequest struct {
 	CurrencyId       string `json:"currencyId,omitempty"`
 	SalaryAmount     string `json:"salaryAmount,omitempty"`
 	Comment          string `json:"comment,omitempty"`
-	AddDirectDeposit bool   `json:"addDirectDeposit,omitempty"`
+	AddDirectDeposit bool   `json:"addDirectDeposit"`
 }

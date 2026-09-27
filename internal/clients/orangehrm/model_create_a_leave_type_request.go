@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type CreateALeaveTypeRequest struct {
 	Name        string `json:"name,omitempty"`
-	Situational bool   `json:"situational,omitempty"`
+	Situational bool   `json:"situational"`
 }

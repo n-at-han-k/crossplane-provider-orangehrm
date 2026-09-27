@@ -12,8 +12,8 @@ type CreateWorkspaceNotificationRegistrationRequest struct {
 	Provider      string  `json:"provider,omitempty"`
 	WebhookUrl    string  `json:"webhookUrl,omitempty"`
 	ChannelLabel  string  `json:"channelLabel,omitempty"`
-	SubunitIds    []int32 `json:"subunitIds,omitempty"`
+	SubunitIds    []int32 `json:"subunitIds"`
 	Timezone      string  `json:"timezone,omitempty"`
 	DailySendTime string  `json:"dailySendTime,omitempty"`
-	Active        bool    `json:"active,omitempty"`
+	Active        bool    `json:"active"`
 }

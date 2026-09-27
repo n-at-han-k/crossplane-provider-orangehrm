@@ -8,7 +8,7 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type UpdateTheEmployeesEvaluationInAReviewRequest struct {
-	Reviewers      []UpdateTheEmployeesEvaluationInAReviewRequestReviewersInner `json:"reviewers,omitempty"`
+	Reviewers      []UpdateTheEmployeesEvaluationInAReviewRequestReviewersInner `json:"reviewers"`
 	GeneralComment string                                                       `json:"generalComment,omitempty"`
-	Complete       bool                                                         `json:"complete,omitempty"`
+	Complete       bool                                                         `json:"complete"`
 }

@@ -17,5 +17,5 @@ type GetMyDetails200ResponseData struct {
 	JobTitle      interface{}                                `json:"jobTitle,omitempty"`
 	Subunit       interface{}                                `json:"subunit,omitempty"`
 	EmpStatus     PimEmployeeDetailedModelEmpStatus          `json:"empStatus,omitempty"`
-	Supervisors   []PimEmployeeDetailedModelSupervisorsInner `json:"supervisors,omitempty"`
+	Supervisors   []PimEmployeeDetailedModelSupervisorsInner `json:"supervisors"`
 }

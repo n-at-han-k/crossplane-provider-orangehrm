@@ -12,6 +12,6 @@ type OAuthOAuthClientModel struct {
 	Name         string `json:"name,omitempty"`
 	ClientId     string `json:"clientId,omitempty"`
 	RedirectUri  string `json:"redirectUri,omitempty"`
-	Enabled      bool   `json:"enabled,omitempty"`
-	Confidential bool   `json:"confidential,omitempty"`
+	Enabled      bool   `json:"enabled"`
+	Confidential bool   `json:"confidential"`
 }

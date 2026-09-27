@@ -11,13 +11,13 @@ type BuzzFeedPostModelPhoto struct {
 	Id           int32                                             `json:"id,omitempty"`
 	Post         BuzzPostPhotoEditDeletedPhotosInner               `json:"post,omitempty"`
 	Type         string                                            `json:"type,omitempty"`
-	Liked        bool                                              `json:"liked,omitempty"`
+	Liked        bool                                              `json:"liked"`
 	Text         string                                            `json:"text,omitempty"`
 	Employee     GetAnEmployeesClaimRequest200ResponseMetaEmployee `json:"employee,omitempty"`
 	Stats        BuzzFeedPostModelTextStats                        `json:"stats,omitempty"`
 	CreatedDate  string                                            `json:"createdDate,omitempty"`
 	CreatedTime  string                                            `json:"createdTime,omitempty"`
-	OriginalPost interface{}                                       `json:"originalPost,omitempty"`
+	OriginalPost interface{}                                       `json:"originalPost"`
 	Permission   BuzzBuzzDetailedCommentModelPermission            `json:"permission,omitempty"`
-	PhotoIds     []int32                                           `json:"photoIds,omitempty"`
+	PhotoIds     []int32                                           `json:"photoIds"`
 }

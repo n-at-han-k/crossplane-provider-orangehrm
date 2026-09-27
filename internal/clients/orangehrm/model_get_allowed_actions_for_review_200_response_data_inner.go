@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type GetAllowedActionsForReview200ResponseDataInner struct {
 	Id    int32 `json:"id,omitempty"`
-	Label bool  `json:"label,omitempty"`
+	Label bool  `json:"label"`
 }

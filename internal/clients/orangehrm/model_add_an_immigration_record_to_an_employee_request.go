@@ -16,5 +16,5 @@ type AddAnImmigrationRecordToAnEmployeeRequest struct {
 	ReviewDate                string `json:"reviewDate,omitempty"`
 	CountryCode               string `json:"countryCode,omitempty"`
 	Comment                   string `json:"comment,omitempty"`
-	AdditionalPropertiesField bool   `json:"additionalProperties,omitempty"`
+	AdditionalPropertiesField bool   `json:"additionalProperties"`
 }

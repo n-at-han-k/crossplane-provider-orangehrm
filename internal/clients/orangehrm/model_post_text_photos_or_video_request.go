@@ -10,6 +10,6 @@ package orangehrm
 type PostTextPhotosOrVideoRequest struct {
 	Text   string             `json:"text,omitempty"`
 	Type   string             `json:"type,omitempty"`
-	Photos []Base64Attachment `json:"photos,omitempty"`
+	Photos []Base64Attachment `json:"photos"`
 	Link   string             `json:"link,omitempty"`
 }

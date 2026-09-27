@@ -12,5 +12,5 @@ type TimeDetailedTimesheetModel struct {
 	Customer DashboardEmployeeOnLeaveListModelLeaveType         `json:"customer,omitempty"`
 	Activity DashboardEmployeeOnLeaveListModelLeaveType         `json:"activity,omitempty"`
 	Total    ListAnEmployeesAttendanceRecords200ResponseMetaSum `json:"total,omitempty"`
-	Dates    map[string]TimeDetailedTimesheetModelDatesValue    `json:"dates,omitempty"`
+	Dates    map[string]TimeDetailedTimesheetModelDatesValue    `json:"dates"`
 }

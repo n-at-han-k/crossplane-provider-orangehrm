@@ -11,5 +11,5 @@ type AdminEmailSubscriptionModel struct {
 	Id          int32                                  `json:"id,omitempty"`
 	Name        string                                 `json:"name,omitempty"`
 	Subscribers AdminEmailSubscriptionModelSubscribers `json:"subscribers,omitempty"`
-	IsEnabled   bool                                   `json:"isEnabled,omitempty"`
+	IsEnabled   bool                                   `json:"isEnabled"`
 }

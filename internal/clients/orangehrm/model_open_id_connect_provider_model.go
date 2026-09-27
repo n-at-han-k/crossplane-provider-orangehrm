@@ -11,6 +11,6 @@ type OpenIdConnectProviderModel struct {
 	Id           int32  `json:"id,omitempty"`
 	ProviderName string `json:"providerName,omitempty"`
 	ProviderUrl  string `json:"providerUrl,omitempty"`
-	Status       bool   `json:"status,omitempty"`
+	Status       bool   `json:"status"`
 	ClientId     string `json:"clientId,omitempty"`
 }

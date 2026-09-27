@@ -10,8 +10,8 @@ package orangehrm
 type AdminUserModel struct {
 	Id       int32                                             `json:"id,omitempty"`
 	UserName string                                            `json:"userName,omitempty"`
-	Deleted  bool                                              `json:"deleted,omitempty"`
-	Status   bool                                              `json:"status,omitempty"`
+	Deleted  bool                                              `json:"deleted"`
+	Status   bool                                              `json:"status"`
 	Employee GetAnEmployeesClaimRequest200ResponseMetaEmployee `json:"employee,omitempty"`
 	UserRole AdminUserModelUserRole                            `json:"userRole,omitempty"`
 }

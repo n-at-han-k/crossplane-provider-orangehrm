@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type GetALicense200Response struct {
 	Data AdminLicenseModel `json:"data,omitempty"`
-	Meta interface{}       `json:"meta,omitempty"`
+	Meta interface{}       `json:"meta"`
 }

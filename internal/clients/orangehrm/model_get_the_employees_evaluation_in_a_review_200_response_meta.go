@@ -10,7 +10,7 @@ package orangehrm
 type GetTheEmployeesEvaluationInAReview200ResponseMeta struct {
 	Total          int32                        `json:"total,omitempty"`
 	GeneralComment string                       `json:"generalComment,omitempty"`
-	Kpis           []PerformanceKpiSummaryModel `json:"kpis,omitempty"`
+	Kpis           []PerformanceKpiSummaryModel `json:"kpis"`
 	Reviewer       PerformanceKpiSummaryModel   `json:"reviewer,omitempty"`
-	AllowedActions []CoreWorkflowStateModel     `json:"allowedActions,omitempty"`
+	AllowedActions []CoreWorkflowStateModel     `json:"allowedActions"`
 }

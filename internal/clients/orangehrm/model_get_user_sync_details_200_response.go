@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type GetUserSyncDetails200Response struct {
 	Data LdapLdapSyncStatusModel `json:"data,omitempty"`
-	Meta interface{}             `json:"meta,omitempty"`
+	Meta interface{}             `json:"meta"`
 }

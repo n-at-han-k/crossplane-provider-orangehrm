@@ -10,7 +10,7 @@ package orangehrm
 type GetTimeReportData200ResponseDataInnerHeadersInner struct {
 	ActivityId   int32                                                `json:"activityId,omitempty"`
 	ActivityName string                                               `json:"activityName,omitempty"`
-	Deleted      bool                                                 `json:"deleted,omitempty"`
+	Deleted      bool                                                 `json:"deleted"`
 	Time         string                                               `json:"time,omitempty"`
 	Url          GetTimeReportData200ResponseDataInnerHeadersInnerUrl `json:"_url,omitempty"`
 }

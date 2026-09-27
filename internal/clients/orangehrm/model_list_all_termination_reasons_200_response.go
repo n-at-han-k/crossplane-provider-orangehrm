@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type ListAllTerminationReasons200Response struct {
 	Data PimTerminationReasonConfigurationModel `json:"data,omitempty"`
-	Meta interface{}                            `json:"meta,omitempty"`
+	Meta interface{}                            `json:"meta"`
 }

@@ -10,6 +10,6 @@ package orangehrm
 type RecruitmentVacancySummaryModel struct {
 	Id          int32  `json:"id,omitempty"`
 	Name        string `json:"name,omitempty"`
-	Status      bool   `json:"status,omitempty"`
-	IsPublished bool   `json:"isPublished,omitempty"`
+	Status      bool   `json:"status"`
+	IsPublished bool   `json:"isPublished"`
 }

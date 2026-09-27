@@ -10,5 +10,5 @@ package orangehrm
 type CreateAPerformanceTrackerRequest struct {
 	TrackerName string  `json:"trackerName,omitempty"`
 	EmpNumber   int32   `json:"empNumber,omitempty"`
-	Reviewers   []int32 `json:"reviewers,omitempty"`
+	Reviewers   []int32 `json:"reviewers"`
 }

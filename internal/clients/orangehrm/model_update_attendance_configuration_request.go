@@ -8,7 +8,7 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type UpdateAttendanceConfigurationRequest struct {
-	CanUserChangeCurrentTime      bool `json:"canUserChangeCurrentTime,omitempty"`
-	CanUserModifyAttendance       bool `json:"canUserModifyAttendance,omitempty"`
-	CanSupervisorModifyAttendance bool `json:"canSupervisorModifyAttendance,omitempty"`
+	CanUserChangeCurrentTime      bool `json:"canUserChangeCurrentTime"`
+	CanUserModifyAttendance       bool `json:"canUserModifyAttendance"`
+	CanSupervisorModifyAttendance bool `json:"canSupervisorModifyAttendance"`
 }

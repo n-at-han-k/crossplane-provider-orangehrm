@@ -12,5 +12,5 @@ type ScheduleInterviewForACandidateRequest struct {
 	InterviewDate         string  `json:"interviewDate,omitempty"`
 	InterviewTime         string  `json:"interviewTime,omitempty"`
 	Note                  string  `json:"note,omitempty"`
-	InterviewerEmpNumbers []int32 `json:"interviewerEmpNumbers,omitempty"`
+	InterviewerEmpNumbers []int32 `json:"interviewerEmpNumbers"`
 }

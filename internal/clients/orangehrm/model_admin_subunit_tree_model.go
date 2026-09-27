@@ -12,5 +12,5 @@ type AdminSubunitTreeModel struct {
 	UnitId   string                               `json:"unitId,omitempty"`
 	Name     string                               `json:"name,omitempty"`
 	Level    int32                                `json:"level,omitempty"`
-	Children []AdminSubunitTreeModelChildrenInner `json:"children,omitempty"`
+	Children []AdminSubunitTreeModelChildrenInner `json:"children"`
 }

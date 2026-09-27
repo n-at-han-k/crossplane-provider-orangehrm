@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type GetAPost200Response struct {
 	Data PostTextPhotosOrVideo200ResponseDataInner `json:"data,omitempty"`
-	Meta interface{}                               `json:"meta,omitempty"`
+	Meta interface{}                               `json:"meta"`
 }

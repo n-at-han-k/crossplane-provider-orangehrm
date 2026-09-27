@@ -12,9 +12,9 @@ type TestLdapConnectionRequest struct {
 	Port               int32                                              `json:"port,omitempty"`
 	Encryption         string                                             `json:"encryption,omitempty"`
 	LdapImplementation string                                             `json:"ldapImplementation,omitempty"`
-	BindAnonymously    bool                                               `json:"bindAnonymously,omitempty"`
+	BindAnonymously    bool                                               `json:"bindAnonymously"`
 	BindUserDN         string                                             `json:"bindUserDN,omitempty"`
 	BindUserPassword   string                                             `json:"bindUserPassword,omitempty"`
-	UserLookupSettings []TestLdapConnectionRequestUserLookupSettingsInner `json:"userLookupSettings,omitempty"`
+	UserLookupSettings []TestLdapConnectionRequestUserLookupSettingsInner `json:"userLookupSettings"`
 	DataMapping        UpdateLdapConfigurationRequestDataMapping          `json:"dataMapping,omitempty"`
 }

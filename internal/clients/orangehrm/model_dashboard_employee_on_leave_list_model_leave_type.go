@@ -10,5 +10,5 @@ package orangehrm
 type DashboardEmployeeOnLeaveListModelLeaveType struct {
 	Id      int32  `json:"id,omitempty"`
 	Name    string `json:"name,omitempty"`
-	Deleted bool   `json:"deleted,omitempty"`
+	Deleted bool   `json:"deleted"`
 }

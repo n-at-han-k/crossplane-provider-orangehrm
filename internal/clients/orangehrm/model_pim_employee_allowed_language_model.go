@@ -10,5 +10,5 @@ package orangehrm
 type PimEmployeeAllowedLanguageModel struct {
 	Id                int32   `json:"id,omitempty"`
 	Name              string  `json:"name,omitempty"`
-	AllowedFluencyIds []int32 `json:"allowedFluencyIds,omitempty"`
+	AllowedFluencyIds []int32 `json:"allowedFluencyIds"`
 }

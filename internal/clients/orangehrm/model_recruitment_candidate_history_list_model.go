@@ -14,6 +14,6 @@ type RecruitmentCandidateHistoryListModel struct {
 	PerformedBy   GetMyTimeAtWork200ResponseMetaCurrentUser         `json:"performedBy,omitempty"`
 	PerformedDate string                                            `json:"performedDate,omitempty"`
 	Note          string                                            `json:"note,omitempty"`
-	Editable      bool                                              `json:"editable,omitempty"`
+	Editable      bool                                              `json:"editable"`
 	Interview     RecruitmentCandidateHistoryListModelInterview     `json:"interview,omitempty"`
 }

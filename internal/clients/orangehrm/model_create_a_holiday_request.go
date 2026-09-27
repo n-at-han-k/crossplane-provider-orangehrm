@@ -11,5 +11,5 @@ type CreateAHolidayRequest struct {
 	Date      string `json:"date,omitempty"`
 	Length    int32  `json:"length,omitempty"`
 	Name      string `json:"name,omitempty"`
-	Recurring bool   `json:"recurring,omitempty"`
+	Recurring bool   `json:"recurring"`
 }

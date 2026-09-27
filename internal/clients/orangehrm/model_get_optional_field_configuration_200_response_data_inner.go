@@ -8,8 +8,8 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type GetOptionalFieldConfiguration200ResponseDataInner struct {
-	PimShowDeprecatedFields bool `json:"pimShowDeprecatedFields,omitempty"`
-	ShowSSN                 bool `json:"showSSN,omitempty"`
-	ShowSIN                 bool `json:"showSIN,omitempty"`
-	ShowTaxExemptions       bool `json:"showTaxExemptions,omitempty"`
+	PimShowDeprecatedFields bool `json:"pimShowDeprecatedFields"`
+	ShowSSN                 bool `json:"showSSN"`
+	ShowSIN                 bool `json:"showSIN"`
+	ShowTaxExemptions       bool `json:"showTaxExemptions"`
 }

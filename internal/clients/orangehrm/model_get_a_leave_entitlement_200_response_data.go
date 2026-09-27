@@ -17,7 +17,7 @@ type GetALeaveEntitlement200ResponseData struct {
 	ToDate          interface{}                                       `json:"toDate,omitempty"`
 	CreditedDate    float32                                           `json:"creditedDate,omitempty"`
 	EntitlementType ClaimEmployeeClaimRequestModelClaimEvent          `json:"entitlementType,omitempty"`
-	Deleted         bool                                              `json:"deleted,omitempty"`
-	Deletable       bool                                              `json:"deletable,omitempty"`
+	Deleted         bool                                              `json:"deleted"`
+	Deletable       bool                                              `json:"deletable"`
 	UsageBreakdown  LeaveLeaveEntitlementSummaryModelUsageBreakdown   `json:"usageBreakdown,omitempty"`
 }

@@ -8,10 +8,10 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type GetQuickLaunchShortcuts200ResponseData struct {
-	LeaveAssignLeave      bool `json:"leave.assign_leave,omitempty"`
-	LeaveLeaveList        bool `json:"leave.leave_list,omitempty"`
-	LeaveApplyLeave       bool `json:"leave.apply_leave,omitempty"`
-	LeaveMyLeave          bool `json:"leave.my_leave,omitempty"`
-	TimeEmployeeTimesheet bool `json:"time.employee_timesheet,omitempty"`
-	TimeMyTimesheet       bool `json:"time.my_timesheet,omitempty"`
+	LeaveAssignLeave      bool `json:"leave.assign_leave"`
+	LeaveLeaveList        bool `json:"leave.leave_list"`
+	LeaveApplyLeave       bool `json:"leave.apply_leave"`
+	LeaveMyLeave          bool `json:"leave.my_leave"`
+	TimeEmployeeTimesheet bool `json:"time.employee_timesheet"`
+	TimeMyTimesheet       bool `json:"time.my_timesheet"`
 }

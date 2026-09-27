@@ -12,5 +12,5 @@ type UpdateAKpiRequest struct {
 	JobTitleId int32  `json:"jobTitleId,omitempty"`
 	MinRating  int32  `json:"minRating,omitempty"`
 	MaxRating  int32  `json:"maxRating,omitempty"`
-	IsDefault  bool   `json:"isDefault,omitempty"`
+	IsDefault  bool   `json:"isDefault"`
 }

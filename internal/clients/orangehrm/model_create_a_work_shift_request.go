@@ -12,5 +12,5 @@ type CreateAWorkShiftRequest struct {
 	HoursPerDay string  `json:"hoursPerDay,omitempty"`
 	StartTime   string  `json:"startTime,omitempty"`
 	EndTime     string  `json:"endTime,omitempty"`
-	EmpNumbers  []int32 `json:"empNumbers,omitempty"`
+	EmpNumbers  []int32 `json:"empNumbers"`
 }

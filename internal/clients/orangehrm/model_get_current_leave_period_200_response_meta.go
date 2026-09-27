@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type GetCurrentLeavePeriod200ResponseMeta struct {
 	CurrentLeavePeriod LeaveLeavePeriodModel `json:"currentLeavePeriod,omitempty"`
-	LeavePeriodDefined bool                  `json:"leavePeriodDefined,omitempty"`
+	LeavePeriodDefined bool                  `json:"leavePeriodDefined"`
 }

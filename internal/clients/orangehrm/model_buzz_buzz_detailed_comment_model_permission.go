@@ -8,6 +8,6 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type BuzzBuzzDetailedCommentModelPermission struct {
-	CanUpdate bool `json:"canUpdate,omitempty"`
-	CanDelete bool `json:"canDelete,omitempty"`
+	CanUpdate bool `json:"canUpdate"`
+	CanDelete bool `json:"canDelete"`
 }

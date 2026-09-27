@@ -10,8 +10,8 @@ package orangehrm
 type GetATimesheetsEntries200ResponseMeta struct {
 	Timesheet      GetATimesheetsEntries200ResponseMetaTimesheet               `json:"timesheet,omitempty"`
 	Sum            ListAnEmployeesAttendanceRecords200ResponseMetaSum          `json:"sum,omitempty"`
-	Columns        map[string]GetATimesheetsEntries200ResponseMetaColumnsValue `json:"columns,omitempty"`
-	Dates          []string                                                    `json:"dates,omitempty"`
+	Columns        map[string]GetATimesheetsEntries200ResponseMetaColumnsValue `json:"columns"`
+	Dates          []string                                                    `json:"dates"`
 	Employee       GetAnEmployeesClaimRequest200ResponseMetaEmployee           `json:"employee,omitempty"`
-	AllowedActions []GetATimesheetsEntries200ResponseMetaAllowedActionsInner   `json:"allowedActions,omitempty"`
+	AllowedActions []GetATimesheetsEntries200ResponseMetaAllowedActionsInner   `json:"allowedActions"`
 }

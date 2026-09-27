@@ -10,5 +10,5 @@ package orangehrm
 type CreateAnOauthClientRequest struct {
 	Name        string `json:"name,omitempty"`
 	RedirectUri string `json:"redirectUri,omitempty"`
-	Enabled     bool   `json:"enabled,omitempty"`
+	Enabled     bool   `json:"enabled"`
 }

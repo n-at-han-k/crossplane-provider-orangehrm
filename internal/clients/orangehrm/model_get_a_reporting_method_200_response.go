@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type GetAReportingMethod200Response struct {
 	Data PimReportingMethodConfigurationModel `json:"data,omitempty"`
-	Meta interface{}                          `json:"meta,omitempty"`
+	Meta interface{}                          `json:"meta"`
 }

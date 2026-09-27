@@ -8,5 +8,5 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type UpdateOptionalFieldConfiguration200Response struct {
-	Data []GetOptionalFieldConfiguration200ResponseDataInner `json:"data,omitempty"`
+	Data []GetOptionalFieldConfiguration200ResponseDataInner `json:"data"`
 }

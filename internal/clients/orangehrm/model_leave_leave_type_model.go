@@ -10,6 +10,6 @@ package orangehrm
 type LeaveLeaveTypeModel struct {
 	Id          int32  `json:"id,omitempty"`
 	Name        string `json:"name,omitempty"`
-	Deleted     bool   `json:"deleted,omitempty"`
-	Situational bool   `json:"situational,omitempty"`
+	Deleted     bool   `json:"deleted"`
+	Situational bool   `json:"situational"`
 }

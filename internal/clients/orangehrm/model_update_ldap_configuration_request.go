@@ -8,16 +8,16 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type UpdateLdapConfigurationRequest struct {
-	Enable                                bool                                                    `json:"enable,omitempty"`
+	Enable                                bool                                                    `json:"enable"`
 	Hostname                              string                                                  `json:"hostname,omitempty"`
 	Port                                  int32                                                   `json:"port,omitempty"`
 	Encryption                            string                                                  `json:"encryption,omitempty"`
 	LdapImplementation                    string                                                  `json:"ldapImplementation,omitempty"`
-	BindAnonymously                       bool                                                    `json:"bindAnonymously,omitempty"`
+	BindAnonymously                       bool                                                    `json:"bindAnonymously"`
 	BindUserDN                            string                                                  `json:"bindUserDN,omitempty"`
 	BindUserPassword                      string                                                  `json:"bindUserPassword,omitempty"`
-	UserLookupSettings                    []UpdateLdapConfigurationRequestUserLookupSettingsInner `json:"userLookupSettings,omitempty"`
+	UserLookupSettings                    []UpdateLdapConfigurationRequestUserLookupSettingsInner `json:"userLookupSettings"`
 	DataMapping                           UpdateLdapConfigurationRequestDataMapping               `json:"dataMapping,omitempty"`
-	MergeLDAPUsersWithExistingSystemUsers bool                                                    `json:"mergeLDAPUsersWithExistingSystemUsers,omitempty"`
+	MergeLDAPUsersWithExistingSystemUsers bool                                                    `json:"mergeLDAPUsersWithExistingSystemUsers"`
 	SyncInterval                          string                                                  `json:"syncInterval,omitempty"`
 }

@@ -10,5 +10,5 @@ package orangehrm
 type AdminPayGradeModel struct {
 	Id         int32                                    `json:"id,omitempty"`
 	Name       string                                   `json:"name,omitempty"`
-	Currencies []AdminPayGradeCurrencyModelCurrencyType `json:"currencies,omitempty"`
+	Currencies []AdminPayGradeCurrencyModelCurrencyType `json:"currencies"`
 }
