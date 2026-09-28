@@ -954,6 +954,15 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
                     // reconcile creates another one. Ten identical locations,
                     // in the first minute.
                     property.dataType = "interface{}";
+                } else if ("string".equals(property.dataType)) {
+                    // See LooseString in client.go: this API sends a number
+                    // where the description says a string (a holiday's
+                    // `length`), and one such field makes the WHOLE response
+                    // unparseable -- which after a create means the identifier
+                    // is never recorded and the next reconcile writes a second
+                    // row. This is a rule about the document's reliability, not
+                    // a list of exceptions.
+                    property.dataType = "LooseString";
                 } else if (isGenuineUnion(property)) {
                     // A composition with BRANCHES, as opposed to the
                     // validation-only kind above. openapi-generator collapses

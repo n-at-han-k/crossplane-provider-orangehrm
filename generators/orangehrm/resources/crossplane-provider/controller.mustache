@@ -381,50 +381,33 @@ func (c *external) Create(ctx context.Context, cr *{{apiVersion}}.{{kind}}) (man
 		return managed.ExternalCreation{}, errors.Wrap(err, errCreate)
 	}
 
-	id := ""
-
-{{^hasResponseModel}}
-	// Nothing to parse the answer into, so the identifier is the Location
-	// header or there is none.
-	id = {{providerName}}.IDFromLocation(location)
-	_ = respBody
-{{/hasResponseModel}}
-{{#hasResponseModel}}
-	if len(respBody) == 0 {
+	// THE IDENTIFIER FIRST, and out of a minimal decode that cannot fail on a
+	// field the document types wrongly. The row is already written by the time
+	// this runs, so anything that stops the id being recorded is a duplicate row
+	// on the next reconcile -- ten of them, in the case that taught this.
+	id := {{providerName}}.CreatedID(respBody)
+	if id == "" {
 		id = {{providerName}}.IDFromLocation(location)
-	} else {
-		var envelope {{providerName}}.{{envelopeModel}}
-		if err := json.Unmarshal(respBody, &envelope); err != nil {
-			return managed.ExternalCreation{}, errors.Wrap(err, errParse)
-		}
-		created := envelope.Data
-		if created == nil {
-			return managed.ExternalCreation{}, errors.New(errParse)
-		}
-{{#hasID}}
-		// Through %v because OrangeHRM numbers its ids and an external name is
-		// a string -- the annotation has to hold what the member path spells.
-		id = fmt.Sprintf("%v", created.{{idFieldExported}})
-{{/hasID}}
-{{^hasID}}
-		// The document describes no identifier on what this create answers, so
-		// the Location header is all there is.
-		id = {{providerName}}.IDFromLocation(location)
-{{/hasID}}
-
-		at, err := observation(created)
-		if err != nil {
-			return managed.ExternalCreation{}, errors.Wrap(err, errParse)
-		}
-		cr.Status.AtProvider = at
 	}
-{{/hasResponseModel}}
 
 	if id == "" {
 		return managed.ExternalCreation{}, errors.New(errNoID)
 	}
 
 	meta.SetExternalName(cr, id)
+
+{{#hasResponseModel}}
+	// status.atProvider is BEST EFFORT, deliberately. The external name above is
+	// the only thing that must not be lost, and the next Observe fills the
+	// status in anyway -- so a response this cannot project is a status that
+	// arrives a reconcile later, not a resource that gets created twice.
+	var envelope {{providerName}}.{{envelopeModel}}
+	if err := json.Unmarshal(respBody, &envelope); err == nil && envelope.Data != nil {
+		if at, err := observation(envelope.Data); err == nil {
+			cr.Status.AtProvider = at
+		}
+	}
+{{/hasResponseModel}}
 {{^hasRead}}
 
 	// The only record that this {{kindCamel}} was created: with no read,

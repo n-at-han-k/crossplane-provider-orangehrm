@@ -179,3 +179,47 @@ func TestAnEmptyMetaIsNotAnObject(t *testing.T) {
 		t.Fatalf("data lost: %+v", envelope.Data)
 	}
 }
+
+// The identifier has to come out of a create's answer even when the rest of it
+// cannot be parsed, because the row is already written: a holiday answers
+// "length": 0 where the description says a string, and losing the id to that is
+// a second row on the next reconcile.
+func TestCreatedIDSurvivesAnAnswerThatDoesNotFitTheDocument(t *testing.T) {
+	body := []byte(`{"data":{"id":7,"name":"Good Friday","length":0,"lengthName":"Full Day"},"meta":[]}`)
+
+	if got := CreatedID(body); got != "7" {
+		t.Fatalf("CreatedID = %q, want 7", got)
+	}
+	// Quoted, as some endpoints answer.
+	if got := CreatedID([]byte(`{"data":{"id":"12"},"meta":[]}`)); got != "12" {
+		t.Fatalf("CreatedID = %q, want 12", got)
+	}
+	// Nothing to find: the caller falls back to the Location header.
+	if got := CreatedID([]byte(`{"data":[],"meta":[]}`)); got != "" {
+		t.Fatalf("CreatedID = %q, want empty", got)
+	}
+}
+
+func TestLooseStringTakesANumberOrAString(t *testing.T) {
+	var holiday struct {
+		Length      LooseString `json:"length"`
+		HoursPerDay LooseString `json:"hoursPerDay"`
+		Missing     LooseString `json:"missing"`
+	}
+
+	if err := json.Unmarshal([]byte(`{"length":0,"hoursPerDay":"8.00","missing":null}`), &holiday); err != nil {
+		t.Fatal(err)
+	}
+	if holiday.Length != "0" || holiday.HoursPerDay != "8.00" || holiday.Missing != "" {
+		t.Fatalf("got %+v", holiday)
+	}
+
+	// Out as a string, which is what every endpoint taking one accepts.
+	raw, err := json.Marshal(holiday)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(raw) != `{"length":"0","hoursPerDay":"8.00","missing":""}` {
+		t.Fatalf("marshalled %s", raw)
+	}
+}

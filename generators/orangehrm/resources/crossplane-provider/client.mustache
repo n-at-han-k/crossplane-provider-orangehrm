@@ -151,6 +151,71 @@ func IsID(externalName string) bool {
 	return err == nil
 }
 
+// CreatedID reads the identifier out of a create's answer WITHOUT parsing the
+// rest of it.
+//
+// THE ROW IS ALREADY WRITTEN when this is called, so anything that stops the id
+// being recorded is a duplicate on the next reconcile -- and the document gets
+// field types wrong, so parsing the whole answer is not a safe way to find an
+// id. A holiday's `length` comes back as the number 0 where the description says
+// a string, and that one mistake was worth ten identical rows.
+//
+// json.Number, so an id quoted as "7" and an id sent as 7 both read the same.
+func CreatedID(body []byte) string {
+	var answer struct {
+		Data struct {
+			Id json.Number `json:"id"`
+		} `json:"data"`
+	}
+
+	if err := json.Unmarshal(body, &answer); err != nil {
+		return ""
+	}
+
+	return answer.Data.Id.String()
+}
+
+// LooseString is a string as this API actually sends it: sometimes quoted,
+// sometimes a bare number.
+//
+//	"length": 0        where the description says a string
+//	"hoursPerDay": "8.00"
+//
+// A model that commits to one of them fails to parse the other, and a response
+// that fails to parse is a resource the controller cannot observe -- or, after a
+// create, cannot record. It goes out as a string, which is what every endpoint
+// that takes one accepts.
+type LooseString string
+
+func (s LooseString) String() string { return string(s) }
+
+func (s *LooseString) UnmarshalJSON(data []byte) error {
+	text := strings.TrimSpace(string(data))
+
+	if text == "null" {
+		*s = ""
+		return nil
+	}
+
+	if strings.HasPrefix(text, `"`) {
+		var unquoted string
+		if err := json.Unmarshal(data, &unquoted); err != nil {
+			return err
+		}
+		*s = LooseString(unquoted)
+		return nil
+	}
+
+	// A bare literal -- a number, in practice. Kept as it was written.
+	*s = LooseString(text)
+
+	return nil
+}
+
+func (s LooseString) MarshalJSON() ([]byte, error) {
+	return json.Marshal(string(s))
+}
+
 // APIError is an unsuccessful response, carrying the status so that a caller
 // can tell "it is gone" from "it did not answer".
 type APIError struct {

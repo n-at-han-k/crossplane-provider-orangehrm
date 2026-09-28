@@ -277,28 +277,13 @@ func (c *external) Create(ctx context.Context, cr *v1alpha1.ClaimExpensesType) (
 		return managed.ExternalCreation{}, errors.Wrap(err, errCreate)
 	}
 
-	id := ""
-
-	if len(respBody) == 0 {
+	// THE IDENTIFIER FIRST, and out of a minimal decode that cannot fail on a
+	// field the document types wrongly. The row is already written by the time
+	// this runs, so anything that stops the id being recorded is a duplicate row
+	// on the next reconcile -- ten of them, in the case that taught this.
+	id := orangehrm.CreatedID(respBody)
+	if id == "" {
 		id = orangehrm.IDFromLocation(location)
-	} else {
-		var envelope orangehrm.GetAnExpenseType200Response
-		if err := json.Unmarshal(respBody, &envelope); err != nil {
-			return managed.ExternalCreation{}, errors.Wrap(err, errParse)
-		}
-		created := envelope.Data
-		if created == nil {
-			return managed.ExternalCreation{}, errors.New(errParse)
-		}
-		// Through %v because OrangeHRM numbers its ids and an external name is
-		// a string -- the annotation has to hold what the member path spells.
-		id = fmt.Sprintf("%v", created.Id)
-
-		at, err := observation(created)
-		if err != nil {
-			return managed.ExternalCreation{}, errors.Wrap(err, errParse)
-		}
-		cr.Status.AtProvider = at
 	}
 
 	if id == "" {
@@ -306,6 +291,17 @@ func (c *external) Create(ctx context.Context, cr *v1alpha1.ClaimExpensesType) (
 	}
 
 	meta.SetExternalName(cr, id)
+
+	// status.atProvider is BEST EFFORT, deliberately. The external name above is
+	// the only thing that must not be lost, and the next Observe fills the
+	// status in anyway -- so a response this cannot project is a status that
+	// arrives a reconcile later, not a resource that gets created twice.
+	var envelope orangehrm.GetAnExpenseType200Response
+	if err := json.Unmarshal(respBody, &envelope); err == nil && envelope.Data != nil {
+		if at, err := observation(envelope.Data); err == nil {
+			cr.Status.AtProvider = at
+		}
+	}
 
 	return managed.ExternalCreation{}, nil
 }
