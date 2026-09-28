@@ -69,18 +69,14 @@ spec:
                     description: Amount
                     type: number
                   date:
-                    description: |-
-                      Date
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Date
                     type: string
                   expenseTypeId:
                     description: ExpenseTypeId
                     format: int64
                     type: integer
                   note:
-                    description: |-
-                      Note
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Note
                     type: string
                   requestId:
                     description: |-

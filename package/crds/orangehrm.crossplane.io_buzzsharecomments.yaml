@@ -74,9 +74,7 @@ spec:
                     - message: shareId is immutable
                       rule: self == oldSelf
                   text:
-                    description: |-
-                      Text
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Text
                     type: string
                 required:
                 - shareId

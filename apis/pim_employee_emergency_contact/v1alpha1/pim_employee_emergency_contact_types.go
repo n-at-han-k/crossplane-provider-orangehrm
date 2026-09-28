@@ -33,32 +33,22 @@ type PimEmployeeEmergencyContactParameters struct {
 
 	// Name Specify the name of the emergency contact
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Name string `json:"name"`
 
 	// Relationship Specify the relationship between the employee and the emergency contact
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Relationship string `json:"relationship"`
 
 	// HomePhone Specify the home phone number of the emergency contact
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	HomePhone string `json:"homePhone"`
 
 	// OfficePhone Specfiy the office phone number of the emergency contact
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	OfficePhone string `json:"officePhone"`
 
 	// MobilePhone Specify the mobile phone number of the emergency contact
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	MobilePhone string `json:"mobilePhone"`
 }
 

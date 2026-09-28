@@ -172,11 +172,7 @@ type external struct {
 func desired(cr *v1alpha1.RecruitmentInterviewAttachment) (*orangehrm.AddAnAttachmentToAnInterviewRequest, error) {
 	body := &orangehrm.AddAnAttachmentToAnInterviewRequest{}
 
-	if cr.Spec.ForProvider.Comment != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Comment), &body.Comment); err != nil {
-			return nil, errors.Wrap(err, "comment")
-		}
-	}
+	body.Comment = orangehrm.LooseString(cr.Spec.ForProvider.Comment)
 	if cr.Spec.ForProvider.Attachment != "" {
 		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Attachment), &body.Attachment); err != nil {
 			return nil, errors.Wrap(err, "attachment")
@@ -197,11 +193,7 @@ func observation(in *orangehrm.RecruitmentInterviewAttachmentModel) (v1alpha1.Re
 	} else {
 		return out, errors.Wrap(err, "attachment")
 	}
-	if raw, err := json.Marshal(in.Comment); err == nil {
-		out.Comment = string(raw)
-	} else {
-		return out, errors.Wrap(err, "comment")
-	}
+	out.Comment = string(in.Comment)
 
 	return out, nil
 }
@@ -211,10 +203,10 @@ func observation(in *orangehrm.RecruitmentInterviewAttachmentModel) (v1alpha1.Re
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.RecruitmentInterviewAttachment, observed *orangehrm.RecruitmentInterviewAttachmentModel) bool {
-	if cr.Spec.ForProvider.Comment != "" {
-		if raw, err := json.Marshal(observed.Comment); err != nil || !jsonEqual(cr.Spec.ForProvider.Comment, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Comment != "" && cr.Spec.ForProvider.Comment != string(observed.Comment) {
+		return false
 	}
 
 	return true

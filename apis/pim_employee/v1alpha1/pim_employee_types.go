@@ -26,26 +26,18 @@ import (
 type PimEmployeeParameters struct {
 	// LastName Specify the employee&#39;s last name
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	LastName string `json:"lastName"`
 
 	// FirstName Specify the employee&#39;s first name
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	FirstName string `json:"firstName"`
 
 	// MiddleName Specify the employee&#39;s middle name
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	MiddleName string `json:"middleName,omitempty"`
 
 	// EmployeeId Specify the employeee&#39;s ID
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	EmployeeId string `json:"employeeId,omitempty"`
 
 	// EmpPicture Upload a profile picture for the employee

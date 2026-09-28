@@ -172,26 +172,14 @@ type external struct {
 func desired(cr *v1alpha1.BuzzPost) (*orangehrm.PostTextPhotosOrVideoRequest, error) {
 	body := &orangehrm.PostTextPhotosOrVideoRequest{}
 
-	if cr.Spec.ForProvider.Text != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Text), &body.Text); err != nil {
-			return nil, errors.Wrap(err, "text")
-		}
-	}
-	if cr.Spec.ForProvider.Type != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Type), &body.Type); err != nil {
-			return nil, errors.Wrap(err, "type")
-		}
-	}
+	body.Text = orangehrm.LooseString(cr.Spec.ForProvider.Text)
+	body.Type = orangehrm.LooseString(cr.Spec.ForProvider.Type)
 	if cr.Spec.ForProvider.Photos != "" {
 		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Photos), &body.Photos); err != nil {
 			return nil, errors.Wrap(err, "photos")
 		}
 	}
-	if cr.Spec.ForProvider.Link != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Link), &body.Link); err != nil {
-			return nil, errors.Wrap(err, "link")
-		}
-	}
+	body.Link = orangehrm.LooseString(cr.Spec.ForProvider.Link)
 
 	return body, nil
 }
@@ -211,32 +199,16 @@ func observation(in *orangehrm.PostTextPhotosOrVideo200ResponseDataInner) (v1alp
 	} else {
 		return out, errors.Wrap(err, "post")
 	}
-	if raw, err := json.Marshal(in.Type); err == nil {
-		out.Type = string(raw)
-	} else {
-		return out, errors.Wrap(err, "type")
-	}
+	out.Type = string(in.Type)
 	out.Liked = in.Liked
-	if raw, err := json.Marshal(in.Text); err == nil {
-		out.Text = string(raw)
-	} else {
-		return out, errors.Wrap(err, "text")
-	}
+	out.Text = string(in.Text)
 	if raw, err := json.Marshal(in.Stats); err == nil {
 		out.Stats = string(raw)
 	} else {
 		return out, errors.Wrap(err, "stats")
 	}
-	if raw, err := json.Marshal(in.CreatedDate); err == nil {
-		out.CreatedDate = string(raw)
-	} else {
-		return out, errors.Wrap(err, "createdDate")
-	}
-	if raw, err := json.Marshal(in.CreatedTime); err == nil {
-		out.CreatedTime = string(raw)
-	} else {
-		return out, errors.Wrap(err, "createdTime")
-	}
+	out.CreatedDate = string(in.CreatedDate)
+	out.CreatedTime = string(in.CreatedTime)
 	if raw, err := json.Marshal(in.OriginalPost); err == nil {
 		out.OriginalPost = string(raw)
 	} else {
@@ -266,15 +238,15 @@ func observation(in *orangehrm.PostTextPhotosOrVideo200ResponseDataInner) (v1alp
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.BuzzPost, observed *orangehrm.PostTextPhotosOrVideo200ResponseDataInner) bool {
-	if cr.Spec.ForProvider.Text != "" {
-		if raw, err := json.Marshal(observed.Text); err != nil || !jsonEqual(cr.Spec.ForProvider.Text, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Text != "" && cr.Spec.ForProvider.Text != string(observed.Text) {
+		return false
 	}
-	if cr.Spec.ForProvider.Type != "" {
-		if raw, err := json.Marshal(observed.Type); err != nil || !jsonEqual(cr.Spec.ForProvider.Type, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Type != "" && cr.Spec.ForProvider.Type != string(observed.Type) {
+		return false
 	}
 
 	return true

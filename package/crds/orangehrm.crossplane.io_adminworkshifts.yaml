@@ -70,24 +70,16 @@ spec:
                       Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   endTime:
-                    description: |-
-                      EndTime
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: EndTime
                     type: string
                   hoursPerDay:
-                    description: |-
-                      HoursPerDay
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: HoursPerDay
                     type: string
                   name:
-                    description: |-
-                      Name
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Name
                     type: string
                   startTime:
-                    description: |-
-                      StartTime
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: StartTime
                     type: string
                 required:
                 - endTime

@@ -33,32 +33,22 @@ type PimEmployeeWorkExperienceParameters struct {
 
 	// Company
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Company string `json:"company"`
 
 	// JobTitle
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	JobTitle string `json:"jobTitle"`
 
 	// FromDate
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	FromDate string `json:"fromDate,omitempty"`
 
 	// ToDate
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	ToDate string `json:"toDate,omitempty"`
 
 	// Comment
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Comment string `json:"comment,omitempty"`
 }
 

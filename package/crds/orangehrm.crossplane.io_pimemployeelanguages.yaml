@@ -66,9 +66,7 @@ spec:
                   PimEmployeeLanguageObservation instead.
                 properties:
                   comment:
-                    description: |-
-                      Comment Specify the comment
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Comment Specify the comment
                     type: string
                   competencyId:
                     description: CompetencyId Specify the numerical ID of the compenetency

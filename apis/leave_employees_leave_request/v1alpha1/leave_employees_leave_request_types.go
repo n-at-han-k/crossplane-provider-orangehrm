@@ -34,26 +34,18 @@ type LeaveEmployeesLeaveRequestParameters struct {
 
 	// FromDate
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	FromDate string `json:"fromDate"`
 
 	// ToDate
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	ToDate string `json:"toDate"`
 
 	// Comment
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Comment string `json:"comment,omitempty"`
 
 	// PartialOption
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	PartialOption string `json:"partialOption,omitempty"`
 
 	// Duration

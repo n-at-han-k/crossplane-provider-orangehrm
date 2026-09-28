@@ -173,16 +173,8 @@ func desired(cr *v1alpha1.ClaimEmployeeRequest) (*orangehrm.ListAnEmployeesClaim
 	body := &orangehrm.ListAnEmployeesClaimRequestsRequest{}
 
 	body.ClaimEventId = int32(cr.Spec.ForProvider.ClaimEventId)
-	if cr.Spec.ForProvider.CurrencyId != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.CurrencyId), &body.CurrencyId); err != nil {
-			return nil, errors.Wrap(err, "currencyId")
-		}
-	}
-	if cr.Spec.ForProvider.Remarks != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Remarks), &body.Remarks); err != nil {
-			return nil, errors.Wrap(err, "remarks")
-		}
-	}
+	body.CurrencyId = orangehrm.LooseString(cr.Spec.ForProvider.CurrencyId)
+	body.Remarks = orangehrm.LooseString(cr.Spec.ForProvider.Remarks)
 
 	return body, nil
 }
@@ -192,11 +184,7 @@ func observation(in *orangehrm.ClaimRequestModel) (v1alpha1.ClaimEmployeeRequest
 	out := v1alpha1.ClaimEmployeeRequestObservation{}
 
 	out.Id = int64(in.Id)
-	if raw, err := json.Marshal(in.ReferenceId); err == nil {
-		out.ReferenceId = string(raw)
-	} else {
-		return out, errors.Wrap(err, "referenceId")
-	}
+	out.ReferenceId = string(in.ReferenceId)
 	if raw, err := json.Marshal(in.ClaimEvent); err == nil {
 		out.ClaimEvent = string(raw)
 	} else {
@@ -207,16 +195,8 @@ func observation(in *orangehrm.ClaimRequestModel) (v1alpha1.ClaimEmployeeRequest
 	} else {
 		return out, errors.Wrap(err, "currency")
 	}
-	if raw, err := json.Marshal(in.Description); err == nil {
-		out.Description = string(raw)
-	} else {
-		return out, errors.Wrap(err, "description")
-	}
-	if raw, err := json.Marshal(in.Status); err == nil {
-		out.Status = string(raw)
-	} else {
-		return out, errors.Wrap(err, "status")
-	}
+	out.Description = string(in.Description)
+	out.Status = string(in.Status)
 
 	return out, nil
 }

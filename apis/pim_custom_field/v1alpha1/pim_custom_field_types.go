@@ -26,8 +26,6 @@ import (
 type PimCustomFieldParameters struct {
 	// FieldName Specify the name of the custom field
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	FieldName string `json:"fieldName,omitempty"`
 
 	// FieldType Specify whether the field is a text/number field or a dropdown field
@@ -36,14 +34,10 @@ type PimCustomFieldParameters struct {
 
 	// Screen Specify which PIM screen this field should be displayed
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Screen string `json:"screen,omitempty"`
 
 	// ExtraData Specify a comma separated list of options for the dropdown type custom fields
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	ExtraData string `json:"extraData,omitempty"`
 }
 

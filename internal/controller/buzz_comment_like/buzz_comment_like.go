@@ -171,16 +171,8 @@ func observation(in *orangehrm.BuzzBuzzLikeOnCommentModel) (v1alpha1.BuzzComment
 	out := v1alpha1.BuzzCommentLikeObservation{}
 
 	out.Id = int64(in.Id)
-	if raw, err := json.Marshal(in.LikedAtDate); err == nil {
-		out.LikedAtDate = string(raw)
-	} else {
-		return out, errors.Wrap(err, "likedAtDate")
-	}
-	if raw, err := json.Marshal(in.LikedAtTime); err == nil {
-		out.LikedAtTime = string(raw)
-	} else {
-		return out, errors.Wrap(err, "likedAtTime")
-	}
+	out.LikedAtDate = string(in.LikedAtDate)
+	out.LikedAtTime = string(in.LikedAtTime)
 	if raw, err := json.Marshal(in.Comment); err == nil {
 		out.Comment = string(raw)
 	} else {

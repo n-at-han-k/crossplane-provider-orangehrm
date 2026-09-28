@@ -65,14 +65,10 @@ spec:
                   TimeCustomerObservation instead.
                 properties:
                   description:
-                    description: |-
-                      Description
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Description
                     type: string
                   name:
-                    description: |-
-                      Name
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Name
                     type: string
                 required:
                 - name

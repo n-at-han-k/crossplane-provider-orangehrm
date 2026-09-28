@@ -30,8 +30,6 @@ type RecruitmentVacancyAttachmentParameters struct {
 
 	// Comment
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Comment string `json:"comment,omitempty"`
 
 	// AttachmentType

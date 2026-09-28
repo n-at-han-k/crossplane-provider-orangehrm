@@ -172,11 +172,7 @@ func desired(cr *v1alpha1.RecruitmentVacancyAttachment) (*orangehrm.AddAnAttachm
 	body := &orangehrm.AddAnAttachmentToAVacancyRequest{}
 
 	body.VacancyId = int32(cr.Spec.ForProvider.VacancyId)
-	if cr.Spec.ForProvider.Comment != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Comment), &body.Comment); err != nil {
-			return nil, errors.Wrap(err, "comment")
-		}
-	}
+	body.Comment = orangehrm.LooseString(cr.Spec.ForProvider.Comment)
 	body.AttachmentType = int32(cr.Spec.ForProvider.AttachmentType)
 	if cr.Spec.ForProvider.Attachment != "" {
 		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Attachment), &body.Attachment); err != nil {
@@ -198,11 +194,7 @@ func observation(in *orangehrm.RecruitmentVacancyAttachmentModel) (v1alpha1.Recr
 	} else {
 		return out, errors.Wrap(err, "attachment")
 	}
-	if raw, err := json.Marshal(in.Comment); err == nil {
-		out.Comment = string(raw)
-	} else {
-		return out, errors.Wrap(err, "comment")
-	}
+	out.Comment = string(in.Comment)
 
 	return out, nil
 }
@@ -217,10 +209,10 @@ func upToDate(cr *v1alpha1.RecruitmentVacancyAttachment, observed *orangehrm.Rec
 	if cr.Spec.ForProvider.VacancyId != 0 && cr.Spec.ForProvider.VacancyId != int64(observed.VacancyId) {
 		return false
 	}
-	if cr.Spec.ForProvider.Comment != "" {
-		if raw, err := json.Marshal(observed.Comment); err != nil || !jsonEqual(cr.Spec.ForProvider.Comment, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Comment != "" && cr.Spec.ForProvider.Comment != string(observed.Comment) {
+		return false
 	}
 
 	return true

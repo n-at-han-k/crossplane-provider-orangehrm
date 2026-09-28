@@ -172,11 +172,7 @@ type external struct {
 func desired(cr *v1alpha1.PerformanceKpi) (*orangehrm.UpdateAKpiRequest, error) {
 	body := &orangehrm.UpdateAKpiRequest{}
 
-	if cr.Spec.ForProvider.Title != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Title), &body.Title); err != nil {
-			return nil, errors.Wrap(err, "title")
-		}
-	}
+	body.Title = orangehrm.LooseString(cr.Spec.ForProvider.Title)
 	body.JobTitleId = int32(cr.Spec.ForProvider.JobTitleId)
 	body.MinRating = int32(cr.Spec.ForProvider.MinRating)
 	body.MaxRating = int32(cr.Spec.ForProvider.MaxRating)
@@ -190,11 +186,7 @@ func observation(in *orangehrm.PerformanceKpiModel) (v1alpha1.PerformanceKpiObse
 	out := v1alpha1.PerformanceKpiObservation{}
 
 	out.Id = int64(in.Id)
-	if raw, err := json.Marshal(in.Title); err == nil {
-		out.Title = string(raw)
-	} else {
-		return out, errors.Wrap(err, "title")
-	}
+	out.Title = string(in.Title)
 	if raw, err := json.Marshal(in.JobTitle); err == nil {
 		out.JobTitle = string(raw)
 	} else {
@@ -213,10 +205,10 @@ func observation(in *orangehrm.PerformanceKpiModel) (v1alpha1.PerformanceKpiObse
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.PerformanceKpi, observed *orangehrm.PerformanceKpiModel) bool {
-	if cr.Spec.ForProvider.Title != "" {
-		if raw, err := json.Marshal(observed.Title); err != nil || !jsonEqual(cr.Spec.ForProvider.Title, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Title != "" && cr.Spec.ForProvider.Title != string(observed.Title) {
+		return false
 	}
 	// Only what the person actually set: an optional field left empty is not
 	// a difference from whatever the server chose to put there.

@@ -71,9 +71,7 @@ spec:
                       Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   description:
-                    description: |-
-                      Description Specify the description of the attachment
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Description Specify the description of the attachment
                     type: string
                   empNumber:
                     description: |-

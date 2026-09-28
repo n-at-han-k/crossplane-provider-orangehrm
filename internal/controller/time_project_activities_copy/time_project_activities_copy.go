@@ -171,11 +171,7 @@ func observation(in *orangehrm.TimeCopyActivityModel) (v1alpha1.TimeProjectActiv
 	out := v1alpha1.TimeProjectActivitiesCopyObservation{}
 
 	out.Id = int64(in.Id)
-	if raw, err := json.Marshal(in.Name); err == nil {
-		out.Name = string(raw)
-	} else {
-		return out, errors.Wrap(err, "name")
-	}
+	out.Name = string(in.Name)
 	out.Unique = in.Unique
 
 	return out, nil
@@ -188,30 +184,6 @@ func observation(in *orangehrm.TimeCopyActivityModel) (v1alpha1.TimeProjectActiv
 func upToDate(cr *v1alpha1.TimeProjectActivitiesCopy, observed *orangehrm.TimeCopyActivityModel) bool {
 
 	return true
-}
-
-// jsonEqual compares two JSON documents by value rather than by text, so that
-// a server re-ordering an object's keys is not a permanent diff.
-func jsonEqual(a, b string) bool {
-	var left, right any
-
-	if err := json.Unmarshal([]byte(a), &left); err != nil {
-		return false
-	}
-	if err := json.Unmarshal([]byte(b), &right); err != nil {
-		return false
-	}
-
-	x, err := json.Marshal(left)
-	if err != nil {
-		return false
-	}
-	y, err := json.Marshal(right)
-	if err != nil {
-		return false
-	}
-
-	return string(x) == string(y)
 }
 
 func (c *external) Observe(ctx context.Context, cr *v1alpha1.TimeProjectActivitiesCopy) (managed.ExternalObservation, error) {

@@ -172,41 +172,17 @@ type external struct {
 func desired(cr *v1alpha1.AdminWorkspaceNotificationRegistration) (*orangehrm.CreateWorkspaceNotificationRegistrationRequest, error) {
 	body := &orangehrm.CreateWorkspaceNotificationRegistrationRequest{}
 
-	if cr.Spec.ForProvider.EventType != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.EventType), &body.EventType); err != nil {
-			return nil, errors.Wrap(err, "eventType")
-		}
-	}
-	if cr.Spec.ForProvider.Provider != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Provider), &body.Provider); err != nil {
-			return nil, errors.Wrap(err, "provider")
-		}
-	}
-	if cr.Spec.ForProvider.WebhookUrl != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.WebhookUrl), &body.WebhookUrl); err != nil {
-			return nil, errors.Wrap(err, "webhookUrl")
-		}
-	}
-	if cr.Spec.ForProvider.ChannelLabel != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.ChannelLabel), &body.ChannelLabel); err != nil {
-			return nil, errors.Wrap(err, "channelLabel")
-		}
-	}
+	body.EventType = orangehrm.LooseString(cr.Spec.ForProvider.EventType)
+	body.Provider = orangehrm.LooseString(cr.Spec.ForProvider.Provider)
+	body.WebhookUrl = orangehrm.LooseString(cr.Spec.ForProvider.WebhookUrl)
+	body.ChannelLabel = orangehrm.LooseString(cr.Spec.ForProvider.ChannelLabel)
 	if cr.Spec.ForProvider.SubunitIds != "" {
 		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.SubunitIds), &body.SubunitIds); err != nil {
 			return nil, errors.Wrap(err, "subunitIds")
 		}
 	}
-	if cr.Spec.ForProvider.Timezone != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Timezone), &body.Timezone); err != nil {
-			return nil, errors.Wrap(err, "timezone")
-		}
-	}
-	if cr.Spec.ForProvider.DailySendTime != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.DailySendTime), &body.DailySendTime); err != nil {
-			return nil, errors.Wrap(err, "dailySendTime")
-		}
-	}
+	body.Timezone = orangehrm.LooseString(cr.Spec.ForProvider.Timezone)
+	body.DailySendTime = orangehrm.LooseString(cr.Spec.ForProvider.DailySendTime)
 	body.Active = cr.Spec.ForProvider.Active
 
 	return body, nil
@@ -217,41 +193,17 @@ func observation(in *orangehrm.SlackRegistrationModel) (v1alpha1.AdminWorkspaceN
 	out := v1alpha1.AdminWorkspaceNotificationRegistrationObservation{}
 
 	out.Id = int64(in.Id)
-	if raw, err := json.Marshal(in.Provider); err == nil {
-		out.Provider = string(raw)
-	} else {
-		return out, errors.Wrap(err, "provider")
-	}
-	if raw, err := json.Marshal(in.EventType); err == nil {
-		out.EventType = string(raw)
-	} else {
-		return out, errors.Wrap(err, "eventType")
-	}
-	if raw, err := json.Marshal(in.WebhookUrl); err == nil {
-		out.WebhookUrl = string(raw)
-	} else {
-		return out, errors.Wrap(err, "webhookUrl")
-	}
-	if raw, err := json.Marshal(in.ChannelLabel); err == nil {
-		out.ChannelLabel = string(raw)
-	} else {
-		return out, errors.Wrap(err, "channelLabel")
-	}
+	out.Provider = string(in.Provider)
+	out.EventType = string(in.EventType)
+	out.WebhookUrl = string(in.WebhookUrl)
+	out.ChannelLabel = string(in.ChannelLabel)
 	if raw, err := json.Marshal(in.Subunits); err == nil {
 		out.Subunits = string(raw)
 	} else {
 		return out, errors.Wrap(err, "subunits")
 	}
-	if raw, err := json.Marshal(in.Timezone); err == nil {
-		out.Timezone = string(raw)
-	} else {
-		return out, errors.Wrap(err, "timezone")
-	}
-	if raw, err := json.Marshal(in.DailySendTime); err == nil {
-		out.DailySendTime = string(raw)
-	} else {
-		return out, errors.Wrap(err, "dailySendTime")
-	}
+	out.Timezone = string(in.Timezone)
+	out.DailySendTime = string(in.DailySendTime)
 	out.Active = in.Active
 
 	return out, nil
@@ -262,35 +214,35 @@ func observation(in *orangehrm.SlackRegistrationModel) (v1alpha1.AdminWorkspaceN
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.AdminWorkspaceNotificationRegistration, observed *orangehrm.SlackRegistrationModel) bool {
-	if cr.Spec.ForProvider.EventType != "" {
-		if raw, err := json.Marshal(observed.EventType); err != nil || !jsonEqual(cr.Spec.ForProvider.EventType, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.EventType != "" && cr.Spec.ForProvider.EventType != string(observed.EventType) {
+		return false
 	}
-	if cr.Spec.ForProvider.Provider != "" {
-		if raw, err := json.Marshal(observed.Provider); err != nil || !jsonEqual(cr.Spec.ForProvider.Provider, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Provider != "" && cr.Spec.ForProvider.Provider != string(observed.Provider) {
+		return false
 	}
-	if cr.Spec.ForProvider.WebhookUrl != "" {
-		if raw, err := json.Marshal(observed.WebhookUrl); err != nil || !jsonEqual(cr.Spec.ForProvider.WebhookUrl, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.WebhookUrl != "" && cr.Spec.ForProvider.WebhookUrl != string(observed.WebhookUrl) {
+		return false
 	}
-	if cr.Spec.ForProvider.ChannelLabel != "" {
-		if raw, err := json.Marshal(observed.ChannelLabel); err != nil || !jsonEqual(cr.Spec.ForProvider.ChannelLabel, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.ChannelLabel != "" && cr.Spec.ForProvider.ChannelLabel != string(observed.ChannelLabel) {
+		return false
 	}
-	if cr.Spec.ForProvider.Timezone != "" {
-		if raw, err := json.Marshal(observed.Timezone); err != nil || !jsonEqual(cr.Spec.ForProvider.Timezone, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Timezone != "" && cr.Spec.ForProvider.Timezone != string(observed.Timezone) {
+		return false
 	}
-	if cr.Spec.ForProvider.DailySendTime != "" {
-		if raw, err := json.Marshal(observed.DailySendTime); err != nil || !jsonEqual(cr.Spec.ForProvider.DailySendTime, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.DailySendTime != "" && cr.Spec.ForProvider.DailySendTime != string(observed.DailySendTime) {
+		return false
 	}
 	if cr.Spec.ForProvider.Active != observed.Active {
 		return false

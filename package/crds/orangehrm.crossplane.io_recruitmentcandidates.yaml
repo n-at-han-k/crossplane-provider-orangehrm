@@ -66,47 +66,31 @@ spec:
                   RecruitmentCandidateObservation instead.
                 properties:
                   comment:
-                    description: |-
-                      Comment
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Comment
                     type: string
                   consentToKeepData:
                     description: ConsentToKeepData
                     type: boolean
                   contactNumber:
-                    description: |-
-                      ContactNumber
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: ContactNumber
                     type: string
                   dateOfApplication:
-                    description: |-
-                      DateOfApplication
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: DateOfApplication
                     type: string
                   email:
-                    description: |-
-                      Email
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Email
                     type: string
                   firstName:
-                    description: |-
-                      FirstName
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: FirstName
                     type: string
                   keywords:
-                    description: |-
-                      Keywords
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Keywords
                     type: string
                   lastName:
-                    description: |-
-                      LastName
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: LastName
                     type: string
                   middleName:
-                    description: |-
-                      MiddleName
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: MiddleName
                     type: string
                   vacancyId:
                     description: VacancyId

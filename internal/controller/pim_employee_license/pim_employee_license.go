@@ -173,21 +173,9 @@ func desired(cr *v1alpha1.PimEmployeeLicense) (*orangehrm.AddALicenseToAnEmploye
 	body := &orangehrm.AddALicenseToAnEmployeeRequest{}
 
 	body.LicenseId = int32(cr.Spec.ForProvider.LicenseId)
-	if cr.Spec.ForProvider.LicenseNo != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.LicenseNo), &body.LicenseNo); err != nil {
-			return nil, errors.Wrap(err, "licenseNo")
-		}
-	}
-	if cr.Spec.ForProvider.IssuedDate != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.IssuedDate), &body.IssuedDate); err != nil {
-			return nil, errors.Wrap(err, "issuedDate")
-		}
-	}
-	if cr.Spec.ForProvider.ExpiryDate != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.ExpiryDate), &body.ExpiryDate); err != nil {
-			return nil, errors.Wrap(err, "expiryDate")
-		}
-	}
+	body.LicenseNo = orangehrm.LooseString(cr.Spec.ForProvider.LicenseNo)
+	body.IssuedDate = orangehrm.LooseString(cr.Spec.ForProvider.IssuedDate)
+	body.ExpiryDate = orangehrm.LooseString(cr.Spec.ForProvider.ExpiryDate)
 
 	return body, nil
 }
@@ -196,21 +184,9 @@ func desired(cr *v1alpha1.PimEmployeeLicense) (*orangehrm.AddALicenseToAnEmploye
 func observation(in *orangehrm.PimEmployeeLicenseModel) (v1alpha1.PimEmployeeLicenseObservation, error) {
 	out := v1alpha1.PimEmployeeLicenseObservation{}
 
-	if raw, err := json.Marshal(in.LicenseNo); err == nil {
-		out.LicenseNo = string(raw)
-	} else {
-		return out, errors.Wrap(err, "licenseNo")
-	}
-	if raw, err := json.Marshal(in.IssuedDate); err == nil {
-		out.IssuedDate = string(raw)
-	} else {
-		return out, errors.Wrap(err, "issuedDate")
-	}
-	if raw, err := json.Marshal(in.ExpiryDate); err == nil {
-		out.ExpiryDate = string(raw)
-	} else {
-		return out, errors.Wrap(err, "expiryDate")
-	}
+	out.LicenseNo = string(in.LicenseNo)
+	out.IssuedDate = string(in.IssuedDate)
+	out.ExpiryDate = string(in.ExpiryDate)
 	if raw, err := json.Marshal(in.License); err == nil {
 		out.License = string(raw)
 	} else {
@@ -225,20 +201,20 @@ func observation(in *orangehrm.PimEmployeeLicenseModel) (v1alpha1.PimEmployeeLic
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.PimEmployeeLicense, observed *orangehrm.PimEmployeeLicenseModel) bool {
-	if cr.Spec.ForProvider.LicenseNo != "" {
-		if raw, err := json.Marshal(observed.LicenseNo); err != nil || !jsonEqual(cr.Spec.ForProvider.LicenseNo, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.LicenseNo != "" && cr.Spec.ForProvider.LicenseNo != string(observed.LicenseNo) {
+		return false
 	}
-	if cr.Spec.ForProvider.IssuedDate != "" {
-		if raw, err := json.Marshal(observed.IssuedDate); err != nil || !jsonEqual(cr.Spec.ForProvider.IssuedDate, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.IssuedDate != "" && cr.Spec.ForProvider.IssuedDate != string(observed.IssuedDate) {
+		return false
 	}
-	if cr.Spec.ForProvider.ExpiryDate != "" {
-		if raw, err := json.Marshal(observed.ExpiryDate); err != nil || !jsonEqual(cr.Spec.ForProvider.ExpiryDate, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.ExpiryDate != "" && cr.Spec.ForProvider.ExpiryDate != string(observed.ExpiryDate) {
+		return false
 	}
 
 	return true

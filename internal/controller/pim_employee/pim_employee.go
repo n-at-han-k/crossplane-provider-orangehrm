@@ -172,26 +172,10 @@ type external struct {
 func desired(cr *v1alpha1.PimEmployee) (*orangehrm.CreateAnEmployeeRequest, error) {
 	body := &orangehrm.CreateAnEmployeeRequest{}
 
-	if cr.Spec.ForProvider.LastName != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.LastName), &body.LastName); err != nil {
-			return nil, errors.Wrap(err, "lastName")
-		}
-	}
-	if cr.Spec.ForProvider.FirstName != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.FirstName), &body.FirstName); err != nil {
-			return nil, errors.Wrap(err, "firstName")
-		}
-	}
-	if cr.Spec.ForProvider.MiddleName != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.MiddleName), &body.MiddleName); err != nil {
-			return nil, errors.Wrap(err, "middleName")
-		}
-	}
-	if cr.Spec.ForProvider.EmployeeId != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.EmployeeId), &body.EmployeeId); err != nil {
-			return nil, errors.Wrap(err, "employeeId")
-		}
-	}
+	body.LastName = orangehrm.LooseString(cr.Spec.ForProvider.LastName)
+	body.FirstName = orangehrm.LooseString(cr.Spec.ForProvider.FirstName)
+	body.MiddleName = orangehrm.LooseString(cr.Spec.ForProvider.MiddleName)
+	body.EmployeeId = orangehrm.LooseString(cr.Spec.ForProvider.EmployeeId)
 	if cr.Spec.ForProvider.EmpPicture != "" {
 		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.EmpPicture), &body.EmpPicture); err != nil {
 			return nil, errors.Wrap(err, "empPicture")
@@ -210,26 +194,10 @@ func observation(in *orangehrm.GetAnEmployee200ResponseData) (v1alpha1.PimEmploy
 	} else {
 		return out, errors.Wrap(err, "empNumber")
 	}
-	if raw, err := json.Marshal(in.LastName); err == nil {
-		out.LastName = string(raw)
-	} else {
-		return out, errors.Wrap(err, "lastName")
-	}
-	if raw, err := json.Marshal(in.FirstName); err == nil {
-		out.FirstName = string(raw)
-	} else {
-		return out, errors.Wrap(err, "firstName")
-	}
-	if raw, err := json.Marshal(in.MiddleName); err == nil {
-		out.MiddleName = string(raw)
-	} else {
-		return out, errors.Wrap(err, "middleName")
-	}
-	if raw, err := json.Marshal(in.EmployeeId); err == nil {
-		out.EmployeeId = string(raw)
-	} else {
-		return out, errors.Wrap(err, "employeeId")
-	}
+	out.LastName = string(in.LastName)
+	out.FirstName = string(in.FirstName)
+	out.MiddleName = string(in.MiddleName)
+	out.EmployeeId = string(in.EmployeeId)
 	out.TerminationId = int64(in.TerminationId)
 	if raw, err := json.Marshal(in.JobTitle); err == nil {
 		out.JobTitle = string(raw)
@@ -260,25 +228,25 @@ func observation(in *orangehrm.GetAnEmployee200ResponseData) (v1alpha1.PimEmploy
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.PimEmployee, observed *orangehrm.GetAnEmployee200ResponseData) bool {
-	if cr.Spec.ForProvider.LastName != "" {
-		if raw, err := json.Marshal(observed.LastName); err != nil || !jsonEqual(cr.Spec.ForProvider.LastName, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.LastName != "" && cr.Spec.ForProvider.LastName != string(observed.LastName) {
+		return false
 	}
-	if cr.Spec.ForProvider.FirstName != "" {
-		if raw, err := json.Marshal(observed.FirstName); err != nil || !jsonEqual(cr.Spec.ForProvider.FirstName, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.FirstName != "" && cr.Spec.ForProvider.FirstName != string(observed.FirstName) {
+		return false
 	}
-	if cr.Spec.ForProvider.MiddleName != "" {
-		if raw, err := json.Marshal(observed.MiddleName); err != nil || !jsonEqual(cr.Spec.ForProvider.MiddleName, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.MiddleName != "" && cr.Spec.ForProvider.MiddleName != string(observed.MiddleName) {
+		return false
 	}
-	if cr.Spec.ForProvider.EmployeeId != "" {
-		if raw, err := json.Marshal(observed.EmployeeId); err != nil || !jsonEqual(cr.Spec.ForProvider.EmployeeId, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.EmployeeId != "" && cr.Spec.ForProvider.EmployeeId != string(observed.EmployeeId) {
+		return false
 	}
 
 	return true

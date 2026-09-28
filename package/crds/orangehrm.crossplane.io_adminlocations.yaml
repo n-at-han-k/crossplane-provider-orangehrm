@@ -65,49 +65,31 @@ spec:
                   AdminLocationObservation instead.
                 properties:
                   address:
-                    description: |-
-                      Address
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Address
                     type: string
                   city:
-                    description: |-
-                      City
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: City
                     type: string
                   countryCode:
-                    description: |-
-                      CountryCode
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: CountryCode
                     type: string
                   fax:
-                    description: |-
-                      Fax
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Fax
                     type: string
                   name:
-                    description: |-
-                      Name
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Name
                     type: string
                   note:
-                    description: |-
-                      Note
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Note
                     type: string
                   phone:
-                    description: |-
-                      Phone
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Phone
                     type: string
                   province:
-                    description: |-
-                      Province
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Province
                     type: string
                   zipCode:
-                    description: |-
-                      ZipCode
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: ZipCode
                     type: string
                 required:
                 - countryCode

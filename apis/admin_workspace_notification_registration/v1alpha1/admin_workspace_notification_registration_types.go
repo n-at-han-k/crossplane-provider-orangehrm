@@ -26,26 +26,18 @@ import (
 type AdminWorkspaceNotificationRegistrationParameters struct {
 	// EventType
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	EventType string `json:"eventType"`
 
 	// Provider Webhook provider. Defaults to &#39;slack&#39; if omitted. URL shape is validated against the selected provider.
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Provider string `json:"provider,omitempty"`
 
 	// WebhookUrl
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	WebhookUrl string `json:"webhookUrl"`
 
 	// ChannelLabel
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	ChannelLabel string `json:"channelLabel,omitempty"`
 
 	// SubunitIds Empty/omitted &#x3D; all employees.
@@ -56,14 +48,10 @@ type AdminWorkspaceNotificationRegistrationParameters struct {
 
 	// Timezone
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Timezone string `json:"timezone"`
 
 	// DailySendTime HH:mm in the registration&#39;s timezone.
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	DailySendTime string `json:"dailySendTime"`
 
 	// Active

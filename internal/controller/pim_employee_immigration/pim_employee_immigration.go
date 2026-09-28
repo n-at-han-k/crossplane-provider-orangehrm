@@ -172,42 +172,14 @@ type external struct {
 func desired(cr *v1alpha1.PimEmployeeImmigration) (*orangehrm.AddAnImmigrationRecordToAnEmployeeRequest, error) {
 	body := &orangehrm.AddAnImmigrationRecordToAnEmployeeRequest{}
 
-	if cr.Spec.ForProvider.Number != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Number), &body.Number); err != nil {
-			return nil, errors.Wrap(err, "number")
-		}
-	}
-	if cr.Spec.ForProvider.IssuedDate != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.IssuedDate), &body.IssuedDate); err != nil {
-			return nil, errors.Wrap(err, "issuedDate")
-		}
-	}
-	if cr.Spec.ForProvider.ExpiryDate != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.ExpiryDate), &body.ExpiryDate); err != nil {
-			return nil, errors.Wrap(err, "expiryDate")
-		}
-	}
+	body.Number = orangehrm.LooseString(cr.Spec.ForProvider.Number)
+	body.IssuedDate = orangehrm.LooseString(cr.Spec.ForProvider.IssuedDate)
+	body.ExpiryDate = orangehrm.LooseString(cr.Spec.ForProvider.ExpiryDate)
 	body.Type = int32(cr.Spec.ForProvider.Type)
-	if cr.Spec.ForProvider.Status != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Status), &body.Status); err != nil {
-			return nil, errors.Wrap(err, "status")
-		}
-	}
-	if cr.Spec.ForProvider.ReviewDate != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.ReviewDate), &body.ReviewDate); err != nil {
-			return nil, errors.Wrap(err, "reviewDate")
-		}
-	}
-	if cr.Spec.ForProvider.CountryCode != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.CountryCode), &body.CountryCode); err != nil {
-			return nil, errors.Wrap(err, "countryCode")
-		}
-	}
-	if cr.Spec.ForProvider.Comment != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Comment), &body.Comment); err != nil {
-			return nil, errors.Wrap(err, "comment")
-		}
-	}
+	body.Status = orangehrm.LooseString(cr.Spec.ForProvider.Status)
+	body.ReviewDate = orangehrm.LooseString(cr.Spec.ForProvider.ReviewDate)
+	body.CountryCode = orangehrm.LooseString(cr.Spec.ForProvider.CountryCode)
+	body.Comment = orangehrm.LooseString(cr.Spec.ForProvider.Comment)
 	body.AdditionalPropertiesField = cr.Spec.ForProvider.AdditionalPropertiesField
 
 	return body, nil
@@ -218,46 +190,18 @@ func observation(in *orangehrm.PimEmployeeImmigrationModel) (v1alpha1.PimEmploye
 	out := v1alpha1.PimEmployeeImmigrationObservation{}
 
 	out.Id = int64(in.Id)
-	if raw, err := json.Marshal(in.Number); err == nil {
-		out.Number = string(raw)
-	} else {
-		return out, errors.Wrap(err, "number")
-	}
-	if raw, err := json.Marshal(in.IssuedDate); err == nil {
-		out.IssuedDate = string(raw)
-	} else {
-		return out, errors.Wrap(err, "issuedDate")
-	}
-	if raw, err := json.Marshal(in.ExpiryDate); err == nil {
-		out.ExpiryDate = string(raw)
-	} else {
-		return out, errors.Wrap(err, "expiryDate")
-	}
-	if raw, err := json.Marshal(in.Type); err == nil {
-		out.Type = string(raw)
-	} else {
-		return out, errors.Wrap(err, "type")
-	}
-	if raw, err := json.Marshal(in.Status); err == nil {
-		out.Status = string(raw)
-	} else {
-		return out, errors.Wrap(err, "status")
-	}
-	if raw, err := json.Marshal(in.ReviewDate); err == nil {
-		out.ReviewDate = string(raw)
-	} else {
-		return out, errors.Wrap(err, "reviewDate")
-	}
+	out.Number = string(in.Number)
+	out.IssuedDate = string(in.IssuedDate)
+	out.ExpiryDate = string(in.ExpiryDate)
+	out.Type = string(in.Type)
+	out.Status = string(in.Status)
+	out.ReviewDate = string(in.ReviewDate)
 	if raw, err := json.Marshal(in.Country); err == nil {
 		out.Country = string(raw)
 	} else {
 		return out, errors.Wrap(err, "country")
 	}
-	if raw, err := json.Marshal(in.Comment); err == nil {
-		out.Comment = string(raw)
-	} else {
-		return out, errors.Wrap(err, "comment")
-	}
+	out.Comment = string(in.Comment)
 
 	return out, nil
 }
@@ -267,35 +211,35 @@ func observation(in *orangehrm.PimEmployeeImmigrationModel) (v1alpha1.PimEmploye
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.PimEmployeeImmigration, observed *orangehrm.PimEmployeeImmigrationModel) bool {
-	if cr.Spec.ForProvider.Number != "" {
-		if raw, err := json.Marshal(observed.Number); err != nil || !jsonEqual(cr.Spec.ForProvider.Number, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Number != "" && cr.Spec.ForProvider.Number != string(observed.Number) {
+		return false
 	}
-	if cr.Spec.ForProvider.IssuedDate != "" {
-		if raw, err := json.Marshal(observed.IssuedDate); err != nil || !jsonEqual(cr.Spec.ForProvider.IssuedDate, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.IssuedDate != "" && cr.Spec.ForProvider.IssuedDate != string(observed.IssuedDate) {
+		return false
 	}
-	if cr.Spec.ForProvider.ExpiryDate != "" {
-		if raw, err := json.Marshal(observed.ExpiryDate); err != nil || !jsonEqual(cr.Spec.ForProvider.ExpiryDate, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.ExpiryDate != "" && cr.Spec.ForProvider.ExpiryDate != string(observed.ExpiryDate) {
+		return false
 	}
-	if cr.Spec.ForProvider.Status != "" {
-		if raw, err := json.Marshal(observed.Status); err != nil || !jsonEqual(cr.Spec.ForProvider.Status, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Status != "" && cr.Spec.ForProvider.Status != string(observed.Status) {
+		return false
 	}
-	if cr.Spec.ForProvider.ReviewDate != "" {
-		if raw, err := json.Marshal(observed.ReviewDate); err != nil || !jsonEqual(cr.Spec.ForProvider.ReviewDate, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.ReviewDate != "" && cr.Spec.ForProvider.ReviewDate != string(observed.ReviewDate) {
+		return false
 	}
-	if cr.Spec.ForProvider.Comment != "" {
-		if raw, err := json.Marshal(observed.Comment); err != nil || !jsonEqual(cr.Spec.ForProvider.Comment, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Comment != "" && cr.Spec.ForProvider.Comment != string(observed.Comment) {
+		return false
 	}
 
 	return true

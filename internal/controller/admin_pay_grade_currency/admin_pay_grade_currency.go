@@ -172,11 +172,7 @@ type external struct {
 func desired(cr *v1alpha1.AdminPayGradeCurrency) (*orangehrm.CreateAPayGradeCurrencyRequest, error) {
 	body := &orangehrm.CreateAPayGradeCurrencyRequest{}
 
-	if cr.Spec.ForProvider.CurrencyId != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.CurrencyId), &body.CurrencyId); err != nil {
-			return nil, errors.Wrap(err, "currencyId")
-		}
-	}
+	body.CurrencyId = orangehrm.LooseString(cr.Spec.ForProvider.CurrencyId)
 	body.MaxSalary = int32(cr.Spec.ForProvider.MaxSalary)
 	body.MinSalary = int32(cr.Spec.ForProvider.MinSalary)
 

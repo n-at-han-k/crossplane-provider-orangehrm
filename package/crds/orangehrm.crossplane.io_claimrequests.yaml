@@ -69,14 +69,10 @@ spec:
                     format: int64
                     type: integer
                   currencyId:
-                    description: |-
-                      CurrencyId
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: CurrencyId
                     type: string
                   remarks:
-                    description: |-
-                      Remarks
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Remarks
                     type: string
                 required:
                 - claimEventId

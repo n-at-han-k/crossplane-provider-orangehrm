@@ -790,7 +790,11 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
         // because Kubernetes has no int32. So the two disagree for exactly the
         // narrow numbers, and the controller converts rather than the schema
         // lying about what the API takes.
-        field.put("clientType", scalar ? dataType : "");
+        // QUALIFIED, because the controller is a different package: a cast to
+        // `LooseString(x)` does not compile there, only to
+        // `orangehrm.LooseString(x)`. Builtins are not qualified.
+        String clientType = "LooseString".equals(dataType) ? providerName + ".LooseString" : dataType;
+        field.put("clientType", scalar ? clientType : "");
         field.put("needsCast", scalar && !goType.equals(dataType));
         // What "the person did not set this" looks like for this type, so
         // upToDate can tell an unset optional field from a difference. The
@@ -824,6 +828,13 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
 
     private boolean isScalar(String dataType) {
         switch (dataType == null ? "" : dataType) {
+            // LooseString IS a string -- it is a string that also parses a bare
+            // number (see client.go). Left out of here it is "not a scalar", so
+            // every string parameter becomes a JSON field and `desired` tries to
+            // json.Unmarshal the value: a holiday's date came out as
+            // `invalid character '-' after top-level value`, and no resource with
+            // a string field could be created at all.
+            case "LooseString":
             case "string": case "bool":
             case "int": case "int32": case "int64":
             case "float32": case "float64":
@@ -835,6 +846,9 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
 
     private String goType(String dataType) {
         switch (dataType == null ? "" : dataType) {
+            // In the CRD it is a plain string; the conversion to and from
+            // LooseString is what needsCast asks the templates for.
+            case "LooseString": return "string";
             case "int": case "int32": case "int64": return "int64";
             case "float32": case "float64": return "float64";
             case "bool": return "bool";

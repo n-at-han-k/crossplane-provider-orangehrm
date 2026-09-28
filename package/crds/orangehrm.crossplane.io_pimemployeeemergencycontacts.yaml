@@ -75,29 +75,23 @@ spec:
                     - message: empNumber is immutable
                       rule: self == oldSelf
                   homePhone:
-                    description: |-
-                      HomePhone Specify the home phone number of the emergency contact
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: HomePhone Specify the home phone number of the emergency
+                      contact
                     type: string
                   mobilePhone:
-                    description: |-
-                      MobilePhone Specify the mobile phone number of the emergency contact
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: MobilePhone Specify the mobile phone number of the
+                      emergency contact
                     type: string
                   name:
-                    description: |-
-                      Name Specify the name of the emergency contact
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Name Specify the name of the emergency contact
                     type: string
                   officePhone:
-                    description: |-
-                      OfficePhone Specfiy the office phone number of the emergency contact
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: OfficePhone Specfiy the office phone number of the
+                      emergency contact
                     type: string
                   relationship:
-                    description: |-
-                      Relationship Specify the relationship between the employee and the emergency contact
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Relationship Specify the relationship between the
+                      employee and the emergency contact
                     type: string
                 required:
                 - empNumber

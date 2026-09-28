@@ -26,20 +26,14 @@ import (
 type AdminJobTitleParameters struct {
 	// Title
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Title string `json:"title"`
 
 	// Description
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Description string `json:"description,omitempty"`
 
 	// Note
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Note string `json:"note,omitempty"`
 
 	// Specification

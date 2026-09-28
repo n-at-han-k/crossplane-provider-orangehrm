@@ -65,23 +65,17 @@ spec:
                   AdminSubunitObservation instead.
                 properties:
                   description:
-                    description: |-
-                      Description
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Description
                     type: string
                   name:
-                    description: |-
-                      Name Should be unique
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Name Should be unique
                     type: string
                   parentId:
                     description: ParentId Should be the id of the parent node
                     format: int64
                     type: integer
                   unitId:
-                    description: |-
-                      UnitId
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: UnitId
                     type: string
                 required:
                 - name

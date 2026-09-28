@@ -172,51 +172,15 @@ type external struct {
 func desired(cr *v1alpha1.AdminLocation) (*orangehrm.UpdateALocationRequest, error) {
 	body := &orangehrm.UpdateALocationRequest{}
 
-	if cr.Spec.ForProvider.Name != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Name), &body.Name); err != nil {
-			return nil, errors.Wrap(err, "name")
-		}
-	}
-	if cr.Spec.ForProvider.CountryCode != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.CountryCode), &body.CountryCode); err != nil {
-			return nil, errors.Wrap(err, "countryCode")
-		}
-	}
-	if cr.Spec.ForProvider.Province != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Province), &body.Province); err != nil {
-			return nil, errors.Wrap(err, "province")
-		}
-	}
-	if cr.Spec.ForProvider.City != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.City), &body.City); err != nil {
-			return nil, errors.Wrap(err, "city")
-		}
-	}
-	if cr.Spec.ForProvider.Address != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Address), &body.Address); err != nil {
-			return nil, errors.Wrap(err, "address")
-		}
-	}
-	if cr.Spec.ForProvider.ZipCode != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.ZipCode), &body.ZipCode); err != nil {
-			return nil, errors.Wrap(err, "zipCode")
-		}
-	}
-	if cr.Spec.ForProvider.Phone != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Phone), &body.Phone); err != nil {
-			return nil, errors.Wrap(err, "phone")
-		}
-	}
-	if cr.Spec.ForProvider.Fax != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Fax), &body.Fax); err != nil {
-			return nil, errors.Wrap(err, "fax")
-		}
-	}
-	if cr.Spec.ForProvider.Note != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Note), &body.Note); err != nil {
-			return nil, errors.Wrap(err, "note")
-		}
-	}
+	body.Name = orangehrm.LooseString(cr.Spec.ForProvider.Name)
+	body.CountryCode = orangehrm.LooseString(cr.Spec.ForProvider.CountryCode)
+	body.Province = orangehrm.LooseString(cr.Spec.ForProvider.Province)
+	body.City = orangehrm.LooseString(cr.Spec.ForProvider.City)
+	body.Address = orangehrm.LooseString(cr.Spec.ForProvider.Address)
+	body.ZipCode = orangehrm.LooseString(cr.Spec.ForProvider.ZipCode)
+	body.Phone = orangehrm.LooseString(cr.Spec.ForProvider.Phone)
+	body.Fax = orangehrm.LooseString(cr.Spec.ForProvider.Fax)
+	body.Note = orangehrm.LooseString(cr.Spec.ForProvider.Note)
 
 	return body, nil
 }
@@ -226,51 +190,19 @@ func observation(in *orangehrm.AdminLocationModel) (v1alpha1.AdminLocationObserv
 	out := v1alpha1.AdminLocationObservation{}
 
 	out.Id = int64(in.Id)
-	if raw, err := json.Marshal(in.Name); err == nil {
-		out.Name = string(raw)
-	} else {
-		return out, errors.Wrap(err, "name")
-	}
+	out.Name = string(in.Name)
 	if raw, err := json.Marshal(in.Country); err == nil {
 		out.Country = string(raw)
 	} else {
 		return out, errors.Wrap(err, "country")
 	}
-	if raw, err := json.Marshal(in.Province); err == nil {
-		out.Province = string(raw)
-	} else {
-		return out, errors.Wrap(err, "province")
-	}
-	if raw, err := json.Marshal(in.City); err == nil {
-		out.City = string(raw)
-	} else {
-		return out, errors.Wrap(err, "city")
-	}
-	if raw, err := json.Marshal(in.Address); err == nil {
-		out.Address = string(raw)
-	} else {
-		return out, errors.Wrap(err, "address")
-	}
-	if raw, err := json.Marshal(in.ZipCode); err == nil {
-		out.ZipCode = string(raw)
-	} else {
-		return out, errors.Wrap(err, "zipCode")
-	}
-	if raw, err := json.Marshal(in.Phone); err == nil {
-		out.Phone = string(raw)
-	} else {
-		return out, errors.Wrap(err, "phone")
-	}
-	if raw, err := json.Marshal(in.Fax); err == nil {
-		out.Fax = string(raw)
-	} else {
-		return out, errors.Wrap(err, "fax")
-	}
-	if raw, err := json.Marshal(in.Note); err == nil {
-		out.Note = string(raw)
-	} else {
-		return out, errors.Wrap(err, "note")
-	}
+	out.Province = string(in.Province)
+	out.City = string(in.City)
+	out.Address = string(in.Address)
+	out.ZipCode = string(in.ZipCode)
+	out.Phone = string(in.Phone)
+	out.Fax = string(in.Fax)
+	out.Note = string(in.Note)
 	out.NoOfEmployees = int64(in.NoOfEmployees)
 
 	return out, nil
@@ -281,45 +213,45 @@ func observation(in *orangehrm.AdminLocationModel) (v1alpha1.AdminLocationObserv
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.AdminLocation, observed *orangehrm.AdminLocationModel) bool {
-	if cr.Spec.ForProvider.Name != "" {
-		if raw, err := json.Marshal(observed.Name); err != nil || !jsonEqual(cr.Spec.ForProvider.Name, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Name != "" && cr.Spec.ForProvider.Name != string(observed.Name) {
+		return false
 	}
-	if cr.Spec.ForProvider.Province != "" {
-		if raw, err := json.Marshal(observed.Province); err != nil || !jsonEqual(cr.Spec.ForProvider.Province, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Province != "" && cr.Spec.ForProvider.Province != string(observed.Province) {
+		return false
 	}
-	if cr.Spec.ForProvider.City != "" {
-		if raw, err := json.Marshal(observed.City); err != nil || !jsonEqual(cr.Spec.ForProvider.City, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.City != "" && cr.Spec.ForProvider.City != string(observed.City) {
+		return false
 	}
-	if cr.Spec.ForProvider.Address != "" {
-		if raw, err := json.Marshal(observed.Address); err != nil || !jsonEqual(cr.Spec.ForProvider.Address, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Address != "" && cr.Spec.ForProvider.Address != string(observed.Address) {
+		return false
 	}
-	if cr.Spec.ForProvider.ZipCode != "" {
-		if raw, err := json.Marshal(observed.ZipCode); err != nil || !jsonEqual(cr.Spec.ForProvider.ZipCode, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.ZipCode != "" && cr.Spec.ForProvider.ZipCode != string(observed.ZipCode) {
+		return false
 	}
-	if cr.Spec.ForProvider.Phone != "" {
-		if raw, err := json.Marshal(observed.Phone); err != nil || !jsonEqual(cr.Spec.ForProvider.Phone, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Phone != "" && cr.Spec.ForProvider.Phone != string(observed.Phone) {
+		return false
 	}
-	if cr.Spec.ForProvider.Fax != "" {
-		if raw, err := json.Marshal(observed.Fax); err != nil || !jsonEqual(cr.Spec.ForProvider.Fax, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Fax != "" && cr.Spec.ForProvider.Fax != string(observed.Fax) {
+		return false
 	}
-	if cr.Spec.ForProvider.Note != "" {
-		if raw, err := json.Marshal(observed.Note); err != nil || !jsonEqual(cr.Spec.ForProvider.Note, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Note != "" && cr.Spec.ForProvider.Note != string(observed.Note) {
+		return false
 	}
 
 	return true

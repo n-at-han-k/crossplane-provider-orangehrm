@@ -172,16 +172,8 @@ type external struct {
 func desired(cr *v1alpha1.TimeCustomer) (*orangehrm.CreateACustomerRequest, error) {
 	body := &orangehrm.CreateACustomerRequest{}
 
-	if cr.Spec.ForProvider.Name != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Name), &body.Name); err != nil {
-			return nil, errors.Wrap(err, "name")
-		}
-	}
-	if cr.Spec.ForProvider.Description != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Description), &body.Description); err != nil {
-			return nil, errors.Wrap(err, "description")
-		}
-	}
+	body.Name = orangehrm.LooseString(cr.Spec.ForProvider.Name)
+	body.Description = orangehrm.LooseString(cr.Spec.ForProvider.Description)
 
 	return body, nil
 }
@@ -191,16 +183,8 @@ func observation(in *orangehrm.TimeCustomerModel) (v1alpha1.TimeCustomerObservat
 	out := v1alpha1.TimeCustomerObservation{}
 
 	out.Id = int64(in.Id)
-	if raw, err := json.Marshal(in.Name); err == nil {
-		out.Name = string(raw)
-	} else {
-		return out, errors.Wrap(err, "name")
-	}
-	if raw, err := json.Marshal(in.Description); err == nil {
-		out.Description = string(raw)
-	} else {
-		return out, errors.Wrap(err, "description")
-	}
+	out.Name = string(in.Name)
+	out.Description = string(in.Description)
 	out.Deleted = in.Deleted
 
 	return out, nil
@@ -211,42 +195,18 @@ func observation(in *orangehrm.TimeCustomerModel) (v1alpha1.TimeCustomerObservat
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.TimeCustomer, observed *orangehrm.TimeCustomerModel) bool {
-	if cr.Spec.ForProvider.Name != "" {
-		if raw, err := json.Marshal(observed.Name); err != nil || !jsonEqual(cr.Spec.ForProvider.Name, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Name != "" && cr.Spec.ForProvider.Name != string(observed.Name) {
+		return false
 	}
-	if cr.Spec.ForProvider.Description != "" {
-		if raw, err := json.Marshal(observed.Description); err != nil || !jsonEqual(cr.Spec.ForProvider.Description, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Description != "" && cr.Spec.ForProvider.Description != string(observed.Description) {
+		return false
 	}
 
 	return true
-}
-
-// jsonEqual compares two JSON documents by value rather than by text, so that
-// a server re-ordering an object's keys is not a permanent diff.
-func jsonEqual(a, b string) bool {
-	var left, right any
-
-	if err := json.Unmarshal([]byte(a), &left); err != nil {
-		return false
-	}
-	if err := json.Unmarshal([]byte(b), &right); err != nil {
-		return false
-	}
-
-	x, err := json.Marshal(left)
-	if err != nil {
-		return false
-	}
-	y, err := json.Marshal(right)
-	if err != nil {
-		return false
-	}
-
-	return string(x) == string(y)
 }
 
 func (c *external) Observe(ctx context.Context, cr *v1alpha1.TimeCustomer) (managed.ExternalObservation, error) {

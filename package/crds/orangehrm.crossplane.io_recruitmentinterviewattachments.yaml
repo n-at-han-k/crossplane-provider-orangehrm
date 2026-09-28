@@ -71,9 +71,7 @@ spec:
                       Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   comment:
-                    description: |-
-                      Comment
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Comment
                     type: string
                   interviewId:
                     description: |-

@@ -37,14 +37,10 @@ type PerformanceTrackerLogParameters struct {
 
 	// Comment
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Comment string `json:"comment"`
 
 	// Log
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Log string `json:"log"`
 }
 

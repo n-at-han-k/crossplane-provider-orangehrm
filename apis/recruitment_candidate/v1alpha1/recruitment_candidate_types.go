@@ -26,32 +26,22 @@ import (
 type RecruitmentCandidateParameters struct {
 	// FirstName
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	FirstName string `json:"firstName"`
 
 	// MiddleName
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	MiddleName string `json:"middleName,omitempty"`
 
 	// LastName
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	LastName string `json:"lastName"`
 
 	// Email
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Email string `json:"email"`
 
 	// ContactNumber
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	ContactNumber string `json:"contactNumber,omitempty"`
 
 	// VacancyId
@@ -60,20 +50,14 @@ type RecruitmentCandidateParameters struct {
 
 	// Keywords
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Keywords string `json:"keywords,omitempty"`
 
 	// Comment
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Comment string `json:"comment,omitempty"`
 
 	// DateOfApplication
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	DateOfApplication string `json:"dateOfApplication,omitempty"`
 
 	// ConsentToKeepData

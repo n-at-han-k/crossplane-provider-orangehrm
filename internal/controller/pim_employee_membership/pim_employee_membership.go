@@ -174,26 +174,10 @@ func desired(cr *v1alpha1.PimEmployeeMembership) (*orangehrm.UpdateAnEmployeesMe
 
 	body.MembershipId = int32(cr.Spec.ForProvider.MembershipId)
 	body.SubscriptionFee = float32(cr.Spec.ForProvider.SubscriptionFee)
-	if cr.Spec.ForProvider.SubscriptionPaidBy != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.SubscriptionPaidBy), &body.SubscriptionPaidBy); err != nil {
-			return nil, errors.Wrap(err, "subscriptionPaidBy")
-		}
-	}
-	if cr.Spec.ForProvider.CurrencyTypeId != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.CurrencyTypeId), &body.CurrencyTypeId); err != nil {
-			return nil, errors.Wrap(err, "currencyTypeId")
-		}
-	}
-	if cr.Spec.ForProvider.SubscriptionCommenceDate != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.SubscriptionCommenceDate), &body.SubscriptionCommenceDate); err != nil {
-			return nil, errors.Wrap(err, "subscriptionCommenceDate")
-		}
-	}
-	if cr.Spec.ForProvider.SubscriptionRenewalDate != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.SubscriptionRenewalDate), &body.SubscriptionRenewalDate); err != nil {
-			return nil, errors.Wrap(err, "subscriptionRenewalDate")
-		}
-	}
+	body.SubscriptionPaidBy = orangehrm.LooseString(cr.Spec.ForProvider.SubscriptionPaidBy)
+	body.CurrencyTypeId = orangehrm.LooseString(cr.Spec.ForProvider.CurrencyTypeId)
+	body.SubscriptionCommenceDate = orangehrm.LooseString(cr.Spec.ForProvider.SubscriptionCommenceDate)
+	body.SubscriptionRenewalDate = orangehrm.LooseString(cr.Spec.ForProvider.SubscriptionRenewalDate)
 
 	return body, nil
 }
@@ -209,26 +193,14 @@ func observation(in *orangehrm.PimEmployeeMembershipModel) (v1alpha1.PimEmployee
 		return out, errors.Wrap(err, "membership")
 	}
 	out.SubscriptionFee = float64(in.SubscriptionFee)
-	if raw, err := json.Marshal(in.SubscriptionPaidBy); err == nil {
-		out.SubscriptionPaidBy = string(raw)
-	} else {
-		return out, errors.Wrap(err, "subscriptionPaidBy")
-	}
+	out.SubscriptionPaidBy = string(in.SubscriptionPaidBy)
 	if raw, err := json.Marshal(in.CurrencyType); err == nil {
 		out.CurrencyType = string(raw)
 	} else {
 		return out, errors.Wrap(err, "currencyType")
 	}
-	if raw, err := json.Marshal(in.SubscriptionCommenceDate); err == nil {
-		out.SubscriptionCommenceDate = string(raw)
-	} else {
-		return out, errors.Wrap(err, "subscriptionCommenceDate")
-	}
-	if raw, err := json.Marshal(in.SubscriptionRenewalDate); err == nil {
-		out.SubscriptionRenewalDate = string(raw)
-	} else {
-		return out, errors.Wrap(err, "subscriptionRenewalDate")
-	}
+	out.SubscriptionCommenceDate = string(in.SubscriptionCommenceDate)
+	out.SubscriptionRenewalDate = string(in.SubscriptionRenewalDate)
 
 	return out, nil
 }
@@ -243,20 +215,20 @@ func upToDate(cr *v1alpha1.PimEmployeeMembership, observed *orangehrm.PimEmploye
 	if cr.Spec.ForProvider.SubscriptionFee != 0 && cr.Spec.ForProvider.SubscriptionFee != float64(observed.SubscriptionFee) {
 		return false
 	}
-	if cr.Spec.ForProvider.SubscriptionPaidBy != "" {
-		if raw, err := json.Marshal(observed.SubscriptionPaidBy); err != nil || !jsonEqual(cr.Spec.ForProvider.SubscriptionPaidBy, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.SubscriptionPaidBy != "" && cr.Spec.ForProvider.SubscriptionPaidBy != string(observed.SubscriptionPaidBy) {
+		return false
 	}
-	if cr.Spec.ForProvider.SubscriptionCommenceDate != "" {
-		if raw, err := json.Marshal(observed.SubscriptionCommenceDate); err != nil || !jsonEqual(cr.Spec.ForProvider.SubscriptionCommenceDate, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.SubscriptionCommenceDate != "" && cr.Spec.ForProvider.SubscriptionCommenceDate != string(observed.SubscriptionCommenceDate) {
+		return false
 	}
-	if cr.Spec.ForProvider.SubscriptionRenewalDate != "" {
-		if raw, err := json.Marshal(observed.SubscriptionRenewalDate); err != nil || !jsonEqual(cr.Spec.ForProvider.SubscriptionRenewalDate, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.SubscriptionRenewalDate != "" && cr.Spec.ForProvider.SubscriptionRenewalDate != string(observed.SubscriptionRenewalDate) {
+		return false
 	}
 
 	return true

@@ -41,26 +41,18 @@ type PimEmployeeMembershipParameters struct {
 
 	// SubscriptionPaidBy
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	SubscriptionPaidBy string `json:"subscriptionPaidBy,omitempty"`
 
 	// CurrencyTypeId
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	CurrencyTypeId string `json:"currencyTypeId,omitempty"`
 
 	// SubscriptionCommenceDate
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	SubscriptionCommenceDate string `json:"subscriptionCommenceDate,omitempty"`
 
 	// SubscriptionRenewalDate
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	SubscriptionRenewalDate string `json:"subscriptionRenewalDate,omitempty"`
 }
 

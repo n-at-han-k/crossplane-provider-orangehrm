@@ -172,11 +172,7 @@ type external struct {
 func desired(cr *v1alpha1.LeaveLeaveRequest) (*orangehrm.ApplyForLeaveRequest, error) {
 	body := &orangehrm.ApplyForLeaveRequest{}
 
-	if cr.Spec.ForProvider.Comment != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Comment), &body.Comment); err != nil {
-			return nil, errors.Wrap(err, "comment")
-		}
-	}
+	body.Comment = orangehrm.LooseString(cr.Spec.ForProvider.Comment)
 	if cr.Spec.ForProvider.Duration != "" {
 		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Duration), &body.Duration); err != nil {
 			return nil, errors.Wrap(err, "duration")
@@ -187,21 +183,9 @@ func desired(cr *v1alpha1.LeaveLeaveRequest) (*orangehrm.ApplyForLeaveRequest, e
 			return nil, errors.Wrap(err, "endDuration")
 		}
 	}
-	if cr.Spec.ForProvider.PartialOption != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.PartialOption), &body.PartialOption); err != nil {
-			return nil, errors.Wrap(err, "partialOption")
-		}
-	}
-	if cr.Spec.ForProvider.FromDate != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.FromDate), &body.FromDate); err != nil {
-			return nil, errors.Wrap(err, "fromDate")
-		}
-	}
-	if cr.Spec.ForProvider.ToDate != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.ToDate), &body.ToDate); err != nil {
-			return nil, errors.Wrap(err, "toDate")
-		}
-	}
+	body.PartialOption = orangehrm.LooseString(cr.Spec.ForProvider.PartialOption)
+	body.FromDate = orangehrm.LooseString(cr.Spec.ForProvider.FromDate)
+	body.ToDate = orangehrm.LooseString(cr.Spec.ForProvider.ToDate)
 	body.LeaveTypeId = int32(cr.Spec.ForProvider.LeaveTypeId)
 
 	return body, nil

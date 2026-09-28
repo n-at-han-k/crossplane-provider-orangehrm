@@ -26,14 +26,10 @@ import (
 type AdminOauthClientParameters struct {
 	// Name
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Name string `json:"name,omitempty"`
 
 	// RedirectUri
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	RedirectUri string `json:"redirectUri,omitempty"`
 
 	// Enabled

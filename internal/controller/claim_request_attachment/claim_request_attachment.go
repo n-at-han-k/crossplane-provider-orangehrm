@@ -172,11 +172,7 @@ type external struct {
 func desired(cr *v1alpha1.ClaimRequestAttachment) (*orangehrm.AddAttachmentsToAClaimRequest, error) {
 	body := &orangehrm.AddAttachmentsToAClaimRequest{}
 
-	if cr.Spec.ForProvider.Description != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Description), &body.Description); err != nil {
-			return nil, errors.Wrap(err, "description")
-		}
-	}
+	body.Description = orangehrm.LooseString(cr.Spec.ForProvider.Description)
 	if cr.Spec.ForProvider.Attachment != "" {
 		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Attachment), &body.Attachment); err != nil {
 			return nil, errors.Wrap(err, "attachment")
@@ -201,11 +197,7 @@ func observation(in *orangehrm.ClaimAttachmentModel) (v1alpha1.ClaimRequestAttac
 	} else {
 		return out, errors.Wrap(err, "attachedBy")
 	}
-	if raw, err := json.Marshal(in.Date); err == nil {
-		out.Date = string(raw)
-	} else {
-		return out, errors.Wrap(err, "date")
-	}
+	out.Date = string(in.Date)
 
 	return out, nil
 }

@@ -26,14 +26,10 @@ import (
 type AdminUserParameters struct {
 	// Username
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Username string `json:"username"`
 
 	// Password
 	// +kubebuilder:validation:Required
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Password string `json:"password"`
 
 	// Status

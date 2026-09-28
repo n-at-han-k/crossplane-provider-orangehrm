@@ -66,9 +66,7 @@ spec:
                   PimEmployeeMembershipObservation instead.
                 properties:
                   currencyTypeId:
-                    description: |-
-                      CurrencyTypeId
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: CurrencyTypeId
                     type: string
                   empNumber:
                     description: |-
@@ -84,22 +82,16 @@ spec:
                     format: int64
                     type: integer
                   subscriptionCommenceDate:
-                    description: |-
-                      SubscriptionCommenceDate
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: SubscriptionCommenceDate
                     type: string
                   subscriptionFee:
                     description: SubscriptionFee
                     type: number
                   subscriptionPaidBy:
-                    description: |-
-                      SubscriptionPaidBy
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: SubscriptionPaidBy
                     type: string
                   subscriptionRenewalDate:
-                    description: |-
-                      SubscriptionRenewalDate
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: SubscriptionRenewalDate
                     type: string
                 required:
                 - empNumber

@@ -65,27 +65,19 @@ spec:
                   AuthOpenidProviderObservation instead.
                 properties:
                   clientId:
-                    description: |-
-                      ClientId
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: ClientId
                     type: string
                   clientSecret:
-                    description: |-
-                      ClientSecret
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: ClientSecret
                     type: string
                   name:
-                    description: |-
-                      Name
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Name
                     type: string
                   status:
                     description: Status
                     type: boolean
                   url:
-                    description: |-
-                      Url
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Url
                     type: string
                 required:
                 - clientId

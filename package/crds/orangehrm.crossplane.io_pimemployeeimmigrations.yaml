@@ -69,14 +69,10 @@ spec:
                     description: AdditionalPropertiesField
                     type: boolean
                   comment:
-                    description: |-
-                      Comment
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Comment
                     type: string
                   countryCode:
-                    description: |-
-                      CountryCode
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: CountryCode
                     type: string
                   empNumber:
                     description: |-
@@ -88,29 +84,19 @@ spec:
                     - message: empNumber is immutable
                       rule: self == oldSelf
                   expiryDate:
-                    description: |-
-                      ExpiryDate
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: ExpiryDate
                     type: string
                   issuedDate:
-                    description: |-
-                      IssuedDate
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: IssuedDate
                     type: string
                   number:
-                    description: |-
-                      Number
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Number
                     type: string
                   reviewDate:
-                    description: |-
-                      ReviewDate
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: ReviewDate
                     type: string
                   status:
-                    description: |-
-                      Status
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Status
                     type: string
                   type:
                     description: Type

@@ -174,16 +174,8 @@ func desired(cr *v1alpha1.ClaimRequestExpense) (*orangehrm.AddAnExpenseToAClaimR
 
 	body.ExpenseTypeId = int32(cr.Spec.ForProvider.ExpenseTypeId)
 	body.Amount = float32(cr.Spec.ForProvider.Amount)
-	if cr.Spec.ForProvider.Note != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Note), &body.Note); err != nil {
-			return nil, errors.Wrap(err, "note")
-		}
-	}
-	if cr.Spec.ForProvider.Date != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Date), &body.Date); err != nil {
-			return nil, errors.Wrap(err, "date")
-		}
-	}
+	body.Note = orangehrm.LooseString(cr.Spec.ForProvider.Note)
+	body.Date = orangehrm.LooseString(cr.Spec.ForProvider.Date)
 
 	return body, nil
 }
@@ -204,11 +196,7 @@ func observation(in *orangehrm.ClaimExpenseModel) (v1alpha1.ClaimRequestExpenseO
 		return out, errors.Wrap(err, "expenseType")
 	}
 	out.Amount = float64(in.Amount)
-	if raw, err := json.Marshal(in.Note); err == nil {
-		out.Note = string(raw)
-	} else {
-		return out, errors.Wrap(err, "note")
-	}
+	out.Note = string(in.Note)
 
 	return out, nil
 }
@@ -223,10 +211,10 @@ func upToDate(cr *v1alpha1.ClaimRequestExpense, observed *orangehrm.ClaimExpense
 	if cr.Spec.ForProvider.Amount != 0 && cr.Spec.ForProvider.Amount != float64(observed.Amount) {
 		return false
 	}
-	if cr.Spec.ForProvider.Note != "" {
-		if raw, err := json.Marshal(observed.Note); err != nil || !jsonEqual(cr.Spec.ForProvider.Note, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Note != "" && cr.Spec.ForProvider.Note != string(observed.Note) {
+		return false
 	}
 
 	return true

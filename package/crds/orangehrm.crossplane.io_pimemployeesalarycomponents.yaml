@@ -69,32 +69,22 @@ spec:
                     description: AddDirectDeposit
                     type: boolean
                   comment:
-                    description: |-
-                      Comment
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Comment
                     type: string
                   currencyId:
-                    description: |-
-                      CurrencyId
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: CurrencyId
                     type: string
                   directDepositAccount:
-                    description: |-
-                      DirectDepositAccount
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: DirectDepositAccount
                     type: string
                   directDepositAccountType:
-                    description: |-
-                      DirectDepositAccountType
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: DirectDepositAccountType
                     type: string
                   directDepositAmount:
                     description: DirectDepositAmount
                     type: number
                   directDepositRoutingNumber:
-                    description: |-
-                      DirectDepositRoutingNumber
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: DirectDepositRoutingNumber
                     type: string
                   empNumber:
                     description: |-
@@ -114,14 +104,10 @@ spec:
                     format: int64
                     type: integer
                   salaryAmount:
-                    description: |-
-                      SalaryAmount
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: SalaryAmount
                     type: string
                   salaryComponent:
-                    description: |-
-                      SalaryComponent
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: SalaryComponent
                     type: string
                 required:
                 - currencyId

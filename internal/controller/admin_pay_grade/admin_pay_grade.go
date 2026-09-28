@@ -172,11 +172,7 @@ type external struct {
 func desired(cr *v1alpha1.AdminPayGrade) (*orangehrm.CreateAPayGradeRequest, error) {
 	body := &orangehrm.CreateAPayGradeRequest{}
 
-	if cr.Spec.ForProvider.Name != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Name), &body.Name); err != nil {
-			return nil, errors.Wrap(err, "name")
-		}
-	}
+	body.Name = orangehrm.LooseString(cr.Spec.ForProvider.Name)
 
 	return body, nil
 }
@@ -186,11 +182,7 @@ func observation(in *orangehrm.AdminPayGradeModel) (v1alpha1.AdminPayGradeObserv
 	out := v1alpha1.AdminPayGradeObservation{}
 
 	out.Id = int64(in.Id)
-	if raw, err := json.Marshal(in.Name); err == nil {
-		out.Name = string(raw)
-	} else {
-		return out, errors.Wrap(err, "name")
-	}
+	out.Name = string(in.Name)
 	if raw, err := json.Marshal(in.Currencies); err == nil {
 		out.Currencies = string(raw)
 	} else {
@@ -205,10 +197,10 @@ func observation(in *orangehrm.AdminPayGradeModel) (v1alpha1.AdminPayGradeObserv
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.AdminPayGrade, observed *orangehrm.AdminPayGradeModel) bool {
-	if cr.Spec.ForProvider.Name != "" {
-		if raw, err := json.Marshal(observed.Name); err != nil || !jsonEqual(cr.Spec.ForProvider.Name, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Name != "" && cr.Spec.ForProvider.Name != string(observed.Name) {
+		return false
 	}
 
 	return true

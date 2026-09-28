@@ -172,47 +172,15 @@ type external struct {
 func desired(cr *v1alpha1.RecruitmentCandidate) (*orangehrm.CreateACandidateRequest, error) {
 	body := &orangehrm.CreateACandidateRequest{}
 
-	if cr.Spec.ForProvider.FirstName != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.FirstName), &body.FirstName); err != nil {
-			return nil, errors.Wrap(err, "firstName")
-		}
-	}
-	if cr.Spec.ForProvider.MiddleName != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.MiddleName), &body.MiddleName); err != nil {
-			return nil, errors.Wrap(err, "middleName")
-		}
-	}
-	if cr.Spec.ForProvider.LastName != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.LastName), &body.LastName); err != nil {
-			return nil, errors.Wrap(err, "lastName")
-		}
-	}
-	if cr.Spec.ForProvider.Email != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Email), &body.Email); err != nil {
-			return nil, errors.Wrap(err, "email")
-		}
-	}
-	if cr.Spec.ForProvider.ContactNumber != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.ContactNumber), &body.ContactNumber); err != nil {
-			return nil, errors.Wrap(err, "contactNumber")
-		}
-	}
+	body.FirstName = orangehrm.LooseString(cr.Spec.ForProvider.FirstName)
+	body.MiddleName = orangehrm.LooseString(cr.Spec.ForProvider.MiddleName)
+	body.LastName = orangehrm.LooseString(cr.Spec.ForProvider.LastName)
+	body.Email = orangehrm.LooseString(cr.Spec.ForProvider.Email)
+	body.ContactNumber = orangehrm.LooseString(cr.Spec.ForProvider.ContactNumber)
 	body.VacancyId = int32(cr.Spec.ForProvider.VacancyId)
-	if cr.Spec.ForProvider.Keywords != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Keywords), &body.Keywords); err != nil {
-			return nil, errors.Wrap(err, "keywords")
-		}
-	}
-	if cr.Spec.ForProvider.Comment != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Comment), &body.Comment); err != nil {
-			return nil, errors.Wrap(err, "comment")
-		}
-	}
-	if cr.Spec.ForProvider.DateOfApplication != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.DateOfApplication), &body.DateOfApplication); err != nil {
-			return nil, errors.Wrap(err, "dateOfApplication")
-		}
-	}
+	body.Keywords = orangehrm.LooseString(cr.Spec.ForProvider.Keywords)
+	body.Comment = orangehrm.LooseString(cr.Spec.ForProvider.Comment)
+	body.DateOfApplication = orangehrm.LooseString(cr.Spec.ForProvider.DateOfApplication)
 	body.ConsentToKeepData = cr.Spec.ForProvider.ConsentToKeepData
 
 	return body, nil
@@ -223,26 +191,10 @@ func observation(in *orangehrm.RecruitmentCandidateModel) (v1alpha1.RecruitmentC
 	out := v1alpha1.RecruitmentCandidateObservation{}
 
 	out.Id = int64(in.Id)
-	if raw, err := json.Marshal(in.FirstName); err == nil {
-		out.FirstName = string(raw)
-	} else {
-		return out, errors.Wrap(err, "firstName")
-	}
-	if raw, err := json.Marshal(in.MiddleName); err == nil {
-		out.MiddleName = string(raw)
-	} else {
-		return out, errors.Wrap(err, "middleName")
-	}
-	if raw, err := json.Marshal(in.LastName); err == nil {
-		out.LastName = string(raw)
-	} else {
-		return out, errors.Wrap(err, "lastName")
-	}
-	if raw, err := json.Marshal(in.Email); err == nil {
-		out.Email = string(raw)
-	} else {
-		return out, errors.Wrap(err, "email")
-	}
+	out.FirstName = string(in.FirstName)
+	out.MiddleName = string(in.MiddleName)
+	out.LastName = string(in.LastName)
+	out.Email = string(in.Email)
 
 	return out, nil
 }
@@ -252,52 +204,28 @@ func observation(in *orangehrm.RecruitmentCandidateModel) (v1alpha1.RecruitmentC
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.RecruitmentCandidate, observed *orangehrm.RecruitmentCandidateModel) bool {
-	if cr.Spec.ForProvider.FirstName != "" {
-		if raw, err := json.Marshal(observed.FirstName); err != nil || !jsonEqual(cr.Spec.ForProvider.FirstName, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.FirstName != "" && cr.Spec.ForProvider.FirstName != string(observed.FirstName) {
+		return false
 	}
-	if cr.Spec.ForProvider.MiddleName != "" {
-		if raw, err := json.Marshal(observed.MiddleName); err != nil || !jsonEqual(cr.Spec.ForProvider.MiddleName, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.MiddleName != "" && cr.Spec.ForProvider.MiddleName != string(observed.MiddleName) {
+		return false
 	}
-	if cr.Spec.ForProvider.LastName != "" {
-		if raw, err := json.Marshal(observed.LastName); err != nil || !jsonEqual(cr.Spec.ForProvider.LastName, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.LastName != "" && cr.Spec.ForProvider.LastName != string(observed.LastName) {
+		return false
 	}
-	if cr.Spec.ForProvider.Email != "" {
-		if raw, err := json.Marshal(observed.Email); err != nil || !jsonEqual(cr.Spec.ForProvider.Email, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Email != "" && cr.Spec.ForProvider.Email != string(observed.Email) {
+		return false
 	}
 
 	return true
-}
-
-// jsonEqual compares two JSON documents by value rather than by text, so that
-// a server re-ordering an object's keys is not a permanent diff.
-func jsonEqual(a, b string) bool {
-	var left, right any
-
-	if err := json.Unmarshal([]byte(a), &left); err != nil {
-		return false
-	}
-	if err := json.Unmarshal([]byte(b), &right); err != nil {
-		return false
-	}
-
-	x, err := json.Marshal(left)
-	if err != nil {
-		return false
-	}
-	y, err := json.Marshal(right)
-	if err != nil {
-		return false
-	}
-
-	return string(x) == string(y)
 }
 
 func (c *external) Observe(ctx context.Context, cr *v1alpha1.RecruitmentCandidate) (managed.ExternalObservation, error) {

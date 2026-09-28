@@ -65,9 +65,7 @@ spec:
                   PimEmployeeSkillObservation instead.
                 properties:
                   comments:
-                    description: |-
-                      Comments Specify the comment regarding the skill
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: Comments Specify the comment regarding the skill
                     type: string
                   empNumber:
                     description: |-

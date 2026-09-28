@@ -37,8 +37,6 @@ type PimEmployeeSkillParameters struct {
 
 	// Comments Specify the comment regarding the skill
 	// +optional
-	// Not a scalar in the API description, so it travels as raw JSON.
-	// +kubebuilder:validation:Type=string
 	Comments string `json:"comments,omitempty"`
 
 	// SkillId Specify the numerical ID of the skill

@@ -75,9 +75,7 @@ spec:
                       Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   trackerName:
-                    description: |-
-                      TrackerName
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: TrackerName
                     type: string
                 required:
                 - empNumber

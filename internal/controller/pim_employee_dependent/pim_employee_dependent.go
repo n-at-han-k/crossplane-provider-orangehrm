@@ -172,26 +172,10 @@ type external struct {
 func desired(cr *v1alpha1.PimEmployeeDependent) (*orangehrm.AddADependentToAnEmployeeRequest, error) {
 	body := &orangehrm.AddADependentToAnEmployeeRequest{}
 
-	if cr.Spec.ForProvider.Name != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Name), &body.Name); err != nil {
-			return nil, errors.Wrap(err, "name")
-		}
-	}
-	if cr.Spec.ForProvider.RelationshipType != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.RelationshipType), &body.RelationshipType); err != nil {
-			return nil, errors.Wrap(err, "relationshipType")
-		}
-	}
-	if cr.Spec.ForProvider.Relationship != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Relationship), &body.Relationship); err != nil {
-			return nil, errors.Wrap(err, "relationship")
-		}
-	}
-	if cr.Spec.ForProvider.DateOfBirth != "" {
-		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.DateOfBirth), &body.DateOfBirth); err != nil {
-			return nil, errors.Wrap(err, "dateOfBirth")
-		}
-	}
+	body.Name = orangehrm.LooseString(cr.Spec.ForProvider.Name)
+	body.RelationshipType = orangehrm.LooseString(cr.Spec.ForProvider.RelationshipType)
+	body.Relationship = orangehrm.LooseString(cr.Spec.ForProvider.Relationship)
+	body.DateOfBirth = orangehrm.LooseString(cr.Spec.ForProvider.DateOfBirth)
 
 	return body, nil
 }
@@ -201,26 +185,10 @@ func observation(in *orangehrm.PimEmployeeDependentModel) (v1alpha1.PimEmployeeD
 	out := v1alpha1.PimEmployeeDependentObservation{}
 
 	out.Id = int64(in.Id)
-	if raw, err := json.Marshal(in.Name); err == nil {
-		out.Name = string(raw)
-	} else {
-		return out, errors.Wrap(err, "name")
-	}
-	if raw, err := json.Marshal(in.RelationshipType); err == nil {
-		out.RelationshipType = string(raw)
-	} else {
-		return out, errors.Wrap(err, "relationshipType")
-	}
-	if raw, err := json.Marshal(in.Relationship); err == nil {
-		out.Relationship = string(raw)
-	} else {
-		return out, errors.Wrap(err, "relationship")
-	}
-	if raw, err := json.Marshal(in.DateOfBirth); err == nil {
-		out.DateOfBirth = string(raw)
-	} else {
-		return out, errors.Wrap(err, "dateOfBirth")
-	}
+	out.Name = string(in.Name)
+	out.RelationshipType = string(in.RelationshipType)
+	out.Relationship = string(in.Relationship)
+	out.DateOfBirth = string(in.DateOfBirth)
 
 	return out, nil
 }
@@ -230,52 +198,28 @@ func observation(in *orangehrm.PimEmployeeDependentModel) (v1alpha1.PimEmployeeD
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.PimEmployeeDependent, observed *orangehrm.PimEmployeeDependentModel) bool {
-	if cr.Spec.ForProvider.Name != "" {
-		if raw, err := json.Marshal(observed.Name); err != nil || !jsonEqual(cr.Spec.ForProvider.Name, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Name != "" && cr.Spec.ForProvider.Name != string(observed.Name) {
+		return false
 	}
-	if cr.Spec.ForProvider.RelationshipType != "" {
-		if raw, err := json.Marshal(observed.RelationshipType); err != nil || !jsonEqual(cr.Spec.ForProvider.RelationshipType, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.RelationshipType != "" && cr.Spec.ForProvider.RelationshipType != string(observed.RelationshipType) {
+		return false
 	}
-	if cr.Spec.ForProvider.Relationship != "" {
-		if raw, err := json.Marshal(observed.Relationship); err != nil || !jsonEqual(cr.Spec.ForProvider.Relationship, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.Relationship != "" && cr.Spec.ForProvider.Relationship != string(observed.Relationship) {
+		return false
 	}
-	if cr.Spec.ForProvider.DateOfBirth != "" {
-		if raw, err := json.Marshal(observed.DateOfBirth); err != nil || !jsonEqual(cr.Spec.ForProvider.DateOfBirth, string(raw)) {
-			return false
-		}
+	// Only what the person actually set: an optional field left empty is not
+	// a difference from whatever the server chose to put there.
+	if cr.Spec.ForProvider.DateOfBirth != "" && cr.Spec.ForProvider.DateOfBirth != string(observed.DateOfBirth) {
+		return false
 	}
 
 	return true
-}
-
-// jsonEqual compares two JSON documents by value rather than by text, so that
-// a server re-ordering an object's keys is not a permanent diff.
-func jsonEqual(a, b string) bool {
-	var left, right any
-
-	if err := json.Unmarshal([]byte(a), &left); err != nil {
-		return false
-	}
-	if err := json.Unmarshal([]byte(b), &right); err != nil {
-		return false
-	}
-
-	x, err := json.Marshal(left)
-	if err != nil {
-		return false
-	}
-	y, err := json.Marshal(right)
-	if err != nil {
-		return false
-	}
-
-	return string(x) == string(y)
 }
 
 func (c *external) Observe(ctx context.Context, cr *v1alpha1.PimEmployeeDependent) (managed.ExternalObservation, error) {

@@ -70,24 +70,16 @@ spec:
                       Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   employeeId:
-                    description: |-
-                      EmployeeId Specify the employeee&#39;s ID
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: EmployeeId Specify the employeee&#39;s ID
                     type: string
                   firstName:
-                    description: |-
-                      FirstName Specify the employee&#39;s first name
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: FirstName Specify the employee&#39;s first name
                     type: string
                   lastName:
-                    description: |-
-                      LastName Specify the employee&#39;s last name
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: LastName Specify the employee&#39;s last name
                     type: string
                   middleName:
-                    description: |-
-                      MiddleName Specify the employee&#39;s middle name
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: MiddleName Specify the employee&#39;s middle name
                     type: string
                 required:
                 - firstName

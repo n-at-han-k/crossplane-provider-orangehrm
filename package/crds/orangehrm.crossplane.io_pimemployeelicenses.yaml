@@ -74,23 +74,17 @@ spec:
                     - message: empNumber is immutable
                       rule: self == oldSelf
                   expiryDate:
-                    description: |-
-                      ExpiryDate Specify the expiry date of the license
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: ExpiryDate Specify the expiry date of the license
                     type: string
                   issuedDate:
-                    description: |-
-                      IssuedDate Specify the issued date of the license
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: IssuedDate Specify the issued date of the license
                     type: string
                   licenseId:
                     description: LicenseId Specify the numerical ID of the license
                     format: int64
                     type: integer
                   licenseNo:
-                    description: |-
-                      LicenseNo Specify the license number
-                      Not a scalar in the API description, so it travels as raw JSON.
+                    description: LicenseNo Specify the license number
                     type: string
                 required:
                 - empNumber
