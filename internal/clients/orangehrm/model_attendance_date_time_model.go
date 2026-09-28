@@ -8,6 +8,6 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type AttendanceDateTimeModel struct {
-	UtcDate string `json:"utcDate,omitempty"`
-	UtcTime string `json:"utcTime,omitempty"`
+	UtcDate LooseString `json:"utcDate,omitempty"`
+	UtcTime LooseString `json:"utcTime,omitempty"`
 }

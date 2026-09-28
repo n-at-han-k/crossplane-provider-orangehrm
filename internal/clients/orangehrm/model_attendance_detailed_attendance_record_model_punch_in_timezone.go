@@ -8,6 +8,6 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type AttendanceDetailedAttendanceRecordModelPunchInTimezone struct {
-	Name  string `json:"name,omitempty"`
-	Label string `json:"label,omitempty"`
+	Name  LooseString `json:"name,omitempty"`
+	Label LooseString `json:"label,omitempty"`
 }

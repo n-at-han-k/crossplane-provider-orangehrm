@@ -70,7 +70,9 @@ spec:
                     format: int64
                     type: integer
                   currencyId:
-                    description: CurrencyId
+                    description: |-
+                      CurrencyId
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   empNumber:
                     description: |-
@@ -82,7 +84,9 @@ spec:
                     - message: empNumber is immutable
                       rule: self == oldSelf
                   remarks:
-                    description: Remarks
+                    description: |-
+                      Remarks
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                 required:
                 - claimEventId

@@ -172,10 +172,22 @@ type external struct {
 func desired(cr *v1alpha1.PimCustomField) (*orangehrm.UpdateACustomFieldRequest, error) {
 	body := &orangehrm.UpdateACustomFieldRequest{}
 
-	body.FieldName = cr.Spec.ForProvider.FieldName
+	if cr.Spec.ForProvider.FieldName != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.FieldName), &body.FieldName); err != nil {
+			return nil, errors.Wrap(err, "fieldName")
+		}
+	}
 	body.FieldType = int32(cr.Spec.ForProvider.FieldType)
-	body.Screen = cr.Spec.ForProvider.Screen
-	body.ExtraData = cr.Spec.ForProvider.ExtraData
+	if cr.Spec.ForProvider.Screen != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Screen), &body.Screen); err != nil {
+			return nil, errors.Wrap(err, "screen")
+		}
+	}
+	if cr.Spec.ForProvider.ExtraData != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.ExtraData), &body.ExtraData); err != nil {
+			return nil, errors.Wrap(err, "extraData")
+		}
+	}
 
 	return body, nil
 }
@@ -185,10 +197,26 @@ func observation(in *orangehrm.PimCustomFieldModel) (v1alpha1.PimCustomFieldObse
 	out := v1alpha1.PimCustomFieldObservation{}
 
 	out.Id = int64(in.Id)
-	out.FieldName = in.FieldName
-	out.FieldType = in.FieldType
-	out.ExtraData = in.ExtraData
-	out.Screen = in.Screen
+	if raw, err := json.Marshal(in.FieldName); err == nil {
+		out.FieldName = string(raw)
+	} else {
+		return out, errors.Wrap(err, "fieldName")
+	}
+	if raw, err := json.Marshal(in.FieldType); err == nil {
+		out.FieldType = string(raw)
+	} else {
+		return out, errors.Wrap(err, "fieldType")
+	}
+	if raw, err := json.Marshal(in.ExtraData); err == nil {
+		out.ExtraData = string(raw)
+	} else {
+		return out, errors.Wrap(err, "extraData")
+	}
+	if raw, err := json.Marshal(in.Screen); err == nil {
+		out.Screen = string(raw)
+	} else {
+		return out, errors.Wrap(err, "screen")
+	}
 
 	return out, nil
 }
@@ -198,23 +226,47 @@ func observation(in *orangehrm.PimCustomFieldModel) (v1alpha1.PimCustomFieldObse
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.PimCustomField, observed *orangehrm.PimCustomFieldModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.FieldName != "" && cr.Spec.ForProvider.FieldName != observed.FieldName {
-		return false
+	if cr.Spec.ForProvider.FieldName != "" {
+		if raw, err := json.Marshal(observed.FieldName); err != nil || !jsonEqual(cr.Spec.ForProvider.FieldName, string(raw)) {
+			return false
+		}
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Screen != "" && cr.Spec.ForProvider.Screen != observed.Screen {
-		return false
+	if cr.Spec.ForProvider.Screen != "" {
+		if raw, err := json.Marshal(observed.Screen); err != nil || !jsonEqual(cr.Spec.ForProvider.Screen, string(raw)) {
+			return false
+		}
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.ExtraData != "" && cr.Spec.ForProvider.ExtraData != observed.ExtraData {
-		return false
+	if cr.Spec.ForProvider.ExtraData != "" {
+		if raw, err := json.Marshal(observed.ExtraData); err != nil || !jsonEqual(cr.Spec.ForProvider.ExtraData, string(raw)) {
+			return false
+		}
 	}
 
 	return true
+}
+
+// jsonEqual compares two JSON documents by value rather than by text, so that
+// a server re-ordering an object's keys is not a permanent diff.
+func jsonEqual(a, b string) bool {
+	var left, right any
+
+	if err := json.Unmarshal([]byte(a), &left); err != nil {
+		return false
+	}
+	if err := json.Unmarshal([]byte(b), &right); err != nil {
+		return false
+	}
+
+	x, err := json.Marshal(left)
+	if err != nil {
+		return false
+	}
+	y, err := json.Marshal(right)
+	if err != nil {
+		return false
+	}
+
+	return string(x) == string(y)
 }
 
 func (c *external) Observe(ctx context.Context, cr *v1alpha1.PimCustomField) (managed.ExternalObservation, error) {

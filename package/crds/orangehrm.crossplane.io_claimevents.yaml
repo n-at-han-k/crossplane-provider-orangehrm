@@ -65,10 +65,14 @@ spec:
                   ClaimEventObservation instead.
                 properties:
                   description:
-                    description: Description
+                    description: |-
+                      Description
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   name:
-                    description: Name
+                    description: |-
+                      Name
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   status:
                     description: Status

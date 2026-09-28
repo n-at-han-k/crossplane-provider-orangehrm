@@ -172,7 +172,11 @@ type external struct {
 func desired(cr *v1alpha1.BuzzShareComment) (*orangehrm.EditACommentOnAPostRequest, error) {
 	body := &orangehrm.EditACommentOnAPostRequest{}
 
-	body.Text = cr.Spec.ForProvider.Text
+	if cr.Spec.ForProvider.Text != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Text), &body.Text); err != nil {
+			return nil, errors.Wrap(err, "text")
+		}
+	}
 
 	return body, nil
 }

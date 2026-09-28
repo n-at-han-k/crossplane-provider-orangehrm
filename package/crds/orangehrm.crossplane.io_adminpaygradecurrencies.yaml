@@ -66,7 +66,9 @@ spec:
                   AdminPayGradeCurrencyObservation instead.
                 properties:
                   currencyId:
-                    description: CurrencyId
+                    description: |-
+                      CurrencyId
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   maxSalary:
                     description: MaxSalary

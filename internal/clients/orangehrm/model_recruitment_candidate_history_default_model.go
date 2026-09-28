@@ -11,6 +11,6 @@ type RecruitmentCandidateHistoryDefaultModel struct {
 	Id        int32                                              `json:"id,omitempty"`
 	Candidate *RecruitmentCandidateHistoryDefaultModelCandidate  `json:"candidate,omitempty"`
 	Vacancy   *RecruitmentCandidateHistoryDefaultModelVacancy    `json:"vacancy,omitempty"`
-	Note      string                                             `json:"note,omitempty"`
+	Note      LooseString                                        `json:"note,omitempty"`
 	Action    *GetAllowedActionsForCandidate200ResponseDataInner `json:"action,omitempty"`
 }

@@ -8,7 +8,7 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type AdminI18NLanguageModel struct {
-	Id   int32  `json:"id,omitempty"`
-	Name string `json:"name,omitempty"`
-	Code string `json:"code,omitempty"`
+	Id   int32       `json:"id,omitempty"`
+	Name LooseString `json:"name,omitempty"`
+	Code LooseString `json:"code,omitempty"`
 }

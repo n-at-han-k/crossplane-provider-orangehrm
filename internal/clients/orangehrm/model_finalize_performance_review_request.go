@@ -8,8 +8,8 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type FinalizePerformanceReviewRequest struct {
-	FinalRating   string  `json:"finalRating,omitempty"`
-	CompletedDate float32 `json:"completedDate,omitempty"`
-	FinalComment  string  `json:"finalComment,omitempty"`
-	Complete      string  `json:"complete,omitempty"`
+	FinalRating   LooseString `json:"finalRating,omitempty"`
+	CompletedDate float32     `json:"completedDate,omitempty"`
+	FinalComment  LooseString `json:"finalComment,omitempty"`
+	Complete      LooseString `json:"complete,omitempty"`
 }

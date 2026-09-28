@@ -173,8 +173,16 @@ func desired(cr *v1alpha1.PerformanceTrackerLog) (*orangehrm.CreateALogForAPerfo
 	body := &orangehrm.CreateALogForAPerformanceTrackerRequest{}
 
 	body.Achievement = int32(cr.Spec.ForProvider.Achievement)
-	body.Comment = cr.Spec.ForProvider.Comment
-	body.Log = cr.Spec.ForProvider.Log
+	if cr.Spec.ForProvider.Comment != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Comment), &body.Comment); err != nil {
+			return nil, errors.Wrap(err, "comment")
+		}
+	}
+	if cr.Spec.ForProvider.Log != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Log), &body.Log); err != nil {
+			return nil, errors.Wrap(err, "log")
+		}
+	}
 
 	return body, nil
 }
@@ -184,9 +192,21 @@ func observation(in *orangehrm.PerformancePerformanceTrackerLogModel) (v1alpha1.
 	out := v1alpha1.PerformanceTrackerLogObservation{}
 
 	out.Id = int64(in.Id)
-	out.Log = in.Log
-	out.Comment = in.Comment
-	out.Achievement = in.Achievement
+	if raw, err := json.Marshal(in.Log); err == nil {
+		out.Log = string(raw)
+	} else {
+		return out, errors.Wrap(err, "log")
+	}
+	if raw, err := json.Marshal(in.Comment); err == nil {
+		out.Comment = string(raw)
+	} else {
+		return out, errors.Wrap(err, "comment")
+	}
+	if raw, err := json.Marshal(in.Achievement); err == nil {
+		out.Achievement = string(raw)
+	} else {
+		return out, errors.Wrap(err, "achievement")
+	}
 	out.AddedDate = float64(in.AddedDate)
 	out.ModifiedDate = float64(in.ModifiedDate)
 	if raw, err := json.Marshal(in.Reviewer); err == nil {
@@ -203,15 +223,15 @@ func observation(in *orangehrm.PerformancePerformanceTrackerLogModel) (v1alpha1.
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.PerformanceTrackerLog, observed *orangehrm.PerformancePerformanceTrackerLogModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Comment != "" && cr.Spec.ForProvider.Comment != observed.Comment {
-		return false
+	if cr.Spec.ForProvider.Comment != "" {
+		if raw, err := json.Marshal(observed.Comment); err != nil || !jsonEqual(cr.Spec.ForProvider.Comment, string(raw)) {
+			return false
+		}
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Log != "" && cr.Spec.ForProvider.Log != observed.Log {
-		return false
+	if cr.Spec.ForProvider.Log != "" {
+		if raw, err := json.Marshal(observed.Log); err != nil || !jsonEqual(cr.Spec.ForProvider.Log, string(raw)) {
+			return false
+		}
 	}
 
 	return true

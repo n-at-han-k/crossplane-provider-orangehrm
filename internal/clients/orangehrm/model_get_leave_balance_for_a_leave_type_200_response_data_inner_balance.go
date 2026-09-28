@@ -8,12 +8,12 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type GetLeaveBalanceForALeaveType200ResponseDataInnerBalance struct {
-	AsAtDate  string `json:"asAtDate,omitempty"`
-	Balance   int32  `json:"balance,omitempty"`
-	EndDate   string `json:"endDate,omitempty"`
-	Entitled  int32  `json:"entitled,omitempty"`
-	Pending   int32  `json:"pending,omitempty"`
-	Scheduled int32  `json:"scheduled,omitempty"`
-	Taken     int32  `json:"taken,omitempty"`
-	Used      int32  `json:"used,omitempty"`
+	AsAtDate  LooseString `json:"asAtDate,omitempty"`
+	Balance   int32       `json:"balance,omitempty"`
+	EndDate   LooseString `json:"endDate,omitempty"`
+	Entitled  int32       `json:"entitled,omitempty"`
+	Pending   int32       `json:"pending,omitempty"`
+	Scheduled int32       `json:"scheduled,omitempty"`
+	Taken     int32       `json:"taken,omitempty"`
+	Used      int32       `json:"used,omitempty"`
 }

@@ -8,9 +8,9 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type CoreAboutOrganizationModel struct {
-	CompanyName            string `json:"companyName,omitempty"`
-	ProductName            string `json:"productName,omitempty"`
-	Version                string `json:"version,omitempty"`
-	NumberOfActiveEmployee int32  `json:"numberOfActiveEmployee,omitempty"`
-	NumberOfPastEmployee   int32  `json:"numberOfPastEmployee,omitempty"`
+	CompanyName            LooseString `json:"companyName,omitempty"`
+	ProductName            LooseString `json:"productName,omitempty"`
+	Version                LooseString `json:"version,omitempty"`
+	NumberOfActiveEmployee int32       `json:"numberOfActiveEmployee,omitempty"`
+	NumberOfPastEmployee   int32       `json:"numberOfPastEmployee,omitempty"`
 }

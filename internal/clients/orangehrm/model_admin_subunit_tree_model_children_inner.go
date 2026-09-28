@@ -8,8 +8,8 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type AdminSubunitTreeModelChildrenInner struct {
-	Id     int32  `json:"id,omitempty"`
-	UnitId string `json:"unitId,omitempty"`
-	Name   string `json:"name,omitempty"`
-	Level  int32  `json:"level,omitempty"`
+	Id     int32       `json:"id,omitempty"`
+	UnitId LooseString `json:"unitId,omitempty"`
+	Name   LooseString `json:"name,omitempty"`
+	Level  int32       `json:"level,omitempty"`
 }

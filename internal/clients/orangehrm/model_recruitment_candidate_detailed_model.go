@@ -9,15 +9,15 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type RecruitmentCandidateDetailedModel struct {
 	Id                int32                                          `json:"id,omitempty"`
-	FirstName         string                                         `json:"firstName,omitempty"`
-	MiddleName        string                                         `json:"middleName,omitempty"`
-	LastName          string                                         `json:"lastName,omitempty"`
-	Email             string                                         `json:"email,omitempty"`
-	ContactNumber     string                                         `json:"contactNumber,omitempty"`
-	Comment           string                                         `json:"comment,omitempty"`
-	Keywords          string                                         `json:"keywords,omitempty"`
-	ModeOfApplication string                                         `json:"modeOfApplication,omitempty"`
-	DateOfApplication string                                         `json:"dateOfApplication,omitempty"`
+	FirstName         LooseString                                    `json:"firstName,omitempty"`
+	MiddleName        LooseString                                    `json:"middleName,omitempty"`
+	LastName          LooseString                                    `json:"lastName,omitempty"`
+	Email             LooseString                                    `json:"email,omitempty"`
+	ContactNumber     LooseString                                    `json:"contactNumber,omitempty"`
+	Comment           LooseString                                    `json:"comment,omitempty"`
+	Keywords          LooseString                                    `json:"keywords,omitempty"`
+	ModeOfApplication LooseString                                    `json:"modeOfApplication,omitempty"`
+	DateOfApplication LooseString                                    `json:"dateOfApplication,omitempty"`
 	Vacancy           *RecruitmentCandidateDetailedModelVacancy      `json:"vacancy,omitempty"`
 	Status            []RecruitmentCandidateDetailedModelStatusInner `json:"status"`
 	HasAttachment     bool                                           `json:"hasAttachment"`

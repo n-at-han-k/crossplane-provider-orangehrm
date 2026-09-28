@@ -196,8 +196,16 @@ func observation(in *orangehrm.RecruitmentCandidateHistoryDetailedModel) (v1alph
 	} else {
 		return out, errors.Wrap(err, "interview")
 	}
-	out.PerformedDate = in.PerformedDate
-	out.Note = in.Note
+	if raw, err := json.Marshal(in.PerformedDate); err == nil {
+		out.PerformedDate = string(raw)
+	} else {
+		return out, errors.Wrap(err, "performedDate")
+	}
+	if raw, err := json.Marshal(in.Note); err == nil {
+		out.Note = string(raw)
+	} else {
+		return out, errors.Wrap(err, "note")
+	}
 
 	return out, nil
 }

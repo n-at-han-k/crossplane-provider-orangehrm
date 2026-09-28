@@ -8,17 +8,17 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type UpdateOrganizationDetailsRequest struct {
-	Name               string `json:"name,omitempty"`
-	RegistrationNumber string `json:"registrationNumber,omitempty"`
-	TaxId              string `json:"taxId,omitempty"`
-	Phone              string `json:"phone,omitempty"`
-	Fax                string `json:"fax,omitempty"`
-	Email              string `json:"email,omitempty"`
-	Country            string `json:"country,omitempty"`
-	Province           string `json:"province,omitempty"`
-	City               string `json:"city,omitempty"`
-	ZipCode            string `json:"zipCode,omitempty"`
-	Street1            string `json:"street1,omitempty"`
-	Street2            string `json:"street2,omitempty"`
-	Note               string `json:"note,omitempty"`
+	Name               LooseString `json:"name,omitempty"`
+	RegistrationNumber LooseString `json:"registrationNumber,omitempty"`
+	TaxId              LooseString `json:"taxId,omitempty"`
+	Phone              LooseString `json:"phone,omitempty"`
+	Fax                LooseString `json:"fax,omitempty"`
+	Email              LooseString `json:"email,omitempty"`
+	Country            LooseString `json:"country,omitempty"`
+	Province           LooseString `json:"province,omitempty"`
+	City               LooseString `json:"city,omitempty"`
+	ZipCode            LooseString `json:"zipCode,omitempty"`
+	Street1            LooseString `json:"street1,omitempty"`
+	Street2            LooseString `json:"street2,omitempty"`
+	Note               LooseString `json:"note,omitempty"`
 }

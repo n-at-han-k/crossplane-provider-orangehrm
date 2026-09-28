@@ -33,14 +33,20 @@ type PimEmployeeImmigrationParameters struct {
 
 	// Number
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Number string `json:"number"`
 
 	// IssuedDate
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	IssuedDate string `json:"issuedDate,omitempty"`
 
 	// ExpiryDate
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	ExpiryDate string `json:"expiryDate,omitempty"`
 
 	// Type
@@ -49,18 +55,26 @@ type PimEmployeeImmigrationParameters struct {
 
 	// Status
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Status string `json:"status,omitempty"`
 
 	// ReviewDate
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	ReviewDate string `json:"reviewDate,omitempty"`
 
 	// CountryCode
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	CountryCode string `json:"countryCode,omitempty"`
 
 	// Comment
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Comment string `json:"comment,omitempty"`
 
 	// AdditionalPropertiesField

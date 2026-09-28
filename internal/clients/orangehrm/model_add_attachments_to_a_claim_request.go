@@ -8,6 +8,6 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type AddAttachmentsToAClaimRequest struct {
-	Description string            `json:"description,omitempty"`
+	Description LooseString       `json:"description,omitempty"`
 	Attachment  *Base64Attachment `json:"attachment,omitempty"`
 }

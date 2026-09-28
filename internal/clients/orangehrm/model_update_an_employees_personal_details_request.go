@@ -8,20 +8,20 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type UpdateAnEmployeesPersonalDetailsRequest struct {
-	LastName                  string `json:"lastName,omitempty"`
-	FirstName                 string `json:"firstName,omitempty"`
-	MiddleName                string `json:"middleName,omitempty"`
-	EmployeeId                string `json:"employeeId,omitempty"`
-	OtherId                   string `json:"otherId,omitempty"`
-	DrivingLicenseNo          string `json:"drivingLicenseNo,omitempty"`
-	DrivingLicenseExpiredDate string `json:"drivingLicenseExpiredDate,omitempty"`
-	SsnNumber                 string `json:"ssnNumber,omitempty"`
-	SinNumber                 string `json:"sinNumber,omitempty"`
-	Gender                    int32  `json:"gender,omitempty"`
-	MaritalStatus             string `json:"maritalStatus,omitempty"`
-	Birthday                  string `json:"birthday,omitempty"`
-	NationalityId             int32  `json:"nationalityId,omitempty"`
-	Nickname                  string `json:"nickname,omitempty"`
-	Smoker                    bool   `json:"smoker"`
-	MilitaryService           string `json:"militaryService,omitempty"`
+	LastName                  LooseString `json:"lastName,omitempty"`
+	FirstName                 LooseString `json:"firstName,omitempty"`
+	MiddleName                LooseString `json:"middleName,omitempty"`
+	EmployeeId                LooseString `json:"employeeId,omitempty"`
+	OtherId                   LooseString `json:"otherId,omitempty"`
+	DrivingLicenseNo          LooseString `json:"drivingLicenseNo,omitempty"`
+	DrivingLicenseExpiredDate LooseString `json:"drivingLicenseExpiredDate,omitempty"`
+	SsnNumber                 LooseString `json:"ssnNumber,omitempty"`
+	SinNumber                 LooseString `json:"sinNumber,omitempty"`
+	Gender                    int32       `json:"gender,omitempty"`
+	MaritalStatus             LooseString `json:"maritalStatus,omitempty"`
+	Birthday                  LooseString `json:"birthday,omitempty"`
+	NationalityId             int32       `json:"nationalityId,omitempty"`
+	Nickname                  LooseString `json:"nickname,omitempty"`
+	Smoker                    bool        `json:"smoker"`
+	MilitaryService           LooseString `json:"militaryService,omitempty"`
 }

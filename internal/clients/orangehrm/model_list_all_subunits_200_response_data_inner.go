@@ -9,9 +9,9 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type ListAllSubunits200ResponseDataInner struct {
 	Id          int32                                `json:"id,omitempty"`
-	Name        string                               `json:"name,omitempty"`
-	UnitId      string                               `json:"unitId,omitempty"`
-	Description string                               `json:"description,omitempty"`
+	Name        LooseString                          `json:"name,omitempty"`
+	UnitId      LooseString                          `json:"unitId,omitempty"`
+	Description LooseString                          `json:"description,omitempty"`
 	Level       int32                                `json:"level,omitempty"`
 	Left        int32                                `json:"left,omitempty"`
 	Right       int32                                `json:"right,omitempty"`

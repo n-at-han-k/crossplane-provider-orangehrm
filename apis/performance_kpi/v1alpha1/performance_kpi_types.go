@@ -26,6 +26,8 @@ import (
 type PerformanceKpiParameters struct {
 	// Title
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Title string `json:"title"`
 
 	// JobTitleId Should be an existing Job title Id

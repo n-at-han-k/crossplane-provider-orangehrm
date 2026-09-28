@@ -8,7 +8,7 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type CreateAPayGradeCurrencyRequest struct {
-	CurrencyId string `json:"currencyId,omitempty"`
-	MaxSalary  int32  `json:"maxSalary,omitempty"`
-	MinSalary  int32  `json:"minSalary,omitempty"`
+	CurrencyId LooseString `json:"currencyId,omitempty"`
+	MaxSalary  int32       `json:"maxSalary,omitempty"`
+	MinSalary  int32       `json:"minSalary,omitempty"`
 }

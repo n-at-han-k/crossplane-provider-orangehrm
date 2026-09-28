@@ -8,12 +8,12 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type CreateWorkspaceNotificationRegistrationRequest struct {
-	EventType     string  `json:"eventType,omitempty"`
-	Provider      string  `json:"provider,omitempty"`
-	WebhookUrl    string  `json:"webhookUrl,omitempty"`
-	ChannelLabel  string  `json:"channelLabel,omitempty"`
-	SubunitIds    []int32 `json:"subunitIds"`
-	Timezone      string  `json:"timezone,omitempty"`
-	DailySendTime string  `json:"dailySendTime,omitempty"`
-	Active        bool    `json:"active"`
+	EventType     LooseString `json:"eventType,omitempty"`
+	Provider      LooseString `json:"provider,omitempty"`
+	WebhookUrl    LooseString `json:"webhookUrl,omitempty"`
+	ChannelLabel  LooseString `json:"channelLabel,omitempty"`
+	SubunitIds    []int32     `json:"subunitIds"`
+	Timezone      LooseString `json:"timezone,omitempty"`
+	DailySendTime LooseString `json:"dailySendTime,omitempty"`
+	Active        bool        `json:"active"`
 }

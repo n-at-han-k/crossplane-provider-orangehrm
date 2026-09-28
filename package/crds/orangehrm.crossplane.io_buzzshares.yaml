@@ -69,7 +69,9 @@ spec:
                     format: int64
                     type: integer
                   text:
-                    description: Text
+                    description: |-
+                      Text
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                 required:
                 - shareId

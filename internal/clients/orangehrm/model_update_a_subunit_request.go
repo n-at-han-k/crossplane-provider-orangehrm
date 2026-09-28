@@ -8,7 +8,7 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type UpdateASubunitRequest struct {
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	UnitId      string `json:"unitId,omitempty"`
+	Name        LooseString `json:"name,omitempty"`
+	Description LooseString `json:"description,omitempty"`
+	UnitId      LooseString `json:"unitId,omitempty"`
 }

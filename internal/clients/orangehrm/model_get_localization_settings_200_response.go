@@ -8,6 +8,6 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type GetLocalizationSettings200Response struct {
-	DateFormat string `json:"dateFormat,omitempty"`
-	Language   string `json:"language,omitempty"`
+	DateFormat LooseString `json:"dateFormat,omitempty"`
+	Language   LooseString `json:"language,omitempty"`
 }

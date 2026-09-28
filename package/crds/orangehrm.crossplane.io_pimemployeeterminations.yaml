@@ -66,7 +66,9 @@ spec:
                   PimEmployeeTerminationObservation instead.
                 properties:
                   date:
-                    description: Date
+                    description: |-
+                      Date
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   empNumber:
                     description: |-
@@ -78,7 +80,9 @@ spec:
                     - message: empNumber is immutable
                       rule: self == oldSelf
                   note:
-                    description: Note
+                    description: |-
+                      Note
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   terminationReasonId:
                     description: TerminationReasonId

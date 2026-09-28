@@ -8,6 +8,6 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type AdminI18NImportErrorModelError struct {
-	Code    string `json:"code,omitempty"`
-	Message string `json:"message,omitempty"`
+	Code    LooseString `json:"code,omitempty"`
+	Message LooseString `json:"message,omitempty"`
 }

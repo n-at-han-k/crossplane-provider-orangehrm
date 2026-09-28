@@ -8,9 +8,9 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type PimCustomFieldModel struct {
-	Id        int32  `json:"id,omitempty"`
-	FieldName string `json:"fieldName,omitempty"`
-	FieldType string `json:"fieldType,omitempty"`
-	ExtraData string `json:"extraData,omitempty"`
-	Screen    string `json:"screen,omitempty"`
+	Id        int32       `json:"id,omitempty"`
+	FieldName LooseString `json:"fieldName,omitempty"`
+	FieldType LooseString `json:"fieldType,omitempty"`
+	ExtraData LooseString `json:"extraData,omitempty"`
+	Screen    LooseString `json:"screen,omitempty"`
 }

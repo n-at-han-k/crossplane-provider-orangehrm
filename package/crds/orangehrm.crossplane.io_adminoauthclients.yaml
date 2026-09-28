@@ -68,10 +68,14 @@ spec:
                     description: Enabled
                     type: boolean
                   name:
-                    description: Name
+                    description: |-
+                      Name
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   redirectUri:
-                    description: RedirectUri
+                    description: |-
+                      RedirectUri
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                 type: object
               managementPolicies:

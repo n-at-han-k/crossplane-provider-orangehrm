@@ -8,7 +8,7 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type CreateAnOauthClientRequest struct {
-	Name        string `json:"name,omitempty"`
-	RedirectUri string `json:"redirectUri,omitempty"`
-	Enabled     bool   `json:"enabled"`
+	Name        LooseString `json:"name,omitempty"`
+	RedirectUri LooseString `json:"redirectUri,omitempty"`
+	Enabled     bool        `json:"enabled"`
 }

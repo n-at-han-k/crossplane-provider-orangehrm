@@ -8,13 +8,13 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type PimEmployeeAttachmentModel struct {
-	Id             int32  `json:"id,omitempty"`
-	Description    string `json:"description,omitempty"`
-	Filename       string `json:"filename,omitempty"`
-	Size           int32  `json:"size,omitempty"`
-	FileType       string `json:"fileType,omitempty"`
-	AttachedBy     int32  `json:"attachedBy,omitempty"`
-	AttachedByName string `json:"attachedByName,omitempty"`
-	AttachedTime   string `json:"attachedTime,omitempty"`
-	AttachedDate   string `json:"attachedDate,omitempty"`
+	Id             int32       `json:"id,omitempty"`
+	Description    LooseString `json:"description,omitempty"`
+	Filename       LooseString `json:"filename,omitempty"`
+	Size           int32       `json:"size,omitempty"`
+	FileType       LooseString `json:"fileType,omitempty"`
+	AttachedBy     int32       `json:"attachedBy,omitempty"`
+	AttachedByName LooseString `json:"attachedByName,omitempty"`
+	AttachedTime   LooseString `json:"attachedTime,omitempty"`
+	AttachedDate   LooseString `json:"attachedDate,omitempty"`
 }

@@ -9,10 +9,10 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type PimEmployeeWorkExperienceModel struct {
 	Id        int32                                     `json:"id,omitempty"`
-	Company   string                                    `json:"company,omitempty"`
-	JobTitle  string                                    `json:"jobTitle,omitempty"`
-	Comment   string                                    `json:"comment,omitempty"`
-	FromDate  string                                    `json:"fromDate,omitempty"`
-	ToDate    string                                    `json:"toDate,omitempty"`
+	Company   LooseString                               `json:"company,omitempty"`
+	JobTitle  LooseString                               `json:"jobTitle,omitempty"`
+	Comment   LooseString                               `json:"comment,omitempty"`
+	FromDate  LooseString                               `json:"fromDate,omitempty"`
+	ToDate    LooseString                               `json:"toDate,omitempty"`
 	Education *ClaimEmployeeClaimRequestModelClaimEvent `json:"education,omitempty"`
 }

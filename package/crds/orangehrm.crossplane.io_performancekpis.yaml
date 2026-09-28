@@ -80,7 +80,9 @@ spec:
                     format: int64
                     type: integer
                   title:
-                    description: Title
+                    description: |-
+                      Title
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                 required:
                 - jobTitleId

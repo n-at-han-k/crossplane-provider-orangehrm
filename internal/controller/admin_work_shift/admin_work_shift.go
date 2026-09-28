@@ -172,10 +172,26 @@ type external struct {
 func desired(cr *v1alpha1.AdminWorkShift) (*orangehrm.CreateAWorkShiftRequest, error) {
 	body := &orangehrm.CreateAWorkShiftRequest{}
 
-	body.Name = cr.Spec.ForProvider.Name
-	body.HoursPerDay = cr.Spec.ForProvider.HoursPerDay
-	body.StartTime = cr.Spec.ForProvider.StartTime
-	body.EndTime = cr.Spec.ForProvider.EndTime
+	if cr.Spec.ForProvider.Name != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Name), &body.Name); err != nil {
+			return nil, errors.Wrap(err, "name")
+		}
+	}
+	if cr.Spec.ForProvider.HoursPerDay != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.HoursPerDay), &body.HoursPerDay); err != nil {
+			return nil, errors.Wrap(err, "hoursPerDay")
+		}
+	}
+	if cr.Spec.ForProvider.StartTime != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.StartTime), &body.StartTime); err != nil {
+			return nil, errors.Wrap(err, "startTime")
+		}
+	}
+	if cr.Spec.ForProvider.EndTime != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.EndTime), &body.EndTime); err != nil {
+			return nil, errors.Wrap(err, "endTime")
+		}
+	}
 	if cr.Spec.ForProvider.EmpNumbers != "" {
 		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.EmpNumbers), &body.EmpNumbers); err != nil {
 			return nil, errors.Wrap(err, "empNumbers")
@@ -190,10 +206,22 @@ func observation(in *orangehrm.AdminWorkShiftDetailedModel) (v1alpha1.AdminWorkS
 	out := v1alpha1.AdminWorkShiftObservation{}
 
 	out.Id = int64(in.Id)
-	out.Name = in.Name
+	if raw, err := json.Marshal(in.Name); err == nil {
+		out.Name = string(raw)
+	} else {
+		return out, errors.Wrap(err, "name")
+	}
 	out.HoursPerDay = float64(in.HoursPerDay)
-	out.StartTime = in.StartTime
-	out.EndTime = in.EndTime
+	if raw, err := json.Marshal(in.StartTime); err == nil {
+		out.StartTime = string(raw)
+	} else {
+		return out, errors.Wrap(err, "startTime")
+	}
+	if raw, err := json.Marshal(in.EndTime); err == nil {
+		out.EndTime = string(raw)
+	} else {
+		return out, errors.Wrap(err, "endTime")
+	}
 	if raw, err := json.Marshal(in.Employees); err == nil {
 		out.Employees = string(raw)
 	} else {
@@ -208,20 +236,20 @@ func observation(in *orangehrm.AdminWorkShiftDetailedModel) (v1alpha1.AdminWorkS
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.AdminWorkShift, observed *orangehrm.AdminWorkShiftDetailedModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Name != "" && cr.Spec.ForProvider.Name != observed.Name {
-		return false
+	if cr.Spec.ForProvider.Name != "" {
+		if raw, err := json.Marshal(observed.Name); err != nil || !jsonEqual(cr.Spec.ForProvider.Name, string(raw)) {
+			return false
+		}
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.StartTime != "" && cr.Spec.ForProvider.StartTime != observed.StartTime {
-		return false
+	if cr.Spec.ForProvider.StartTime != "" {
+		if raw, err := json.Marshal(observed.StartTime); err != nil || !jsonEqual(cr.Spec.ForProvider.StartTime, string(raw)) {
+			return false
+		}
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.EndTime != "" && cr.Spec.ForProvider.EndTime != observed.EndTime {
-		return false
+	if cr.Spec.ForProvider.EndTime != "" {
+		if raw, err := json.Marshal(observed.EndTime); err != nil || !jsonEqual(cr.Spec.ForProvider.EndTime, string(raw)) {
+			return false
+		}
 	}
 
 	return true

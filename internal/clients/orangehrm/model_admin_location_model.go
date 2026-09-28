@@ -9,14 +9,14 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type AdminLocationModel struct {
 	Id            int32                      `json:"id,omitempty"`
-	Name          string                     `json:"name,omitempty"`
+	Name          LooseString                `json:"name,omitempty"`
 	Country       *AdminLocationModelCountry `json:"country,omitempty"`
-	Province      string                     `json:"province,omitempty"`
-	City          string                     `json:"city,omitempty"`
-	Address       string                     `json:"address,omitempty"`
-	ZipCode       string                     `json:"zipCode,omitempty"`
-	Phone         string                     `json:"phone,omitempty"`
-	Fax           string                     `json:"fax,omitempty"`
-	Note          string                     `json:"note,omitempty"`
+	Province      LooseString                `json:"province,omitempty"`
+	City          LooseString                `json:"city,omitempty"`
+	Address       LooseString                `json:"address,omitempty"`
+	ZipCode       LooseString                `json:"zipCode,omitempty"`
+	Phone         LooseString                `json:"phone,omitempty"`
+	Fax           LooseString                `json:"fax,omitempty"`
+	Note          LooseString                `json:"note,omitempty"`
 	NoOfEmployees int32                      `json:"noOfEmployees,omitempty"`
 }

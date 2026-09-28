@@ -16,6 +16,6 @@ type PerformanceCompletedPerformanceReviewModel struct {
 	DueDate           float32                                                  `json:"dueDate,omitempty"`
 	OverallStatus     *PerformanceCompletedPerformanceReviewModelOverallStatus `json:"overallStatus,omitempty"`
 	FinalRating       float32                                                  `json:"finalRating,omitempty"`
-	FinalComment      string                                                   `json:"finalComment,omitempty"`
+	FinalComment      LooseString                                              `json:"finalComment,omitempty"`
 	CompletedDate     float32                                                  `json:"completedDate,omitempty"`
 }

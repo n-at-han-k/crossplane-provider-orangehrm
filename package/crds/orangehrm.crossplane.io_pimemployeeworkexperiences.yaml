@@ -66,10 +66,14 @@ spec:
                   PimEmployeeWorkExperienceObservation instead.
                 properties:
                   comment:
-                    description: Comment
+                    description: |-
+                      Comment
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   company:
-                    description: Company
+                    description: |-
+                      Company
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   empNumber:
                     description: |-
@@ -81,13 +85,19 @@ spec:
                     - message: empNumber is immutable
                       rule: self == oldSelf
                   fromDate:
-                    description: FromDate
+                    description: |-
+                      FromDate
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   jobTitle:
-                    description: JobTitle
+                    description: |-
+                      JobTitle
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   toDate:
-                    description: ToDate
+                    description: |-
+                      ToDate
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                 required:
                 - company

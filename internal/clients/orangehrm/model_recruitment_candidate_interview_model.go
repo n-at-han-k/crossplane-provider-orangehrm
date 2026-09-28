@@ -9,11 +9,11 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type RecruitmentCandidateInterviewModel struct {
 	Id            int32                                             `json:"id,omitempty"`
-	Name          string                                            `json:"name,omitempty"`
+	Name          LooseString                                       `json:"name,omitempty"`
 	Candidate     *RecruitmentCandidateHistoryDefaultModelCandidate `json:"candidate,omitempty"`
 	Vacancy       *ClaimEmployeeClaimRequestModelClaimEvent         `json:"vacancy,omitempty"`
 	Interviewers  []GetMyTimeAtWork200ResponseMetaCurrentUser       `json:"interviewers"`
-	InterviewDate string                                            `json:"interviewDate,omitempty"`
-	InterviewTime string                                            `json:"interviewTime,omitempty"`
-	Note          string                                            `json:"note,omitempty"`
+	InterviewDate LooseString                                       `json:"interviewDate,omitempty"`
+	InterviewTime LooseString                                       `json:"interviewTime,omitempty"`
+	Note          LooseString                                       `json:"note,omitempty"`
 }

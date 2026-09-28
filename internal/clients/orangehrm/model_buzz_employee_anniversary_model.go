@@ -10,5 +10,5 @@ package orangehrm
 type BuzzEmployeeAnniversaryModel struct {
 	Employee   *GetAnEmployeesClaimRequest200ResponseMetaEmployee `json:"employee,omitempty"`
 	JobTitle   *BuzzEmployeeAnniversaryModelJobTitle              `json:"jobTitle,omitempty"`
-	JoinedDate string                                             `json:"joinedDate,omitempty"`
+	JoinedDate LooseString                                        `json:"joinedDate,omitempty"`
 }

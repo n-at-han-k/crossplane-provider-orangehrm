@@ -71,7 +71,9 @@ spec:
                       Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   description:
-                    description: Description
+                    description: |-
+                      Description
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   requestId:
                     description: |-

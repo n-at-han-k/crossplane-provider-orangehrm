@@ -9,9 +9,9 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type GetAnEmployeeDirectoryListing200ResponseDataInner struct {
 	EmpNumber     int32                                                        `json:"empNumber,omitempty"`
-	LastName      string                                                       `json:"lastName,omitempty"`
-	FirstName     string                                                       `json:"firstName,omitempty"`
-	MiddleName    string                                                       `json:"middleName,omitempty"`
+	LastName      LooseString                                                  `json:"lastName,omitempty"`
+	FirstName     LooseString                                                  `json:"firstName,omitempty"`
+	MiddleName    LooseString                                                  `json:"middleName,omitempty"`
 	TerminationId int32                                                        `json:"terminationId,omitempty"`
 	JobTitle      *BuzzEmployeeAnniversaryModelJobTitle                        `json:"jobTitle,omitempty"`
 	Subunit       *ClaimEmployeeClaimRequestModelClaimEvent                    `json:"subunit,omitempty"`

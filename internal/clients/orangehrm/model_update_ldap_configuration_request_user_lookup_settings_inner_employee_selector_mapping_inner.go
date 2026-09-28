@@ -8,6 +8,6 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type UpdateLdapConfigurationRequestUserLookupSettingsInnerEmployeeSelectorMappingInner struct {
-	Field         string `json:"field,omitempty"`
-	AttributeName string `json:"attributeName,omitempty"`
+	Field         LooseString `json:"field,omitempty"`
+	AttributeName LooseString `json:"attributeName,omitempty"`
 }

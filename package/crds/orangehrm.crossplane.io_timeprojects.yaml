@@ -69,10 +69,14 @@ spec:
                     format: int64
                     type: integer
                   description:
-                    description: Description
+                    description: |-
+                      Description
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   name:
-                    description: Name
+                    description: |-
+                      Name
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   projectAdminsEmpNumbers:
                     description: |-

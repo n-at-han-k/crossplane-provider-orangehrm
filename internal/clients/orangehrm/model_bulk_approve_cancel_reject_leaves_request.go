@@ -8,6 +8,6 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type BulkApproveCancelRejectLeavesRequest struct {
-	LeaveId int32  `json:"leaveId,omitempty"`
-	Action  string `json:"action,omitempty"`
+	LeaveId int32       `json:"leaveId,omitempty"`
+	Action  LooseString `json:"action,omitempty"`
 }

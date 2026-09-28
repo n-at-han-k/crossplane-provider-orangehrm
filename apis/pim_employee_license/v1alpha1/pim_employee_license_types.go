@@ -37,14 +37,20 @@ type PimEmployeeLicenseParameters struct {
 
 	// LicenseNo Specify the license number
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	LicenseNo string `json:"licenseNo"`
 
 	// IssuedDate Specify the issued date of the license
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	IssuedDate string `json:"issuedDate,omitempty"`
 
 	// ExpiryDate Specify the expiry date of the license
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	ExpiryDate string `json:"expiryDate,omitempty"`
 }
 

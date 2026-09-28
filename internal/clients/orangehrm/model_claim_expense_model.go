@@ -12,5 +12,5 @@ type ClaimExpenseModel struct {
 	ClaimRequest *ClaimExpenseModelClaimRequest `json:"claimRequest,omitempty"`
 	ExpenseType  *ClaimExpenseModelExpenseType  `json:"expenseType,omitempty"`
 	Amount       float32                        `json:"amount,omitempty"`
-	Note         string                         `json:"note,omitempty"`
+	Note         LooseString                    `json:"note,omitempty"`
 }

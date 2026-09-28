@@ -69,7 +69,9 @@ spec:
                     format: int64
                     type: integer
                   password:
-                    description: Password
+                    description: |-
+                      Password
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   status:
                     description: Status
@@ -79,7 +81,9 @@ spec:
                     format: int64
                     type: integer
                   username:
-                    description: Username
+                    description: |-
+                      Username
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                 required:
                 - empNumber

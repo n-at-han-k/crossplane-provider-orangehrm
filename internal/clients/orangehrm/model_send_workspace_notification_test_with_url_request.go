@@ -8,7 +8,7 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type SendWorkspaceNotificationTestWithUrlRequest struct {
-	EventType  string `json:"eventType,omitempty"`
-	WebhookUrl string `json:"webhookUrl,omitempty"`
-	Provider   string `json:"provider,omitempty"`
+	EventType  LooseString `json:"eventType,omitempty"`
+	WebhookUrl LooseString `json:"webhookUrl,omitempty"`
+	Provider   LooseString `json:"provider,omitempty"`
 }

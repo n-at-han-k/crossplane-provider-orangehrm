@@ -185,7 +185,11 @@ func observation(in *orangehrm.PimEmployeeLanguageModel) (v1alpha1.PimEmployeeLa
 	} else {
 		return out, errors.Wrap(err, "competency")
 	}
-	out.Comment = in.Comment
+	if raw, err := json.Marshal(in.Comment); err == nil {
+		out.Comment = string(raw)
+	} else {
+		return out, errors.Wrap(err, "comment")
+	}
 
 	return out, nil
 }

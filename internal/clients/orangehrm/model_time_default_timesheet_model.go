@@ -10,6 +10,6 @@ package orangehrm
 type TimeDefaultTimesheetModel struct {
 	Id        int32                                                `json:"id,omitempty"`
 	Status    *GetATimesheetsEntries200ResponseMetaTimesheetStatus `json:"status,omitempty"`
-	StartDate string                                               `json:"startDate,omitempty"`
-	EndDate   string                                               `json:"endDate,omitempty"`
+	StartDate LooseString                                          `json:"startDate,omitempty"`
+	EndDate   LooseString                                          `json:"endDate,omitempty"`
 }

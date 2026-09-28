@@ -26,10 +26,14 @@ import (
 type AuthOpenidProviderParameters struct {
 	// Name
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Name string `json:"name"`
 
 	// Url
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Url string `json:"url"`
 
 	// Status
@@ -38,10 +42,14 @@ type AuthOpenidProviderParameters struct {
 
 	// ClientId
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	ClientId string `json:"clientId"`
 
 	// ClientSecret
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	ClientSecret string `json:"clientSecret"`
 }
 

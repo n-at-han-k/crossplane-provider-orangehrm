@@ -171,7 +171,11 @@ func observation(in *orangehrm.PerformancePerformanceTrackerModel) (v1alpha1.Per
 	out := v1alpha1.PerformanceEmployeesTrackerObservation{}
 
 	out.Id = int64(in.Id)
-	out.TrackerName = in.TrackerName
+	if raw, err := json.Marshal(in.TrackerName); err == nil {
+		out.TrackerName = string(raw)
+	} else {
+		return out, errors.Wrap(err, "trackerName")
+	}
 	out.AddedDate = float64(in.AddedDate)
 	out.ModifiedDate = float64(in.ModifiedDate)
 	out.Status = int64(in.Status)

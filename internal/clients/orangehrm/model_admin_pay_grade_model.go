@@ -9,6 +9,6 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type AdminPayGradeModel struct {
 	Id         int32                                    `json:"id,omitempty"`
-	Name       string                                   `json:"name,omitempty"`
+	Name       LooseString                              `json:"name,omitempty"`
 	Currencies []AdminPayGradeCurrencyModelCurrencyType `json:"currencies"`
 }

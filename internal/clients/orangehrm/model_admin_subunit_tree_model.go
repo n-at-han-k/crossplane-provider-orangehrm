@@ -9,8 +9,8 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type AdminSubunitTreeModel struct {
 	Id       int32                                `json:"id,omitempty"`
-	UnitId   string                               `json:"unitId,omitempty"`
-	Name     string                               `json:"name,omitempty"`
+	UnitId   LooseString                          `json:"unitId,omitempty"`
+	Name     LooseString                          `json:"name,omitempty"`
 	Level    int32                                `json:"level,omitempty"`
 	Children []AdminSubunitTreeModelChildrenInner `json:"children"`
 }

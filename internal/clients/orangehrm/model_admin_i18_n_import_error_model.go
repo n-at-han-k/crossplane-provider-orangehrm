@@ -9,7 +9,7 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type AdminI18NImportErrorModel struct {
 	Id           int32                           `json:"id,omitempty"`
-	LangStringId string                          `json:"langStringId,omitempty"`
-	Source       string                          `json:"source,omitempty"`
+	LangStringId LooseString                     `json:"langStringId,omitempty"`
+	Source       LooseString                     `json:"source,omitempty"`
 	Error        *AdminI18NImportErrorModelError `json:"error,omitempty"`
 }

@@ -11,5 +11,5 @@ type RecruitmentVacancyAttachmentModel struct {
 	Id         int32                                          `json:"id,omitempty"`
 	VacancyId  int32                                          `json:"vacancyId,omitempty"`
 	Attachment *RecruitmentCandidateAttachmentModelAttachment `json:"attachment,omitempty"`
-	Comment    string                                         `json:"comment,omitempty"`
+	Comment    LooseString                                    `json:"comment,omitempty"`
 }

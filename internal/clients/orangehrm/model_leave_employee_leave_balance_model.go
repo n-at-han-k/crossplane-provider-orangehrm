@@ -11,6 +11,6 @@ type LeaveEmployeeLeaveBalanceModel struct {
 	Id             int32                                         `json:"id,omitempty"`
 	UsageBreakdown *LeaveEmployeeLeaveBalanceModelUsageBreakdown `json:"usageBreakdown,omitempty"`
 	LeaveType      *DashboardEmployeeOnLeaveListModelLeaveType   `json:"leaveType,omitempty"`
-	FromDate       string                                        `json:"fromDate,omitempty"`
-	ToDate         string                                        `json:"toDate,omitempty"`
+	FromDate       LooseString                                   `json:"fromDate,omitempty"`
+	ToDate         LooseString                                   `json:"toDate,omitempty"`
 }

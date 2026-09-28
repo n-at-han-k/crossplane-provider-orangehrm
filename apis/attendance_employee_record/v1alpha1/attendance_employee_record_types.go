@@ -33,22 +33,32 @@ type AttendanceEmployeeRecordParameters struct {
 
 	// Date
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Date string `json:"date"`
 
 	// Time
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Time string `json:"time"`
 
 	// TimezoneOffset
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	TimezoneOffset string `json:"timezoneOffset"`
 
 	// TimezoneName
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	TimezoneName string `json:"timezoneName"`
 
 	// Note
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Note string `json:"note,omitempty"`
 }
 

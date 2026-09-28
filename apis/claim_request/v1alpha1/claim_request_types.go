@@ -30,10 +30,14 @@ type ClaimRequestParameters struct {
 
 	// CurrencyId
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	CurrencyId string `json:"currencyId,omitempty"`
 
 	// Remarks
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Remarks string `json:"remarks,omitempty"`
 }
 

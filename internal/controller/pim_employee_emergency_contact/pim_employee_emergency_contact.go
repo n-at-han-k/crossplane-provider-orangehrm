@@ -172,11 +172,31 @@ type external struct {
 func desired(cr *v1alpha1.PimEmployeeEmergencyContact) (*orangehrm.AddAnEmergencyContactToAnEmployeeRequest, error) {
 	body := &orangehrm.AddAnEmergencyContactToAnEmployeeRequest{}
 
-	body.Name = cr.Spec.ForProvider.Name
-	body.Relationship = cr.Spec.ForProvider.Relationship
-	body.HomePhone = cr.Spec.ForProvider.HomePhone
-	body.OfficePhone = cr.Spec.ForProvider.OfficePhone
-	body.MobilePhone = cr.Spec.ForProvider.MobilePhone
+	if cr.Spec.ForProvider.Name != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Name), &body.Name); err != nil {
+			return nil, errors.Wrap(err, "name")
+		}
+	}
+	if cr.Spec.ForProvider.Relationship != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Relationship), &body.Relationship); err != nil {
+			return nil, errors.Wrap(err, "relationship")
+		}
+	}
+	if cr.Spec.ForProvider.HomePhone != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.HomePhone), &body.HomePhone); err != nil {
+			return nil, errors.Wrap(err, "homePhone")
+		}
+	}
+	if cr.Spec.ForProvider.OfficePhone != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.OfficePhone), &body.OfficePhone); err != nil {
+			return nil, errors.Wrap(err, "officePhone")
+		}
+	}
+	if cr.Spec.ForProvider.MobilePhone != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.MobilePhone), &body.MobilePhone); err != nil {
+			return nil, errors.Wrap(err, "mobilePhone")
+		}
+	}
 
 	return body, nil
 }
@@ -186,11 +206,31 @@ func observation(in *orangehrm.PimEmpEmergencyContactModel) (v1alpha1.PimEmploye
 	out := v1alpha1.PimEmployeeEmergencyContactObservation{}
 
 	out.Id = int64(in.Id)
-	out.Name = in.Name
-	out.Relationship = in.Relationship
-	out.HomePhone = in.HomePhone
-	out.OfficePhone = in.OfficePhone
-	out.MobilePhone = in.MobilePhone
+	if raw, err := json.Marshal(in.Name); err == nil {
+		out.Name = string(raw)
+	} else {
+		return out, errors.Wrap(err, "name")
+	}
+	if raw, err := json.Marshal(in.Relationship); err == nil {
+		out.Relationship = string(raw)
+	} else {
+		return out, errors.Wrap(err, "relationship")
+	}
+	if raw, err := json.Marshal(in.HomePhone); err == nil {
+		out.HomePhone = string(raw)
+	} else {
+		return out, errors.Wrap(err, "homePhone")
+	}
+	if raw, err := json.Marshal(in.OfficePhone); err == nil {
+		out.OfficePhone = string(raw)
+	} else {
+		return out, errors.Wrap(err, "officePhone")
+	}
+	if raw, err := json.Marshal(in.MobilePhone); err == nil {
+		out.MobilePhone = string(raw)
+	} else {
+		return out, errors.Wrap(err, "mobilePhone")
+	}
 
 	return out, nil
 }
@@ -200,33 +240,57 @@ func observation(in *orangehrm.PimEmpEmergencyContactModel) (v1alpha1.PimEmploye
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.PimEmployeeEmergencyContact, observed *orangehrm.PimEmpEmergencyContactModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Name != "" && cr.Spec.ForProvider.Name != observed.Name {
-		return false
+	if cr.Spec.ForProvider.Name != "" {
+		if raw, err := json.Marshal(observed.Name); err != nil || !jsonEqual(cr.Spec.ForProvider.Name, string(raw)) {
+			return false
+		}
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Relationship != "" && cr.Spec.ForProvider.Relationship != observed.Relationship {
-		return false
+	if cr.Spec.ForProvider.Relationship != "" {
+		if raw, err := json.Marshal(observed.Relationship); err != nil || !jsonEqual(cr.Spec.ForProvider.Relationship, string(raw)) {
+			return false
+		}
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.HomePhone != "" && cr.Spec.ForProvider.HomePhone != observed.HomePhone {
-		return false
+	if cr.Spec.ForProvider.HomePhone != "" {
+		if raw, err := json.Marshal(observed.HomePhone); err != nil || !jsonEqual(cr.Spec.ForProvider.HomePhone, string(raw)) {
+			return false
+		}
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.OfficePhone != "" && cr.Spec.ForProvider.OfficePhone != observed.OfficePhone {
-		return false
+	if cr.Spec.ForProvider.OfficePhone != "" {
+		if raw, err := json.Marshal(observed.OfficePhone); err != nil || !jsonEqual(cr.Spec.ForProvider.OfficePhone, string(raw)) {
+			return false
+		}
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.MobilePhone != "" && cr.Spec.ForProvider.MobilePhone != observed.MobilePhone {
-		return false
+	if cr.Spec.ForProvider.MobilePhone != "" {
+		if raw, err := json.Marshal(observed.MobilePhone); err != nil || !jsonEqual(cr.Spec.ForProvider.MobilePhone, string(raw)) {
+			return false
+		}
 	}
 
 	return true
+}
+
+// jsonEqual compares two JSON documents by value rather than by text, so that
+// a server re-ordering an object's keys is not a permanent diff.
+func jsonEqual(a, b string) bool {
+	var left, right any
+
+	if err := json.Unmarshal([]byte(a), &left); err != nil {
+		return false
+	}
+	if err := json.Unmarshal([]byte(b), &right); err != nil {
+		return false
+	}
+
+	x, err := json.Marshal(left)
+	if err != nil {
+		return false
+	}
+	y, err := json.Marshal(right)
+	if err != nil {
+		return false
+	}
+
+	return string(x) == string(y)
 }
 
 func (c *external) Observe(ctx context.Context, cr *v1alpha1.PimEmployeeEmergencyContact) (managed.ExternalObservation, error) {

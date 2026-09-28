@@ -33,18 +33,26 @@ type PimEmployeeDependentParameters struct {
 
 	// Name Specify the name of the dependent
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Name string `json:"name"`
 
 	// RelationshipType Specify the relationship type
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	RelationshipType string `json:"relationshipType"`
 
 	// Relationship Specify additional details of the relationship
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Relationship string `json:"relationship,omitempty"`
 
 	// DateOfBirth Specify the date of birth of the dependent
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	DateOfBirth string `json:"dateOfBirth,omitempty"`
 }
 

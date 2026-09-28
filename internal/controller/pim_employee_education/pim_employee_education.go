@@ -173,12 +173,32 @@ func desired(cr *v1alpha1.PimEmployeeEducation) (*orangehrm.UpdateAnEmployeesEdu
 	body := &orangehrm.UpdateAnEmployeesEducationalQualificationRequest{}
 
 	body.EducationId = int32(cr.Spec.ForProvider.EducationId)
-	body.Institute = cr.Spec.ForProvider.Institute
-	body.Major = cr.Spec.ForProvider.Major
+	if cr.Spec.ForProvider.Institute != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Institute), &body.Institute); err != nil {
+			return nil, errors.Wrap(err, "institute")
+		}
+	}
+	if cr.Spec.ForProvider.Major != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Major), &body.Major); err != nil {
+			return nil, errors.Wrap(err, "major")
+		}
+	}
 	body.Year = int32(cr.Spec.ForProvider.Year)
-	body.Score = cr.Spec.ForProvider.Score
-	body.StartDate = cr.Spec.ForProvider.StartDate
-	body.EndDate = cr.Spec.ForProvider.EndDate
+	if cr.Spec.ForProvider.Score != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Score), &body.Score); err != nil {
+			return nil, errors.Wrap(err, "score")
+		}
+	}
+	if cr.Spec.ForProvider.StartDate != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.StartDate), &body.StartDate); err != nil {
+			return nil, errors.Wrap(err, "startDate")
+		}
+	}
+	if cr.Spec.ForProvider.EndDate != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.EndDate), &body.EndDate); err != nil {
+			return nil, errors.Wrap(err, "endDate")
+		}
+	}
 
 	return body, nil
 }
@@ -188,12 +208,32 @@ func observation(in *orangehrm.PimEmployeeEducationModel) (v1alpha1.PimEmployeeE
 	out := v1alpha1.PimEmployeeEducationObservation{}
 
 	out.Id = int64(in.Id)
-	out.Institute = in.Institute
-	out.Major = in.Major
+	if raw, err := json.Marshal(in.Institute); err == nil {
+		out.Institute = string(raw)
+	} else {
+		return out, errors.Wrap(err, "institute")
+	}
+	if raw, err := json.Marshal(in.Major); err == nil {
+		out.Major = string(raw)
+	} else {
+		return out, errors.Wrap(err, "major")
+	}
 	out.Year = int64(in.Year)
-	out.Score = in.Score
-	out.StartDate = in.StartDate
-	out.EndDate = in.EndDate
+	if raw, err := json.Marshal(in.Score); err == nil {
+		out.Score = string(raw)
+	} else {
+		return out, errors.Wrap(err, "score")
+	}
+	if raw, err := json.Marshal(in.StartDate); err == nil {
+		out.StartDate = string(raw)
+	} else {
+		return out, errors.Wrap(err, "startDate")
+	}
+	if raw, err := json.Marshal(in.EndDate); err == nil {
+		out.EndDate = string(raw)
+	} else {
+		return out, errors.Wrap(err, "endDate")
+	}
 	if raw, err := json.Marshal(in.Education); err == nil {
 		out.Education = string(raw)
 	} else {
@@ -208,35 +248,35 @@ func observation(in *orangehrm.PimEmployeeEducationModel) (v1alpha1.PimEmployeeE
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.PimEmployeeEducation, observed *orangehrm.PimEmployeeEducationModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Institute != "" && cr.Spec.ForProvider.Institute != observed.Institute {
-		return false
+	if cr.Spec.ForProvider.Institute != "" {
+		if raw, err := json.Marshal(observed.Institute); err != nil || !jsonEqual(cr.Spec.ForProvider.Institute, string(raw)) {
+			return false
+		}
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Major != "" && cr.Spec.ForProvider.Major != observed.Major {
-		return false
+	if cr.Spec.ForProvider.Major != "" {
+		if raw, err := json.Marshal(observed.Major); err != nil || !jsonEqual(cr.Spec.ForProvider.Major, string(raw)) {
+			return false
+		}
 	}
 	// Only what the person actually set: an optional field left empty is not
 	// a difference from whatever the server chose to put there.
 	if cr.Spec.ForProvider.Year != 0 && cr.Spec.ForProvider.Year != int64(observed.Year) {
 		return false
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Score != "" && cr.Spec.ForProvider.Score != observed.Score {
-		return false
+	if cr.Spec.ForProvider.Score != "" {
+		if raw, err := json.Marshal(observed.Score); err != nil || !jsonEqual(cr.Spec.ForProvider.Score, string(raw)) {
+			return false
+		}
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.StartDate != "" && cr.Spec.ForProvider.StartDate != observed.StartDate {
-		return false
+	if cr.Spec.ForProvider.StartDate != "" {
+		if raw, err := json.Marshal(observed.StartDate); err != nil || !jsonEqual(cr.Spec.ForProvider.StartDate, string(raw)) {
+			return false
+		}
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.EndDate != "" && cr.Spec.ForProvider.EndDate != observed.EndDate {
-		return false
+	if cr.Spec.ForProvider.EndDate != "" {
+		if raw, err := json.Marshal(observed.EndDate); err != nil || !jsonEqual(cr.Spec.ForProvider.EndDate, string(raw)) {
+			return false
+		}
 	}
 
 	return true

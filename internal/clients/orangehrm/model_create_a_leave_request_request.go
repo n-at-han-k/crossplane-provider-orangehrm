@@ -10,9 +10,9 @@ package orangehrm
 type CreateALeaveRequestRequest struct {
 	EmpNumber     int32                               `json:"empNumber,omitempty"`
 	LeaveTypeId   int32                               `json:"leaveTypeId,omitempty"`
-	FromDate      string                              `json:"fromDate,omitempty"`
-	ToDate        string                              `json:"toDate,omitempty"`
-	Comment       string                              `json:"comment,omitempty"`
-	PartialOption string                              `json:"partialOption,omitempty"`
+	FromDate      LooseString                         `json:"fromDate,omitempty"`
+	ToDate        LooseString                         `json:"toDate,omitempty"`
+	Comment       LooseString                         `json:"comment,omitempty"`
+	PartialOption LooseString                         `json:"partialOption,omitempty"`
 	Duration      *CreateALeaveRequestRequestDuration `json:"duration,omitempty"`
 }

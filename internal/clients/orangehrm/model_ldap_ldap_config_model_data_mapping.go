@@ -8,10 +8,10 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type LdapLdapConfigModelDataMapping struct {
-	FirstName  string `json:"firstName,omitempty"`
-	MiddleName string `json:"middleName,omitempty"`
-	LastName   string `json:"lastName,omitempty"`
-	WorkEmail  string `json:"workEmail,omitempty"`
-	EmployeeId string `json:"employeeId,omitempty"`
-	UserStatus string `json:"userStatus,omitempty"`
+	FirstName  LooseString `json:"firstName,omitempty"`
+	MiddleName LooseString `json:"middleName,omitempty"`
+	LastName   LooseString `json:"lastName,omitempty"`
+	WorkEmail  LooseString `json:"workEmail,omitempty"`
+	EmployeeId LooseString `json:"employeeId,omitempty"`
+	UserStatus LooseString `json:"userStatus,omitempty"`
 }

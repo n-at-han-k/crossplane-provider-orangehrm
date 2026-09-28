@@ -173,15 +173,43 @@ func desired(cr *v1alpha1.PimEmployeeSalaryComponent) (*orangehrm.AddASalaryComp
 	body := &orangehrm.AddASalaryComponentToAnEmployeeRequest{}
 
 	body.PayGradeId = int32(cr.Spec.ForProvider.PayGradeId)
-	body.SalaryComponent = cr.Spec.ForProvider.SalaryComponent
+	if cr.Spec.ForProvider.SalaryComponent != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.SalaryComponent), &body.SalaryComponent); err != nil {
+			return nil, errors.Wrap(err, "salaryComponent")
+		}
+	}
 	body.PayFrequencyId = int32(cr.Spec.ForProvider.PayFrequencyId)
-	body.CurrencyId = cr.Spec.ForProvider.CurrencyId
-	body.SalaryAmount = cr.Spec.ForProvider.SalaryAmount
-	body.Comment = cr.Spec.ForProvider.Comment
+	if cr.Spec.ForProvider.CurrencyId != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.CurrencyId), &body.CurrencyId); err != nil {
+			return nil, errors.Wrap(err, "currencyId")
+		}
+	}
+	if cr.Spec.ForProvider.SalaryAmount != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.SalaryAmount), &body.SalaryAmount); err != nil {
+			return nil, errors.Wrap(err, "salaryAmount")
+		}
+	}
+	if cr.Spec.ForProvider.Comment != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Comment), &body.Comment); err != nil {
+			return nil, errors.Wrap(err, "comment")
+		}
+	}
 	body.AddDirectDeposit = cr.Spec.ForProvider.AddDirectDeposit
-	body.DirectDepositAccount = cr.Spec.ForProvider.DirectDepositAccount
-	body.DirectDepositAccountType = cr.Spec.ForProvider.DirectDepositAccountType
-	body.DirectDepositRoutingNumber = cr.Spec.ForProvider.DirectDepositRoutingNumber
+	if cr.Spec.ForProvider.DirectDepositAccount != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.DirectDepositAccount), &body.DirectDepositAccount); err != nil {
+			return nil, errors.Wrap(err, "directDepositAccount")
+		}
+	}
+	if cr.Spec.ForProvider.DirectDepositAccountType != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.DirectDepositAccountType), &body.DirectDepositAccountType); err != nil {
+			return nil, errors.Wrap(err, "directDepositAccountType")
+		}
+	}
+	if cr.Spec.ForProvider.DirectDepositRoutingNumber != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.DirectDepositRoutingNumber), &body.DirectDepositRoutingNumber); err != nil {
+			return nil, errors.Wrap(err, "directDepositRoutingNumber")
+		}
+	}
 	body.DirectDepositAmount = float32(cr.Spec.ForProvider.DirectDepositAmount)
 
 	return body, nil
@@ -193,8 +221,16 @@ func observation(in *orangehrm.PimEmployeeSalaryModel) (v1alpha1.PimEmployeeSala
 
 	out.Id = int64(in.Id)
 	out.Amount = float64(in.Amount)
-	out.SalaryName = in.SalaryName
-	out.Comment = in.Comment
+	if raw, err := json.Marshal(in.SalaryName); err == nil {
+		out.SalaryName = string(raw)
+	} else {
+		return out, errors.Wrap(err, "salaryName")
+	}
+	if raw, err := json.Marshal(in.Comment); err == nil {
+		out.Comment = string(raw)
+	} else {
+		return out, errors.Wrap(err, "comment")
+	}
 	if raw, err := json.Marshal(in.PayPeriod); err == nil {
 		out.PayPeriod = string(raw)
 	} else {
@@ -224,10 +260,10 @@ func observation(in *orangehrm.PimEmployeeSalaryModel) (v1alpha1.PimEmployeeSala
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.PimEmployeeSalaryComponent, observed *orangehrm.PimEmployeeSalaryModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Comment != "" && cr.Spec.ForProvider.Comment != observed.Comment {
-		return false
+	if cr.Spec.ForProvider.Comment != "" {
+		if raw, err := json.Marshal(observed.Comment); err != nil || !jsonEqual(cr.Spec.ForProvider.Comment, string(raw)) {
+			return false
+		}
 	}
 
 	return true

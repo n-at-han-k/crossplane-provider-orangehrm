@@ -8,8 +8,8 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type Base64AttachmentOrNull struct {
-	Name   string `json:"name,omitempty"`
-	Type   string `json:"type,omitempty"`
-	Base64 string `json:"base64,omitempty"`
-	Size   int32  `json:"size,omitempty"`
+	Name   LooseString `json:"name,omitempty"`
+	Type   LooseString `json:"type,omitempty"`
+	Base64 LooseString `json:"base64,omitempty"`
+	Size   int32       `json:"size,omitempty"`
 }

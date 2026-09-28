@@ -10,6 +10,6 @@ package orangehrm
 type PerformanceReviewerRatingModel struct {
 	Id      int32                                `json:"id,omitempty"`
 	Rating  float32                              `json:"rating,omitempty"`
-	Comment string                               `json:"comment,omitempty"`
+	Comment LooseString                          `json:"comment,omitempty"`
 	Kpi     *BuzzPostPhotoEditDeletedPhotosInner `json:"kpi,omitempty"`
 }

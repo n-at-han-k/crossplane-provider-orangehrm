@@ -173,8 +173,16 @@ func desired(cr *v1alpha1.ClaimRequest) (*orangehrm.CreateMyClaimRequestRequest,
 	body := &orangehrm.CreateMyClaimRequestRequest{}
 
 	body.ClaimEventId = int32(cr.Spec.ForProvider.ClaimEventId)
-	body.CurrencyId = cr.Spec.ForProvider.CurrencyId
-	body.Remarks = cr.Spec.ForProvider.Remarks
+	if cr.Spec.ForProvider.CurrencyId != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.CurrencyId), &body.CurrencyId); err != nil {
+			return nil, errors.Wrap(err, "currencyId")
+		}
+	}
+	if cr.Spec.ForProvider.Remarks != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Remarks), &body.Remarks); err != nil {
+			return nil, errors.Wrap(err, "remarks")
+		}
+	}
 
 	return body, nil
 }
@@ -184,7 +192,11 @@ func observation(in *orangehrm.ClaimRequestModel) (v1alpha1.ClaimRequestObservat
 	out := v1alpha1.ClaimRequestObservation{}
 
 	out.Id = int64(in.Id)
-	out.ReferenceId = in.ReferenceId
+	if raw, err := json.Marshal(in.ReferenceId); err == nil {
+		out.ReferenceId = string(raw)
+	} else {
+		return out, errors.Wrap(err, "referenceId")
+	}
 	if raw, err := json.Marshal(in.ClaimEvent); err == nil {
 		out.ClaimEvent = string(raw)
 	} else {
@@ -195,8 +207,16 @@ func observation(in *orangehrm.ClaimRequestModel) (v1alpha1.ClaimRequestObservat
 	} else {
 		return out, errors.Wrap(err, "currency")
 	}
-	out.Description = in.Description
-	out.Status = in.Status
+	if raw, err := json.Marshal(in.Description); err == nil {
+		out.Description = string(raw)
+	} else {
+		return out, errors.Wrap(err, "description")
+	}
+	if raw, err := json.Marshal(in.Status); err == nil {
+		out.Status = string(raw)
+	} else {
+		return out, errors.Wrap(err, "status")
+	}
 
 	return out, nil
 }

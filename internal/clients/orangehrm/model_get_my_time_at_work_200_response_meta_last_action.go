@@ -8,10 +8,10 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type GetMyTimeAtWork200ResponseMetaLastAction struct {
-	State          string `json:"state,omitempty"`
-	UtcDate        string `json:"utcDate,omitempty"`
-	UtcTime        bool   `json:"utcTime"`
-	UserDate       string `json:"userDate,omitempty"`
-	UserTime       string `json:"userTime,omitempty"`
-	TimezoneOffset bool   `json:"timezoneOffset"`
+	State          LooseString `json:"state,omitempty"`
+	UtcDate        LooseString `json:"utcDate,omitempty"`
+	UtcTime        bool        `json:"utcTime"`
+	UserDate       LooseString `json:"userDate,omitempty"`
+	UserTime       LooseString `json:"userTime,omitempty"`
+	TimezoneOffset bool        `json:"timezoneOffset"`
 }

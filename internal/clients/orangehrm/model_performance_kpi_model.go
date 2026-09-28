@@ -9,7 +9,7 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type PerformanceKpiModel struct {
 	Id        int32                                       `json:"id,omitempty"`
-	Title     string                                      `json:"title,omitempty"`
+	Title     LooseString                                 `json:"title,omitempty"`
 	JobTitle  *DashboardEmployeeOnLeaveListModelLeaveType `json:"jobTitle,omitempty"`
 	MinRating int32                                       `json:"minRating,omitempty"`
 	MaxRating int32                                       `json:"maxRating,omitempty"`

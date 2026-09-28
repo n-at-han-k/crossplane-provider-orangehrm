@@ -172,7 +172,11 @@ type external struct {
 func desired(cr *v1alpha1.PerformanceConfigTracker) (*orangehrm.CreateAPerformanceTrackerRequest, error) {
 	body := &orangehrm.CreateAPerformanceTrackerRequest{}
 
-	body.TrackerName = cr.Spec.ForProvider.TrackerName
+	if cr.Spec.ForProvider.TrackerName != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.TrackerName), &body.TrackerName); err != nil {
+			return nil, errors.Wrap(err, "trackerName")
+		}
+	}
 	body.EmpNumber = int32(cr.Spec.ForProvider.EmpNumber)
 	if cr.Spec.ForProvider.Reviewers != "" {
 		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Reviewers), &body.Reviewers); err != nil {
@@ -188,7 +192,11 @@ func observation(in *orangehrm.PerformanceDetailedPerformanceTrackerModel) (v1al
 	out := v1alpha1.PerformanceConfigTrackerObservation{}
 
 	out.Id = int64(in.Id)
-	out.TrackerName = in.TrackerName
+	if raw, err := json.Marshal(in.TrackerName); err == nil {
+		out.TrackerName = string(raw)
+	} else {
+		return out, errors.Wrap(err, "trackerName")
+	}
 	out.AddedDate = float64(in.AddedDate)
 	out.ModifiedDate = float64(in.ModifiedDate)
 	out.Status = int64(in.Status)
@@ -212,10 +220,10 @@ func observation(in *orangehrm.PerformanceDetailedPerformanceTrackerModel) (v1al
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.PerformanceConfigTracker, observed *orangehrm.PerformanceDetailedPerformanceTrackerModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.TrackerName != "" && cr.Spec.ForProvider.TrackerName != observed.TrackerName {
-		return false
+	if cr.Spec.ForProvider.TrackerName != "" {
+		if raw, err := json.Marshal(observed.TrackerName); err != nil || !jsonEqual(cr.Spec.ForProvider.TrackerName, string(raw)) {
+			return false
+		}
 	}
 
 	return true

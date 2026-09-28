@@ -8,8 +8,8 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type UpdateACustomFieldRequest struct {
-	FieldName string `json:"fieldName,omitempty"`
-	FieldType int32  `json:"fieldType,omitempty"`
-	Screen    string `json:"screen,omitempty"`
-	ExtraData string `json:"extraData,omitempty"`
+	FieldName LooseString `json:"fieldName,omitempty"`
+	FieldType int32       `json:"fieldType,omitempty"`
+	Screen    LooseString `json:"screen,omitempty"`
+	ExtraData LooseString `json:"extraData,omitempty"`
 }

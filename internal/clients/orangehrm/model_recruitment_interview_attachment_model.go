@@ -11,5 +11,5 @@ type RecruitmentInterviewAttachmentModel struct {
 	Id          int32                                          `json:"id,omitempty"`
 	InterviewId int32                                          `json:"interviewId,omitempty"`
 	Attachment  *RecruitmentCandidateAttachmentModelAttachment `json:"attachment,omitempty"`
-	Comment     string                                         `json:"comment,omitempty"`
+	Comment     LooseString                                    `json:"comment,omitempty"`
 }

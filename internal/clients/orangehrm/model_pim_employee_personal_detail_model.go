@@ -9,21 +9,21 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type PimEmployeePersonalDetailModel struct {
 	EmpNumber                 int32                                     `json:"empNumber,omitempty"`
-	LastName                  string                                    `json:"lastName,omitempty"`
-	FirstName                 string                                    `json:"firstName,omitempty"`
-	MiddleName                string                                    `json:"middleName,omitempty"`
-	EmployeeId                string                                    `json:"employeeId,omitempty"`
-	OtherId                   string                                    `json:"otherId,omitempty"`
-	DrivingLicenseNo          string                                    `json:"drivingLicenseNo,omitempty"`
-	DrivingLicenseExpiredDate string                                    `json:"drivingLicenseExpiredDate,omitempty"`
-	Gender                    string                                    `json:"gender,omitempty"`
-	MaritalStatus             string                                    `json:"maritalStatus,omitempty"`
-	Birthday                  string                                    `json:"birthday,omitempty"`
+	LastName                  LooseString                               `json:"lastName,omitempty"`
+	FirstName                 LooseString                               `json:"firstName,omitempty"`
+	MiddleName                LooseString                               `json:"middleName,omitempty"`
+	EmployeeId                LooseString                               `json:"employeeId,omitempty"`
+	OtherId                   LooseString                               `json:"otherId,omitempty"`
+	DrivingLicenseNo          LooseString                               `json:"drivingLicenseNo,omitempty"`
+	DrivingLicenseExpiredDate LooseString                               `json:"drivingLicenseExpiredDate,omitempty"`
+	Gender                    LooseString                               `json:"gender,omitempty"`
+	MaritalStatus             LooseString                               `json:"maritalStatus,omitempty"`
+	Birthday                  LooseString                               `json:"birthday,omitempty"`
 	TerminationId             int32                                     `json:"terminationId,omitempty"`
 	Nationality               *ClaimEmployeeClaimRequestModelClaimEvent `json:"nationality,omitempty"`
-	SsnNumber                 string                                    `json:"ssnNumber,omitempty"`
-	SinNumber                 string                                    `json:"sinNumber,omitempty"`
-	Nickname                  string                                    `json:"nickname,omitempty"`
+	SsnNumber                 LooseString                               `json:"ssnNumber,omitempty"`
+	SinNumber                 LooseString                               `json:"sinNumber,omitempty"`
+	Nickname                  LooseString                               `json:"nickname,omitempty"`
 	Smoker                    int32                                     `json:"smoker,omitempty"`
-	MilitaryService           string                                    `json:"militaryService,omitempty"`
+	MilitaryService           LooseString                               `json:"militaryService,omitempty"`
 }

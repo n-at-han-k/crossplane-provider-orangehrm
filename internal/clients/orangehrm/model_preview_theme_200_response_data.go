@@ -8,25 +8,25 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type PreviewTheme200ResponseData struct {
-	OxdPrimaryOneColor             string `json:"--oxd-primary-one-color,omitempty"`
-	OxdPrimaryFontColor            string `json:"--oxd-primary-font-color,omitempty"`
-	OxdSecondaryFourColor          string `json:"--oxd-secondary-four-color,omitempty"`
-	OxdSecondaryFontColor          string `json:"--oxd-secondary-font-color,omitempty"`
-	OxdPrimaryGradientStartColor   string `json:"--oxd-primary-gradient-start-color,omitempty"`
-	OxdPrimaryGradientEndColor     string `json:"--oxd-primary-gradient-end-color,omitempty"`
-	OxdSecondaryGradientStartColor string `json:"--oxd-secondary-gradient-start-color,omitempty"`
-	OxdSecondaryGradientEndColor   string `json:"--oxd-secondary-gradient-end-color,omitempty"`
-	OxdPrimaryOneLighten5Color     string `json:"--oxd-primary-one-lighten-5-color,omitempty"`
-	OxdPrimaryOneLighten30Color    string `json:"--oxd-primary-one-lighten-30-color,omitempty"`
-	OxdPrimaryOneDarken5Color      string `json:"--oxd-primary-one-darken-5-color,omitempty"`
-	OxdPrimaryOneAlpha10Color      string `json:"--oxd-primary-one-alpha-10-color,omitempty"`
-	OxdPrimaryOneAlpha15Color      string `json:"--oxd-primary-one-alpha-15-color,omitempty"`
-	OxdPrimaryOneAlpha20Color      string `json:"--oxd-primary-one-alpha-20-color,omitempty"`
-	OxdPrimaryOneAlpha50Color      string `json:"--oxd-primary-one-alpha-50-color,omitempty"`
-	OxdSecondaryFourLighten5Color  string `json:"--oxd-secondary-four-lighten-5-color,omitempty"`
-	OxdSecondaryFourDarken5Color   string `json:"--oxd-secondary-four-darken-5-color,omitempty"`
-	OxdSecondaryFourAlpha10Color   string `json:"--oxd-secondary-four-alpha-10-color,omitempty"`
-	OxdSecondaryFourAlpha15Color   string `json:"--oxd-secondary-four-alpha-15-color,omitempty"`
-	OxdSecondaryFourAlpha20Color   string `json:"--oxd-secondary-four-alpha-20-color,omitempty"`
-	OxdSecondaryFourAlpha50Color   string `json:"--oxd-secondary-four-alpha-50-color,omitempty"`
+	OxdPrimaryOneColor             LooseString `json:"--oxd-primary-one-color,omitempty"`
+	OxdPrimaryFontColor            LooseString `json:"--oxd-primary-font-color,omitempty"`
+	OxdSecondaryFourColor          LooseString `json:"--oxd-secondary-four-color,omitempty"`
+	OxdSecondaryFontColor          LooseString `json:"--oxd-secondary-font-color,omitempty"`
+	OxdPrimaryGradientStartColor   LooseString `json:"--oxd-primary-gradient-start-color,omitempty"`
+	OxdPrimaryGradientEndColor     LooseString `json:"--oxd-primary-gradient-end-color,omitempty"`
+	OxdSecondaryGradientStartColor LooseString `json:"--oxd-secondary-gradient-start-color,omitempty"`
+	OxdSecondaryGradientEndColor   LooseString `json:"--oxd-secondary-gradient-end-color,omitempty"`
+	OxdPrimaryOneLighten5Color     LooseString `json:"--oxd-primary-one-lighten-5-color,omitempty"`
+	OxdPrimaryOneLighten30Color    LooseString `json:"--oxd-primary-one-lighten-30-color,omitempty"`
+	OxdPrimaryOneDarken5Color      LooseString `json:"--oxd-primary-one-darken-5-color,omitempty"`
+	OxdPrimaryOneAlpha10Color      LooseString `json:"--oxd-primary-one-alpha-10-color,omitempty"`
+	OxdPrimaryOneAlpha15Color      LooseString `json:"--oxd-primary-one-alpha-15-color,omitempty"`
+	OxdPrimaryOneAlpha20Color      LooseString `json:"--oxd-primary-one-alpha-20-color,omitempty"`
+	OxdPrimaryOneAlpha50Color      LooseString `json:"--oxd-primary-one-alpha-50-color,omitempty"`
+	OxdSecondaryFourLighten5Color  LooseString `json:"--oxd-secondary-four-lighten-5-color,omitempty"`
+	OxdSecondaryFourDarken5Color   LooseString `json:"--oxd-secondary-four-darken-5-color,omitempty"`
+	OxdSecondaryFourAlpha10Color   LooseString `json:"--oxd-secondary-four-alpha-10-color,omitempty"`
+	OxdSecondaryFourAlpha15Color   LooseString `json:"--oxd-secondary-four-alpha-15-color,omitempty"`
+	OxdSecondaryFourAlpha20Color   LooseString `json:"--oxd-secondary-four-alpha-20-color,omitempty"`
+	OxdSecondaryFourAlpha50Color   LooseString `json:"--oxd-secondary-four-alpha-50-color,omitempty"`
 }

@@ -37,10 +37,14 @@ type PimEmployeeEducationParameters struct {
 
 	// Institute
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Institute string `json:"institute,omitempty"`
 
 	// Major
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Major string `json:"major,omitempty"`
 
 	// Year
@@ -49,14 +53,20 @@ type PimEmployeeEducationParameters struct {
 
 	// Score
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Score string `json:"score,omitempty"`
 
 	// StartDate
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	StartDate string `json:"startDate,omitempty"`
 
 	// EndDate
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	EndDate string `json:"endDate,omitempty"`
 }
 

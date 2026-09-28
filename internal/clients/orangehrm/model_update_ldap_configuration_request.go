@@ -9,15 +9,15 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type UpdateLdapConfigurationRequest struct {
 	Enable                                bool                                                    `json:"enable"`
-	Hostname                              string                                                  `json:"hostname,omitempty"`
+	Hostname                              LooseString                                             `json:"hostname,omitempty"`
 	Port                                  int32                                                   `json:"port,omitempty"`
-	Encryption                            string                                                  `json:"encryption,omitempty"`
-	LdapImplementation                    string                                                  `json:"ldapImplementation,omitempty"`
+	Encryption                            LooseString                                             `json:"encryption,omitempty"`
+	LdapImplementation                    LooseString                                             `json:"ldapImplementation,omitempty"`
 	BindAnonymously                       bool                                                    `json:"bindAnonymously"`
-	BindUserDN                            string                                                  `json:"bindUserDN,omitempty"`
-	BindUserPassword                      string                                                  `json:"bindUserPassword,omitempty"`
+	BindUserDN                            LooseString                                             `json:"bindUserDN,omitempty"`
+	BindUserPassword                      LooseString                                             `json:"bindUserPassword,omitempty"`
 	UserLookupSettings                    []UpdateLdapConfigurationRequestUserLookupSettingsInner `json:"userLookupSettings"`
 	DataMapping                           *UpdateLdapConfigurationRequestDataMapping              `json:"dataMapping,omitempty"`
 	MergeLDAPUsersWithExistingSystemUsers bool                                                    `json:"mergeLDAPUsersWithExistingSystemUsers"`
-	SyncInterval                          string                                                  `json:"syncInterval,omitempty"`
+	SyncInterval                          LooseString                                             `json:"syncInterval,omitempty"`
 }

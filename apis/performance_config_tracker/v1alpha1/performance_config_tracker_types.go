@@ -26,6 +26,8 @@ import (
 type PerformanceConfigTrackerParameters struct {
 	// TrackerName
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	TrackerName string `json:"trackerName"`
 
 	// EmpNumber Should be an existing EMployee Id

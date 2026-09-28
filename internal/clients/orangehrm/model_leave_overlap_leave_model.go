@@ -9,14 +9,14 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type LeaveOverlapLeaveModel struct {
 	Id           int32                                       `json:"id,omitempty"`
-	Date         string                                      `json:"date,omitempty"`
+	Date         LooseString                                 `json:"date,omitempty"`
 	LengthHours  int32                                       `json:"lengthHours,omitempty"`
 	LengthDays   int32                                       `json:"lengthDays,omitempty"`
 	Status       *ClaimEmployeeClaimRequestModelClaimEvent   `json:"status,omitempty"`
 	LeaveRequest *BuzzPostPhotoEditDeletedPhotosInner        `json:"leaveRequest,omitempty"`
 	LeaveType    *DashboardEmployeeOnLeaveListModelLeaveType `json:"leaveType,omitempty"`
-	StartTime    string                                      `json:"startTime,omitempty"`
-	EndTime      string                                      `json:"endTime,omitempty"`
+	StartTime    LooseString                                 `json:"startTime,omitempty"`
+	EndTime      LooseString                                 `json:"endTime,omitempty"`
 	DurationType *LeaveEmployeeLeaveModelDurationType        `json:"durationType,omitempty"`
 	LastComment  *LeaveOverlapLeaveModelAllOfLastComment     `json:"lastComment,omitempty"`
 }

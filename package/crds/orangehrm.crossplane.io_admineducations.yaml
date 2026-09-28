@@ -65,7 +65,9 @@ spec:
                   AdminEducationObservation instead.
                 properties:
                   name:
-                    description: Name
+                    description: |-
+                      Name
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                 required:
                 - name

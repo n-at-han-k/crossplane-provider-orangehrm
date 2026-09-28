@@ -65,7 +65,9 @@ spec:
                   RecruitmentVacancyObservation instead.
                 properties:
                   description:
-                    description: Description
+                    description: |-
+                      Description
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   employeeId:
                     description: EmployeeId
@@ -79,7 +81,9 @@ spec:
                     format: int64
                     type: integer
                   name:
-                    description: Name
+                    description: |-
+                      Name
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   numOfPositions:
                     description: NumOfPositions

@@ -65,7 +65,9 @@ spec:
                   BuzzPostObservation instead.
                 properties:
                   link:
-                    description: Link
+                    description: |-
+                      Link
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   photos:
                     description: |-
@@ -73,10 +75,14 @@ spec:
                       Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   text:
-                    description: Text
+                    description: |-
+                      Text
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   type:
-                    description: Type
+                    description: |-
+                      Type
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                 required:
                 - type

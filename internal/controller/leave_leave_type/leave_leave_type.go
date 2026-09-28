@@ -172,7 +172,11 @@ type external struct {
 func desired(cr *v1alpha1.LeaveLeaveType) (*orangehrm.CreateALeaveTypeRequest, error) {
 	body := &orangehrm.CreateALeaveTypeRequest{}
 
-	body.Name = cr.Spec.ForProvider.Name
+	if cr.Spec.ForProvider.Name != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Name), &body.Name); err != nil {
+			return nil, errors.Wrap(err, "name")
+		}
+	}
 	body.Situational = cr.Spec.ForProvider.Situational
 
 	return body, nil
@@ -183,7 +187,11 @@ func observation(in *orangehrm.LeaveLeaveTypeModel) (v1alpha1.LeaveLeaveTypeObse
 	out := v1alpha1.LeaveLeaveTypeObservation{}
 
 	out.Id = int64(in.Id)
-	out.Name = in.Name
+	if raw, err := json.Marshal(in.Name); err == nil {
+		out.Name = string(raw)
+	} else {
+		return out, errors.Wrap(err, "name")
+	}
 	out.Deleted = in.Deleted
 	out.Situational = in.Situational
 
@@ -195,16 +203,40 @@ func observation(in *orangehrm.LeaveLeaveTypeModel) (v1alpha1.LeaveLeaveTypeObse
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.LeaveLeaveType, observed *orangehrm.LeaveLeaveTypeModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Name != "" && cr.Spec.ForProvider.Name != observed.Name {
-		return false
+	if cr.Spec.ForProvider.Name != "" {
+		if raw, err := json.Marshal(observed.Name); err != nil || !jsonEqual(cr.Spec.ForProvider.Name, string(raw)) {
+			return false
+		}
 	}
 	if cr.Spec.ForProvider.Situational != observed.Situational {
 		return false
 	}
 
 	return true
+}
+
+// jsonEqual compares two JSON documents by value rather than by text, so that
+// a server re-ordering an object's keys is not a permanent diff.
+func jsonEqual(a, b string) bool {
+	var left, right any
+
+	if err := json.Unmarshal([]byte(a), &left); err != nil {
+		return false
+	}
+	if err := json.Unmarshal([]byte(b), &right); err != nil {
+		return false
+	}
+
+	x, err := json.Marshal(left)
+	if err != nil {
+		return false
+	}
+	y, err := json.Marshal(right)
+	if err != nil {
+		return false
+	}
+
+	return string(x) == string(y)
 }
 
 func (c *external) Observe(ctx context.Context, cr *v1alpha1.LeaveLeaveType) (managed.ExternalObservation, error) {

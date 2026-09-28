@@ -8,14 +8,14 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type CreateACandidateRequest struct {
-	FirstName         string `json:"firstName,omitempty"`
-	MiddleName        string `json:"middleName,omitempty"`
-	LastName          string `json:"lastName,omitempty"`
-	Email             string `json:"email,omitempty"`
-	ContactNumber     string `json:"contactNumber,omitempty"`
-	VacancyId         int32  `json:"vacancyId,omitempty"`
-	Keywords          string `json:"keywords,omitempty"`
-	Comment           string `json:"comment,omitempty"`
-	DateOfApplication string `json:"dateOfApplication,omitempty"`
-	ConsentToKeepData bool   `json:"consentToKeepData"`
+	FirstName         LooseString `json:"firstName,omitempty"`
+	MiddleName        LooseString `json:"middleName,omitempty"`
+	LastName          LooseString `json:"lastName,omitempty"`
+	Email             LooseString `json:"email,omitempty"`
+	ContactNumber     LooseString `json:"contactNumber,omitempty"`
+	VacancyId         int32       `json:"vacancyId,omitempty"`
+	Keywords          LooseString `json:"keywords,omitempty"`
+	Comment           LooseString `json:"comment,omitempty"`
+	DateOfApplication LooseString `json:"dateOfApplication,omitempty"`
+	ConsentToKeepData bool        `json:"consentToKeepData"`
 }

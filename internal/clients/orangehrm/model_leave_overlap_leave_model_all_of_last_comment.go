@@ -8,8 +8,8 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type LeaveOverlapLeaveModelAllOfLastComment struct {
-	Id      int32  `json:"id,omitempty"`
-	Comment string `json:"comment,omitempty"`
-	Date    string `json:"date,omitempty"`
-	Time    string `json:"time,omitempty"`
+	Id      int32       `json:"id,omitempty"`
+	Comment LooseString `json:"comment,omitempty"`
+	Date    LooseString `json:"date,omitempty"`
+	Time    LooseString `json:"time,omitempty"`
 }

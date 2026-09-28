@@ -70,17 +70,24 @@ spec:
                     description: Active
                     type: boolean
                   channelLabel:
-                    description: ChannelLabel
+                    description: |-
+                      ChannelLabel
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   dailySendTime:
-                    description: DailySendTime HH:mm in the registration&#39;s timezone.
+                    description: |-
+                      DailySendTime HH:mm in the registration&#39;s timezone.
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   eventType:
-                    description: EventType
+                    description: |-
+                      EventType
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   provider:
-                    description: Provider Webhook provider. Defaults to &#39;slack&#39;
-                      if omitted. URL shape is validated against the selected provider.
+                    description: |-
+                      Provider Webhook provider. Defaults to &#39;slack&#39; if omitted. URL shape is validated against the selected provider.
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   subunitIds:
                     description: |-
@@ -88,10 +95,14 @@ spec:
                       Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   timezone:
-                    description: Timezone
+                    description: |-
+                      Timezone
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   webhookUrl:
-                    description: WebhookUrl
+                    description: |-
+                      WebhookUrl
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                 required:
                 - dailySendTime

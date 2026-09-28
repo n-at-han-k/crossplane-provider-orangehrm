@@ -173,7 +173,11 @@ func desired(cr *v1alpha1.PimEmployeeSkill) (*orangehrm.AddASkillToAnEmployeeReq
 	body := &orangehrm.AddASkillToAnEmployeeRequest{}
 
 	body.YearsOfExperience = int32(cr.Spec.ForProvider.YearsOfExperience)
-	body.Comments = cr.Spec.ForProvider.Comments
+	if cr.Spec.ForProvider.Comments != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Comments), &body.Comments); err != nil {
+			return nil, errors.Wrap(err, "comments")
+		}
+	}
 	body.SkillId = int32(cr.Spec.ForProvider.SkillId)
 
 	return body, nil
@@ -184,7 +188,11 @@ func observation(in *orangehrm.PimEmployeeSkillModel) (v1alpha1.PimEmployeeSkill
 	out := v1alpha1.PimEmployeeSkillObservation{}
 
 	out.YearsOfExperience = float64(in.YearsOfExperience)
-	out.Comments = in.Comments
+	if raw, err := json.Marshal(in.Comments); err == nil {
+		out.Comments = string(raw)
+	} else {
+		return out, errors.Wrap(err, "comments")
+	}
 	if raw, err := json.Marshal(in.Skill); err == nil {
 		out.Skill = string(raw)
 	} else {
@@ -199,10 +207,10 @@ func observation(in *orangehrm.PimEmployeeSkillModel) (v1alpha1.PimEmployeeSkill
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.PimEmployeeSkill, observed *orangehrm.PimEmployeeSkillModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Comments != "" && cr.Spec.ForProvider.Comments != observed.Comments {
-		return false
+	if cr.Spec.ForProvider.Comments != "" {
+		if raw, err := json.Marshal(observed.Comments); err != nil || !jsonEqual(cr.Spec.ForProvider.Comments, string(raw)) {
+			return false
+		}
 	}
 
 	return true

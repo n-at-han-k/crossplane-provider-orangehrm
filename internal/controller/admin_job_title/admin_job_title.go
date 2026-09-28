@@ -172,9 +172,21 @@ type external struct {
 func desired(cr *v1alpha1.AdminJobTitle) (*orangehrm.CreateAJobTitleRequest, error) {
 	body := &orangehrm.CreateAJobTitleRequest{}
 
-	body.Title = cr.Spec.ForProvider.Title
-	body.Description = cr.Spec.ForProvider.Description
-	body.Note = cr.Spec.ForProvider.Note
+	if cr.Spec.ForProvider.Title != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Title), &body.Title); err != nil {
+			return nil, errors.Wrap(err, "title")
+		}
+	}
+	if cr.Spec.ForProvider.Description != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Description), &body.Description); err != nil {
+			return nil, errors.Wrap(err, "description")
+		}
+	}
+	if cr.Spec.ForProvider.Note != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Note), &body.Note); err != nil {
+			return nil, errors.Wrap(err, "note")
+		}
+	}
 	if cr.Spec.ForProvider.Specification != "" {
 		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Specification), &body.Specification); err != nil {
 			return nil, errors.Wrap(err, "specification")
@@ -189,9 +201,21 @@ func observation(in *orangehrm.AdminJobTitleModel) (v1alpha1.AdminJobTitleObserv
 	out := v1alpha1.AdminJobTitleObservation{}
 
 	out.Id = int64(in.Id)
-	out.Title = in.Title
-	out.Description = in.Description
-	out.Note = in.Note
+	if raw, err := json.Marshal(in.Title); err == nil {
+		out.Title = string(raw)
+	} else {
+		return out, errors.Wrap(err, "title")
+	}
+	if raw, err := json.Marshal(in.Description); err == nil {
+		out.Description = string(raw)
+	} else {
+		return out, errors.Wrap(err, "description")
+	}
+	if raw, err := json.Marshal(in.Note); err == nil {
+		out.Note = string(raw)
+	} else {
+		return out, errors.Wrap(err, "note")
+	}
 	if raw, err := json.Marshal(in.JobSpecification); err == nil {
 		out.JobSpecification = string(raw)
 	} else {
@@ -206,20 +230,20 @@ func observation(in *orangehrm.AdminJobTitleModel) (v1alpha1.AdminJobTitleObserv
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.AdminJobTitle, observed *orangehrm.AdminJobTitleModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Title != "" && cr.Spec.ForProvider.Title != observed.Title {
-		return false
+	if cr.Spec.ForProvider.Title != "" {
+		if raw, err := json.Marshal(observed.Title); err != nil || !jsonEqual(cr.Spec.ForProvider.Title, string(raw)) {
+			return false
+		}
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Description != "" && cr.Spec.ForProvider.Description != observed.Description {
-		return false
+	if cr.Spec.ForProvider.Description != "" {
+		if raw, err := json.Marshal(observed.Description); err != nil || !jsonEqual(cr.Spec.ForProvider.Description, string(raw)) {
+			return false
+		}
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Note != "" && cr.Spec.ForProvider.Note != observed.Note {
-		return false
+	if cr.Spec.ForProvider.Note != "" {
+		if raw, err := json.Marshal(observed.Note); err != nil || !jsonEqual(cr.Spec.ForProvider.Note, string(raw)) {
+			return false
+		}
 	}
 
 	return true

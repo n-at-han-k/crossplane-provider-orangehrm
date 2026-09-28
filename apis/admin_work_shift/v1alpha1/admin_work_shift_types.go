@@ -26,18 +26,26 @@ import (
 type AdminWorkShiftParameters struct {
 	// Name
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Name string `json:"name"`
 
 	// HoursPerDay
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	HoursPerDay string `json:"hoursPerDay"`
 
 	// StartTime
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	StartTime string `json:"startTime"`
 
 	// EndTime
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	EndTime string `json:"endTime"`
 
 	// EmpNumbers

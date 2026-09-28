@@ -26,6 +26,8 @@ import (
 type BuzzShareParameters struct {
 	// Text
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Text string `json:"text,omitempty"`
 
 	// ShareId

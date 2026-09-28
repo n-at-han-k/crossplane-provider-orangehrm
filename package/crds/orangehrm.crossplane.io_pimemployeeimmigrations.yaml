@@ -69,10 +69,14 @@ spec:
                     description: AdditionalPropertiesField
                     type: boolean
                   comment:
-                    description: Comment
+                    description: |-
+                      Comment
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   countryCode:
-                    description: CountryCode
+                    description: |-
+                      CountryCode
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   empNumber:
                     description: |-
@@ -84,19 +88,29 @@ spec:
                     - message: empNumber is immutable
                       rule: self == oldSelf
                   expiryDate:
-                    description: ExpiryDate
+                    description: |-
+                      ExpiryDate
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   issuedDate:
-                    description: IssuedDate
+                    description: |-
+                      IssuedDate
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   number:
-                    description: Number
+                    description: |-
+                      Number
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   reviewDate:
-                    description: ReviewDate
+                    description: |-
+                      ReviewDate
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   status:
-                    description: Status
+                    description: |-
+                      Status
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   type:
                     description: Type

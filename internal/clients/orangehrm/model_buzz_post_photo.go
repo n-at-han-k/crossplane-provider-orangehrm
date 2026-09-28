@@ -8,7 +8,7 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type BuzzPostPhoto struct {
-	Text   string             `json:"text,omitempty"`
-	Type   string             `json:"type,omitempty"`
+	Text   LooseString        `json:"text,omitempty"`
+	Type   LooseString        `json:"type,omitempty"`
 	Photos []Base64Attachment `json:"photos"`
 }

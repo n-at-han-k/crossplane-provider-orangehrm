@@ -33,6 +33,8 @@ type BuzzShareCommentParameters struct {
 
 	// Text
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Text string `json:"text"`
 }
 

@@ -10,7 +10,7 @@ package orangehrm
 type TimeTimesheetActionLogModel struct {
 	Id                int32                                                   `json:"id,omitempty"`
 	Action            *AttendanceDetailedAttendanceRecordModelPunchInTimezone `json:"action,omitempty"`
-	Comment           string                                                  `json:"comment,omitempty"`
-	Date              string                                                  `json:"date,omitempty"`
+	Comment           LooseString                                             `json:"comment,omitempty"`
+	Date              LooseString                                             `json:"date,omitempty"`
 	PerformedEmployee *GetMyTimeAtWork200ResponseMetaCurrentUser              `json:"performedEmployee,omitempty"`
 }

@@ -172,11 +172,31 @@ type external struct {
 func desired(cr *v1alpha1.AttendanceEmployeeRecord) (*orangehrm.CreateAnEmployeesAttendanceRecordRequest, error) {
 	body := &orangehrm.CreateAnEmployeesAttendanceRecordRequest{}
 
-	body.Date = cr.Spec.ForProvider.Date
-	body.Time = cr.Spec.ForProvider.Time
-	body.TimezoneOffset = cr.Spec.ForProvider.TimezoneOffset
-	body.TimezoneName = cr.Spec.ForProvider.TimezoneName
-	body.Note = cr.Spec.ForProvider.Note
+	if cr.Spec.ForProvider.Date != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Date), &body.Date); err != nil {
+			return nil, errors.Wrap(err, "date")
+		}
+	}
+	if cr.Spec.ForProvider.Time != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Time), &body.Time); err != nil {
+			return nil, errors.Wrap(err, "time")
+		}
+	}
+	if cr.Spec.ForProvider.TimezoneOffset != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.TimezoneOffset), &body.TimezoneOffset); err != nil {
+			return nil, errors.Wrap(err, "timezoneOffset")
+		}
+	}
+	if cr.Spec.ForProvider.TimezoneName != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.TimezoneName), &body.TimezoneName); err != nil {
+			return nil, errors.Wrap(err, "timezoneName")
+		}
+	}
+	if cr.Spec.ForProvider.Note != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Note), &body.Note); err != nil {
+			return nil, errors.Wrap(err, "note")
+		}
+	}
 
 	return body, nil
 }

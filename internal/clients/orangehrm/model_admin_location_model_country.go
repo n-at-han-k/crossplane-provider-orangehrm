@@ -8,7 +8,7 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type AdminLocationModelCountry struct {
-	CountryCode string `json:"countryCode,omitempty"`
-	Name        string `json:"name,omitempty"`
-	CountryName string `json:"countryName,omitempty"`
+	CountryCode LooseString `json:"countryCode,omitempty"`
+	Name        LooseString `json:"name,omitempty"`
+	CountryName LooseString `json:"countryName,omitempty"`
 }

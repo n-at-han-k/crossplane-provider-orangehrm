@@ -8,6 +8,6 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type ShareAPostRequest struct {
-	Text    string `json:"text,omitempty"`
-	ShareId int32  `json:"shareId,omitempty"`
+	Text    LooseString `json:"text,omitempty"`
+	ShareId int32       `json:"shareId,omitempty"`
 }

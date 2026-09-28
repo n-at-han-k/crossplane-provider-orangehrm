@@ -71,10 +71,14 @@ spec:
                     format: int64
                     type: integer
                   comment:
-                    description: Comment
+                    description: |-
+                      Comment
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   log:
-                    description: Log
+                    description: |-
+                      Log
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   trackerId:
                     description: |-

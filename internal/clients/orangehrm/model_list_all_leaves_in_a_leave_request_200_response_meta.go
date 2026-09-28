@@ -10,6 +10,6 @@ package orangehrm
 type ListAllLeavesInALeaveRequest200ResponseMeta struct {
 	Total     int32                                              `json:"total,omitempty"`
 	Employee  *GetAnEmployeesClaimRequest200ResponseMetaEmployee `json:"employee,omitempty"`
-	StartDate string                                             `json:"startDate,omitempty"`
-	EndDate   string                                             `json:"endDate,omitempty"`
+	StartDate LooseString                                        `json:"startDate,omitempty"`
+	EndDate   LooseString                                        `json:"endDate,omitempty"`
 }

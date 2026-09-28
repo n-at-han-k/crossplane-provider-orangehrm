@@ -172,7 +172,11 @@ type external struct {
 func desired(cr *v1alpha1.BuzzShare) (*orangehrm.ShareAPostRequest, error) {
 	body := &orangehrm.ShareAPostRequest{}
 
-	body.Text = cr.Spec.ForProvider.Text
+	if cr.Spec.ForProvider.Text != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Text), &body.Text); err != nil {
+			return nil, errors.Wrap(err, "text")
+		}
+	}
 	body.ShareId = int32(cr.Spec.ForProvider.ShareId)
 
 	return body, nil

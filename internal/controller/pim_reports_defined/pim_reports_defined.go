@@ -172,8 +172,16 @@ type external struct {
 func desired(cr *v1alpha1.PimReportsDefined) (*orangehrm.CreateAPimReportRequest, error) {
 	body := &orangehrm.CreateAPimReportRequest{}
 
-	body.Name = cr.Spec.ForProvider.Name
-	body.Include = cr.Spec.ForProvider.Include
+	if cr.Spec.ForProvider.Name != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Name), &body.Name); err != nil {
+			return nil, errors.Wrap(err, "name")
+		}
+	}
+	if cr.Spec.ForProvider.Include != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Include), &body.Include); err != nil {
+			return nil, errors.Wrap(err, "include")
+		}
+	}
 	if cr.Spec.ForProvider.Criteria != "" {
 		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Criteria), &body.Criteria); err != nil {
 			return nil, errors.Wrap(err, "criteria")
@@ -193,7 +201,11 @@ func observation(in *orangehrm.PimPimDefinedReportModel) (v1alpha1.PimReportsDef
 	out := v1alpha1.PimReportsDefinedObservation{}
 
 	out.Id = int64(in.Id)
-	out.Name = in.Name
+	if raw, err := json.Marshal(in.Name); err == nil {
+		out.Name = string(raw)
+	} else {
+		return out, errors.Wrap(err, "name")
+	}
 
 	return out, nil
 }
@@ -203,10 +215,10 @@ func observation(in *orangehrm.PimPimDefinedReportModel) (v1alpha1.PimReportsDef
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.PimReportsDefined, observed *orangehrm.PimPimDefinedReportModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Name != "" && cr.Spec.ForProvider.Name != observed.Name {
-		return false
+	if cr.Spec.ForProvider.Name != "" {
+		if raw, err := json.Marshal(observed.Name); err != nil || !jsonEqual(cr.Spec.ForProvider.Name, string(raw)) {
+			return false
+		}
 	}
 
 	return true

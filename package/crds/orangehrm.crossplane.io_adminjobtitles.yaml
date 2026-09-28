@@ -65,10 +65,14 @@ spec:
                   AdminJobTitleObservation instead.
                 properties:
                   description:
-                    description: Description
+                    description: |-
+                      Description
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   note:
-                    description: Note
+                    description: |-
+                      Note
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   specification:
                     description: |-
@@ -76,7 +80,9 @@ spec:
                       Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   title:
-                    description: Title
+                    description: |-
+                      Title
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                 required:
                 - title

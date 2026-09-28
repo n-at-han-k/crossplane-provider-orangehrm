@@ -65,7 +65,9 @@ spec:
                   LeaveLeaveRequestObservation instead.
                 properties:
                   comment:
-                    description: Comment
+                    description: |-
+                      Comment
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   duration:
                     description: |-
@@ -78,17 +80,23 @@ spec:
                       Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   fromDate:
-                    description: FromDate
+                    description: |-
+                      FromDate
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   leaveTypeId:
                     description: LeaveTypeId
                     format: int64
                     type: integer
                   partialOption:
-                    description: PartialOption
+                    description: |-
+                      PartialOption
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   toDate:
-                    description: ToDate
+                    description: |-
+                      ToDate
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                 required:
                 - duration

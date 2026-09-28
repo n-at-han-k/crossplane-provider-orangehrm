@@ -8,6 +8,6 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type ValidateVideoLink200ResponseData struct {
-	Url         string `json:"url,omitempty"`
-	EmbeddedURL string `json:"embeddedURL,omitempty"`
+	Url         LooseString `json:"url,omitempty"`
+	EmbeddedURL LooseString `json:"embeddedURL,omitempty"`
 }

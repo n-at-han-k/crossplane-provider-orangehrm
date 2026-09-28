@@ -9,7 +9,7 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type AdminEmailSubscriptionModel struct {
 	Id          int32                                   `json:"id,omitempty"`
-	Name        string                                  `json:"name,omitempty"`
+	Name        LooseString                             `json:"name,omitempty"`
 	Subscribers *AdminEmailSubscriptionModelSubscribers `json:"subscribers,omitempty"`
 	IsEnabled   bool                                    `json:"isEnabled"`
 }

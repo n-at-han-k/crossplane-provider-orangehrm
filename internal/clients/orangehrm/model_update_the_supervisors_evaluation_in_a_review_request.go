@@ -9,5 +9,5 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type UpdateTheSupervisorsEvaluationInAReviewRequest struct {
 	Reviewers      []UpdateTheEmployeesEvaluationInAReviewRequestReviewersInner `json:"reviewers"`
-	GeneralComment string                                                       `json:"generalComment,omitempty"`
+	GeneralComment LooseString                                                  `json:"generalComment,omitempty"`
 }

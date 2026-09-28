@@ -9,8 +9,8 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type TimeTimesheetItemModel struct {
 	Id       int32                                       `json:"id,omitempty"`
-	Date     string                                      `json:"date,omitempty"`
-	Comment  string                                      `json:"comment,omitempty"`
+	Date     LooseString                                 `json:"date,omitempty"`
+	Comment  LooseString                                 `json:"comment,omitempty"`
 	Project  *DashboardEmployeeOnLeaveListModelLeaveType `json:"project,omitempty"`
 	Activity *DashboardEmployeeOnLeaveListModelLeaveType `json:"activity,omitempty"`
 }

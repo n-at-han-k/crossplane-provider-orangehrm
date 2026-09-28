@@ -10,10 +10,10 @@ package orangehrm
 type RecruitmentCandidateHistoryListModel struct {
 	Id            int32                                              `json:"id,omitempty"`
 	Action        *GetAllowedActionsForCandidate200ResponseDataInner `json:"action,omitempty"`
-	VacancyName   string                                             `json:"vacancyName,omitempty"`
+	VacancyName   LooseString                                        `json:"vacancyName,omitempty"`
 	PerformedBy   *GetMyTimeAtWork200ResponseMetaCurrentUser         `json:"performedBy,omitempty"`
-	PerformedDate string                                             `json:"performedDate,omitempty"`
-	Note          string                                             `json:"note,omitempty"`
+	PerformedDate LooseString                                        `json:"performedDate,omitempty"`
+	Note          LooseString                                        `json:"note,omitempty"`
 	Editable      bool                                               `json:"editable"`
 	Interview     *RecruitmentCandidateHistoryListModelInterview     `json:"interview,omitempty"`
 }

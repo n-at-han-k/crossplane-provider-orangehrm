@@ -33,6 +33,8 @@ type ClaimRequestAttachmentParameters struct {
 
 	// Description
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Description string `json:"description,omitempty"`
 
 	// Attachment

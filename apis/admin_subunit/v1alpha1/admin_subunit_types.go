@@ -26,10 +26,14 @@ import (
 type AdminSubunitParameters struct {
 	// Name Should be unique
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Name string `json:"name"`
 
 	// Description
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Description string `json:"description,omitempty"`
 
 	// ParentId Should be the id of the parent node
@@ -38,6 +42,8 @@ type AdminSubunitParameters struct {
 
 	// UnitId
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	UnitId string `json:"unitId,omitempty"`
 }
 

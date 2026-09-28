@@ -14,6 +14,6 @@ type RecruitmentCandidateHistoryDetailedModel struct {
 	Vacancy       *RecruitmentCandidateHistoryDetailedModelVacancy   `json:"vacancy,omitempty"`
 	PerformedBy   *GetMyTimeAtWork200ResponseMetaCurrentUser         `json:"performedBy,omitempty"`
 	Interview     *BuzzPostPhotoEditDeletedPhotosInner               `json:"interview,omitempty"`
-	PerformedDate string                                             `json:"performedDate,omitempty"`
-	Note          string                                             `json:"note,omitempty"`
+	PerformedDate LooseString                                        `json:"performedDate,omitempty"`
+	Note          LooseString                                        `json:"note,omitempty"`
 }

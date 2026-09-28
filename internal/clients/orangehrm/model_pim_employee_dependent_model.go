@@ -8,9 +8,9 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type PimEmployeeDependentModel struct {
-	Id               int32  `json:"id,omitempty"`
-	Name             string `json:"name,omitempty"`
-	RelationshipType string `json:"relationshipType,omitempty"`
-	Relationship     string `json:"relationship,omitempty"`
-	DateOfBirth      string `json:"dateOfBirth,omitempty"`
+	Id               int32       `json:"id,omitempty"`
+	Name             LooseString `json:"name,omitempty"`
+	RelationshipType LooseString `json:"relationshipType,omitempty"`
+	Relationship     LooseString `json:"relationship,omitempty"`
+	DateOfBirth      LooseString `json:"dateOfBirth,omitempty"`
 }

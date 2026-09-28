@@ -9,8 +9,8 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type BuzzBuzzLikeOnShareModel struct {
 	Id          int32                                `json:"id,omitempty"`
-	LikedAtDate string                               `json:"likedAtDate,omitempty"`
-	LikedAtTime string                               `json:"likedAtTime,omitempty"`
+	LikedAtDate LooseString                          `json:"likedAtDate,omitempty"`
+	LikedAtTime LooseString                          `json:"likedAtTime,omitempty"`
 	Share       *BuzzPostPhotoEditDeletedPhotosInner `json:"share,omitempty"`
 	Employee    *BuzzBuzzLikeOnCommentModelEmployee  `json:"employee,omitempty"`
 }

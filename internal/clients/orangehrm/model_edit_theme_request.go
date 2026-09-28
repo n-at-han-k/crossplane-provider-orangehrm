@@ -13,7 +13,7 @@ type EditThemeRequest struct {
 	ClientLogo            *Base64Attachment    `json:"clientLogo,omitempty"`
 	ClientBanner          *Base64Attachment    `json:"clientBanner,omitempty"`
 	LoginBanner           *Base64Attachment    `json:"loginBanner,omitempty"`
-	CurrentClientLogo     string               `json:"currentClientLogo,omitempty"`
-	CurrentClientBanner   string               `json:"currentClientBanner,omitempty"`
-	CurrentLoginBanner    string               `json:"currentLoginBanner,omitempty"`
+	CurrentClientLogo     LooseString          `json:"currentClientLogo,omitempty"`
+	CurrentClientBanner   LooseString          `json:"currentClientBanner,omitempty"`
+	CurrentLoginBanner    LooseString          `json:"currentLoginBanner,omitempty"`
 }

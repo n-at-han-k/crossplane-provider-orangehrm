@@ -11,8 +11,8 @@ type PimEmployeeMembershipModel struct {
 	Id                       int32                                     `json:"id,omitempty"`
 	Membership               *ClaimEmployeeClaimRequestModelClaimEvent `json:"membership,omitempty"`
 	SubscriptionFee          float32                                   `json:"subscriptionFee,omitempty"`
-	SubscriptionPaidBy       string                                    `json:"subscriptionPaidBy,omitempty"`
+	SubscriptionPaidBy       LooseString                               `json:"subscriptionPaidBy,omitempty"`
 	CurrencyType             *ClaimEmployeeClaimRequestModelClaimEvent `json:"currencyType,omitempty"`
-	SubscriptionCommenceDate string                                    `json:"subscriptionCommenceDate,omitempty"`
-	SubscriptionRenewalDate  string                                    `json:"subscriptionRenewalDate,omitempty"`
+	SubscriptionCommenceDate LooseString                               `json:"subscriptionCommenceDate,omitempty"`
+	SubscriptionRenewalDate  LooseString                               `json:"subscriptionRenewalDate,omitempty"`
 }

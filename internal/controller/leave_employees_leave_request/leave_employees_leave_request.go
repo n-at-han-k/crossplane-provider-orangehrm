@@ -174,10 +174,26 @@ func desired(cr *v1alpha1.LeaveEmployeesLeaveRequest) (*orangehrm.CreateALeaveRe
 
 	body.EmpNumber = int32(cr.Spec.ForProvider.EmpNumber)
 	body.LeaveTypeId = int32(cr.Spec.ForProvider.LeaveTypeId)
-	body.FromDate = cr.Spec.ForProvider.FromDate
-	body.ToDate = cr.Spec.ForProvider.ToDate
-	body.Comment = cr.Spec.ForProvider.Comment
-	body.PartialOption = cr.Spec.ForProvider.PartialOption
+	if cr.Spec.ForProvider.FromDate != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.FromDate), &body.FromDate); err != nil {
+			return nil, errors.Wrap(err, "fromDate")
+		}
+	}
+	if cr.Spec.ForProvider.ToDate != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.ToDate), &body.ToDate); err != nil {
+			return nil, errors.Wrap(err, "toDate")
+		}
+	}
+	if cr.Spec.ForProvider.Comment != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Comment), &body.Comment); err != nil {
+			return nil, errors.Wrap(err, "comment")
+		}
+	}
+	if cr.Spec.ForProvider.PartialOption != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.PartialOption), &body.PartialOption); err != nil {
+			return nil, errors.Wrap(err, "partialOption")
+		}
+	}
 	if cr.Spec.ForProvider.Duration != "" {
 		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Duration), &body.Duration); err != nil {
 			return nil, errors.Wrap(err, "duration")

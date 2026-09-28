@@ -8,8 +8,8 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type CreateAPimReportRequest struct {
-	Name       string                            `json:"name,omitempty"`
-	Include    string                            `json:"include,omitempty"`
+	Name       LooseString                       `json:"name,omitempty"`
+	Include    LooseString                       `json:"include,omitempty"`
 	Criteria   CreateAPimReportRequestCriteria   `json:"criteria,omitempty"`
 	FieldGroup CreateAPimReportRequestFieldGroup `json:"fieldGroup,omitempty"`
 }

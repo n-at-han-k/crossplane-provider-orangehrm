@@ -10,6 +10,6 @@ package orangehrm
 type TimeTimesheetModel struct {
 	Id        int32                                     `json:"id,omitempty"`
 	Status    *ClaimEmployeeClaimRequestModelClaimEvent `json:"status,omitempty"`
-	StartDate string                                    `json:"startDate,omitempty"`
-	EndDate   string                                    `json:"endDate,omitempty"`
+	StartDate LooseString                               `json:"startDate,omitempty"`
+	EndDate   LooseString                               `json:"endDate,omitempty"`
 }

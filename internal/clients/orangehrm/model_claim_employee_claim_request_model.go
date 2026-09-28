@@ -12,9 +12,9 @@ type ClaimEmployeeClaimRequestModel struct {
 	ReferenceId   int32                                              `json:"referenceId,omitempty"`
 	ClaimEvent    *ClaimEmployeeClaimRequestModelClaimEvent          `json:"claimEvent,omitempty"`
 	CurrencyType  *ClaimEmployeeClaimRequestModelClaimEvent          `json:"currencyType,omitempty"`
-	Description   string                                             `json:"description,omitempty"`
-	Status        string                                             `json:"status,omitempty"`
+	Description   LooseString                                        `json:"description,omitempty"`
+	Status        LooseString                                        `json:"status,omitempty"`
 	Employee      *GetAnEmployeesClaimRequest200ResponseMetaEmployee `json:"employee,omitempty"`
 	Amount        float32                                            `json:"amount,omitempty"`
-	SubmittedDate string                                             `json:"submittedDate,omitempty"`
+	SubmittedDate LooseString                                        `json:"submittedDate,omitempty"`
 }

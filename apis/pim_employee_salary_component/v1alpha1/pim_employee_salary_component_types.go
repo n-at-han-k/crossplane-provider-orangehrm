@@ -37,6 +37,8 @@ type PimEmployeeSalaryComponentParameters struct {
 
 	// SalaryComponent
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	SalaryComponent string `json:"salaryComponent"`
 
 	// PayFrequencyId
@@ -45,14 +47,20 @@ type PimEmployeeSalaryComponentParameters struct {
 
 	// CurrencyId
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	CurrencyId string `json:"currencyId"`
 
 	// SalaryAmount
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	SalaryAmount string `json:"salaryAmount"`
 
 	// Comment
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Comment string `json:"comment,omitempty"`
 
 	// AddDirectDeposit
@@ -61,14 +69,20 @@ type PimEmployeeSalaryComponentParameters struct {
 
 	// DirectDepositAccount
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	DirectDepositAccount string `json:"directDepositAccount,omitempty"`
 
 	// DirectDepositAccountType
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	DirectDepositAccountType string `json:"directDepositAccountType,omitempty"`
 
 	// DirectDepositRoutingNumber
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	DirectDepositRoutingNumber string `json:"directDepositRoutingNumber,omitempty"`
 
 	// DirectDepositAmount

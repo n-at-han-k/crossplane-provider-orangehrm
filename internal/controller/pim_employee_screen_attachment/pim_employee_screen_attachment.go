@@ -172,7 +172,11 @@ type external struct {
 func desired(cr *v1alpha1.PimEmployeeScreenAttachment) (*orangehrm.UpdateAnEmployeesAttachmentOnAScreenRequest, error) {
 	body := &orangehrm.UpdateAnEmployeesAttachmentOnAScreenRequest{}
 
-	body.Description = cr.Spec.ForProvider.Description
+	if cr.Spec.ForProvider.Description != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Description), &body.Description); err != nil {
+			return nil, errors.Wrap(err, "description")
+		}
+	}
 	if cr.Spec.ForProvider.Attachment != "" {
 		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Attachment), &body.Attachment); err != nil {
 			return nil, errors.Wrap(err, "attachment")
@@ -187,14 +191,38 @@ func observation(in *orangehrm.PimEmployeeAttachmentModel) (v1alpha1.PimEmployee
 	out := v1alpha1.PimEmployeeScreenAttachmentObservation{}
 
 	out.Id = int64(in.Id)
-	out.Description = in.Description
-	out.Filename = in.Filename
+	if raw, err := json.Marshal(in.Description); err == nil {
+		out.Description = string(raw)
+	} else {
+		return out, errors.Wrap(err, "description")
+	}
+	if raw, err := json.Marshal(in.Filename); err == nil {
+		out.Filename = string(raw)
+	} else {
+		return out, errors.Wrap(err, "filename")
+	}
 	out.Size = int64(in.Size)
-	out.FileType = in.FileType
+	if raw, err := json.Marshal(in.FileType); err == nil {
+		out.FileType = string(raw)
+	} else {
+		return out, errors.Wrap(err, "fileType")
+	}
 	out.AttachedBy = int64(in.AttachedBy)
-	out.AttachedByName = in.AttachedByName
-	out.AttachedTime = in.AttachedTime
-	out.AttachedDate = in.AttachedDate
+	if raw, err := json.Marshal(in.AttachedByName); err == nil {
+		out.AttachedByName = string(raw)
+	} else {
+		return out, errors.Wrap(err, "attachedByName")
+	}
+	if raw, err := json.Marshal(in.AttachedTime); err == nil {
+		out.AttachedTime = string(raw)
+	} else {
+		return out, errors.Wrap(err, "attachedTime")
+	}
+	if raw, err := json.Marshal(in.AttachedDate); err == nil {
+		out.AttachedDate = string(raw)
+	} else {
+		return out, errors.Wrap(err, "attachedDate")
+	}
 
 	return out, nil
 }
@@ -204,10 +232,10 @@ func observation(in *orangehrm.PimEmployeeAttachmentModel) (v1alpha1.PimEmployee
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.PimEmployeeScreenAttachment, observed *orangehrm.PimEmployeeAttachmentModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Description != "" && cr.Spec.ForProvider.Description != observed.Description {
-		return false
+	if cr.Spec.ForProvider.Description != "" {
+		if raw, err := json.Marshal(observed.Description); err != nil || !jsonEqual(cr.Spec.ForProvider.Description, string(raw)) {
+			return false
+		}
 	}
 
 	return true

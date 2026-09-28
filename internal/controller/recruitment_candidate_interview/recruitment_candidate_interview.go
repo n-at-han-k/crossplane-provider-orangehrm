@@ -171,7 +171,11 @@ func observation(in *orangehrm.RecruitmentCandidateInterviewModel) (v1alpha1.Rec
 	out := v1alpha1.RecruitmentCandidateInterviewObservation{}
 
 	out.Id = int64(in.Id)
-	out.Name = in.Name
+	if raw, err := json.Marshal(in.Name); err == nil {
+		out.Name = string(raw)
+	} else {
+		return out, errors.Wrap(err, "name")
+	}
 	if raw, err := json.Marshal(in.Candidate); err == nil {
 		out.Candidate = string(raw)
 	} else {
@@ -187,9 +191,21 @@ func observation(in *orangehrm.RecruitmentCandidateInterviewModel) (v1alpha1.Rec
 	} else {
 		return out, errors.Wrap(err, "interviewers")
 	}
-	out.InterviewDate = in.InterviewDate
-	out.InterviewTime = in.InterviewTime
-	out.Note = in.Note
+	if raw, err := json.Marshal(in.InterviewDate); err == nil {
+		out.InterviewDate = string(raw)
+	} else {
+		return out, errors.Wrap(err, "interviewDate")
+	}
+	if raw, err := json.Marshal(in.InterviewTime); err == nil {
+		out.InterviewTime = string(raw)
+	} else {
+		return out, errors.Wrap(err, "interviewTime")
+	}
+	if raw, err := json.Marshal(in.Note); err == nil {
+		out.Note = string(raw)
+	} else {
+		return out, errors.Wrap(err, "note")
+	}
 
 	return out, nil
 }

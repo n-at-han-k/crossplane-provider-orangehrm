@@ -8,6 +8,6 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type GetLeaveReport200ResponseMeta struct {
-	Headers string `json:"headers,omitempty"`
-	Filters string `json:"filters,omitempty"`
+	Headers LooseString `json:"headers,omitempty"`
+	Filters LooseString `json:"filters,omitempty"`
 }

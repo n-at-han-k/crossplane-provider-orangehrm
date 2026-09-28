@@ -26,38 +26,56 @@ import (
 type AdminLocationParameters struct {
 	// Name
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Name string `json:"name"`
 
 	// CountryCode
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	CountryCode string `json:"countryCode"`
 
 	// Province
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Province string `json:"province,omitempty"`
 
 	// City
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	City string `json:"city,omitempty"`
 
 	// Address
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Address string `json:"address,omitempty"`
 
 	// ZipCode
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	ZipCode string `json:"zipCode,omitempty"`
 
 	// Phone
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Phone string `json:"phone,omitempty"`
 
 	// Fax
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Fax string `json:"fax,omitempty"`
 
 	// Note
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Note string `json:"note,omitempty"`
 }
 

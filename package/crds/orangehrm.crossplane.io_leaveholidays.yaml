@@ -65,14 +65,18 @@ spec:
                   LeaveHolidayObservation instead.
                 properties:
                   date:
-                    description: Date
+                    description: |-
+                      Date
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   length:
                     description: Length 0 - working day, 4 - half day
                     format: int64
                     type: integer
                   name:
-                    description: Name
+                    description: |-
+                      Name
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   recurring:
                     description: Recurring

@@ -8,8 +8,8 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type CreateAProjectRequest struct {
-	CustomerId              int32   `json:"customerId,omitempty"`
-	Name                    string  `json:"name,omitempty"`
-	Description             string  `json:"description,omitempty"`
-	ProjectAdminsEmpNumbers []int32 `json:"projectAdminsEmpNumbers"`
+	CustomerId              int32       `json:"customerId,omitempty"`
+	Name                    LooseString `json:"name,omitempty"`
+	Description             LooseString `json:"description,omitempty"`
+	ProjectAdminsEmpNumbers []int32     `json:"projectAdminsEmpNumbers"`
 }

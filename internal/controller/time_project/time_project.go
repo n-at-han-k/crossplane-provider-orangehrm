@@ -173,8 +173,16 @@ func desired(cr *v1alpha1.TimeProject) (*orangehrm.CreateAProjectRequest, error)
 	body := &orangehrm.CreateAProjectRequest{}
 
 	body.CustomerId = int32(cr.Spec.ForProvider.CustomerId)
-	body.Name = cr.Spec.ForProvider.Name
-	body.Description = cr.Spec.ForProvider.Description
+	if cr.Spec.ForProvider.Name != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Name), &body.Name); err != nil {
+			return nil, errors.Wrap(err, "name")
+		}
+	}
+	if cr.Spec.ForProvider.Description != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Description), &body.Description); err != nil {
+			return nil, errors.Wrap(err, "description")
+		}
+	}
 	if cr.Spec.ForProvider.ProjectAdminsEmpNumbers != "" {
 		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.ProjectAdminsEmpNumbers), &body.ProjectAdminsEmpNumbers); err != nil {
 			return nil, errors.Wrap(err, "projectAdminsEmpNumbers")
@@ -189,7 +197,11 @@ func observation(in *orangehrm.ListAllProjects200ResponseData) (v1alpha1.TimePro
 	out := v1alpha1.TimeProjectObservation{}
 
 	out.Id = int64(in.Id)
-	out.Name = in.Name
+	if raw, err := json.Marshal(in.Name); err == nil {
+		out.Name = string(raw)
+	} else {
+		return out, errors.Wrap(err, "name")
+	}
 	if raw, err := json.Marshal(in.Description); err == nil {
 		out.Description = string(raw)
 	} else {
@@ -215,10 +227,10 @@ func observation(in *orangehrm.ListAllProjects200ResponseData) (v1alpha1.TimePro
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.TimeProject, observed *orangehrm.ListAllProjects200ResponseData) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Name != "" && cr.Spec.ForProvider.Name != observed.Name {
-		return false
+	if cr.Spec.ForProvider.Name != "" {
+		if raw, err := json.Marshal(observed.Name); err != nil || !jsonEqual(cr.Spec.ForProvider.Name, string(raw)) {
+			return false
+		}
 	}
 
 	return true

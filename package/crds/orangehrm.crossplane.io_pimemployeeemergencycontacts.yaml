@@ -75,23 +75,29 @@ spec:
                     - message: empNumber is immutable
                       rule: self == oldSelf
                   homePhone:
-                    description: HomePhone Specify the home phone number of the emergency
-                      contact
+                    description: |-
+                      HomePhone Specify the home phone number of the emergency contact
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   mobilePhone:
-                    description: MobilePhone Specify the mobile phone number of the
-                      emergency contact
+                    description: |-
+                      MobilePhone Specify the mobile phone number of the emergency contact
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   name:
-                    description: Name Specify the name of the emergency contact
+                    description: |-
+                      Name Specify the name of the emergency contact
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   officePhone:
-                    description: OfficePhone Specfiy the office phone number of the
-                      emergency contact
+                    description: |-
+                      OfficePhone Specfiy the office phone number of the emergency contact
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   relationship:
-                    description: Relationship Specify the relationship between the
-                      employee and the emergency contact
+                    description: |-
+                      Relationship Specify the relationship between the employee and the emergency contact
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                 required:
                 - empNumber

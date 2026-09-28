@@ -8,10 +8,10 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type UpdateLdapConfigurationRequestUserLookupSettingsInner struct {
-	BaseDN                  string                                                                              `json:"baseDN,omitempty"`
-	SearchScope             string                                                                              `json:"searchScope,omitempty"`
-	UserNameAttribute       string                                                                              `json:"userNameAttribute,omitempty"`
-	UserSearchFilter        string                                                                              `json:"userSearchFilter,omitempty"`
-	UserUniqueIdAttribute   string                                                                              `json:"userUniqueIdAttribute,omitempty"`
+	BaseDN                  LooseString                                                                         `json:"baseDN,omitempty"`
+	SearchScope             LooseString                                                                         `json:"searchScope,omitempty"`
+	UserNameAttribute       LooseString                                                                         `json:"userNameAttribute,omitempty"`
+	UserSearchFilter        LooseString                                                                         `json:"userSearchFilter,omitempty"`
+	UserUniqueIdAttribute   LooseString                                                                         `json:"userUniqueIdAttribute,omitempty"`
 	EmployeeSelectorMapping []UpdateLdapConfigurationRequestUserLookupSettingsInnerEmployeeSelectorMappingInner `json:"employeeSelectorMapping"`
 }

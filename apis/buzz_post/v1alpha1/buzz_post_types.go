@@ -26,10 +26,14 @@ import (
 type BuzzPostParameters struct {
 	// Text
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Text string `json:"text,omitempty"`
 
 	// Type
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Type string `json:"type"`
 
 	// Photos
@@ -40,6 +44,8 @@ type BuzzPostParameters struct {
 
 	// Link
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Link string `json:"link,omitempty"`
 }
 

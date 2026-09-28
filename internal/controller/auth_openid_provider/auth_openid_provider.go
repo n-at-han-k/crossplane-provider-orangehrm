@@ -172,11 +172,27 @@ type external struct {
 func desired(cr *v1alpha1.AuthOpenidProvider) (*orangehrm.CreateOpenidProviderRequest, error) {
 	body := &orangehrm.CreateOpenidProviderRequest{}
 
-	body.Name = cr.Spec.ForProvider.Name
-	body.Url = cr.Spec.ForProvider.Url
+	if cr.Spec.ForProvider.Name != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Name), &body.Name); err != nil {
+			return nil, errors.Wrap(err, "name")
+		}
+	}
+	if cr.Spec.ForProvider.Url != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Url), &body.Url); err != nil {
+			return nil, errors.Wrap(err, "url")
+		}
+	}
 	body.Status = cr.Spec.ForProvider.Status
-	body.ClientId = cr.Spec.ForProvider.ClientId
-	body.ClientSecret = cr.Spec.ForProvider.ClientSecret
+	if cr.Spec.ForProvider.ClientId != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.ClientId), &body.ClientId); err != nil {
+			return nil, errors.Wrap(err, "clientId")
+		}
+	}
+	if cr.Spec.ForProvider.ClientSecret != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.ClientSecret), &body.ClientSecret); err != nil {
+			return nil, errors.Wrap(err, "clientSecret")
+		}
+	}
 
 	return body, nil
 }
@@ -186,10 +202,22 @@ func observation(in *orangehrm.OpenIdConnectProviderModel) (v1alpha1.AuthOpenidP
 	out := v1alpha1.AuthOpenidProviderObservation{}
 
 	out.Id = int64(in.Id)
-	out.ProviderName = in.ProviderName
-	out.ProviderUrl = in.ProviderUrl
+	if raw, err := json.Marshal(in.ProviderName); err == nil {
+		out.ProviderName = string(raw)
+	} else {
+		return out, errors.Wrap(err, "providerName")
+	}
+	if raw, err := json.Marshal(in.ProviderUrl); err == nil {
+		out.ProviderUrl = string(raw)
+	} else {
+		return out, errors.Wrap(err, "providerUrl")
+	}
 	out.Status = in.Status
-	out.ClientId = in.ClientId
+	if raw, err := json.Marshal(in.ClientId); err == nil {
+		out.ClientId = string(raw)
+	} else {
+		return out, errors.Wrap(err, "clientId")
+	}
 
 	return out, nil
 }
@@ -202,13 +230,37 @@ func upToDate(cr *v1alpha1.AuthOpenidProvider, observed *orangehrm.OpenIdConnect
 	if cr.Spec.ForProvider.Status != observed.Status {
 		return false
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.ClientId != "" && cr.Spec.ForProvider.ClientId != observed.ClientId {
-		return false
+	if cr.Spec.ForProvider.ClientId != "" {
+		if raw, err := json.Marshal(observed.ClientId); err != nil || !jsonEqual(cr.Spec.ForProvider.ClientId, string(raw)) {
+			return false
+		}
 	}
 
 	return true
+}
+
+// jsonEqual compares two JSON documents by value rather than by text, so that
+// a server re-ordering an object's keys is not a permanent diff.
+func jsonEqual(a, b string) bool {
+	var left, right any
+
+	if err := json.Unmarshal([]byte(a), &left); err != nil {
+		return false
+	}
+	if err := json.Unmarshal([]byte(b), &right); err != nil {
+		return false
+	}
+
+	x, err := json.Marshal(left)
+	if err != nil {
+		return false
+	}
+	y, err := json.Marshal(right)
+	if err != nil {
+		return false
+	}
+
+	return string(x) == string(y)
 }
 
 func (c *external) Observe(ctx context.Context, cr *v1alpha1.AuthOpenidProvider) (managed.ExternalObservation, error) {

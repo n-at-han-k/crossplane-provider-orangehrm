@@ -172,9 +172,17 @@ type external struct {
 func desired(cr *v1alpha1.LeaveHoliday) (*orangehrm.CreateAHolidayRequest, error) {
 	body := &orangehrm.CreateAHolidayRequest{}
 
-	body.Date = cr.Spec.ForProvider.Date
+	if cr.Spec.ForProvider.Date != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Date), &body.Date); err != nil {
+			return nil, errors.Wrap(err, "date")
+		}
+	}
 	body.Length = int32(cr.Spec.ForProvider.Length)
-	body.Name = cr.Spec.ForProvider.Name
+	if cr.Spec.ForProvider.Name != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Name), &body.Name); err != nil {
+			return nil, errors.Wrap(err, "name")
+		}
+	}
 	body.Recurring = cr.Spec.ForProvider.Recurring
 
 	return body, nil
@@ -185,11 +193,27 @@ func observation(in *orangehrm.LeaveHolidayModel) (v1alpha1.LeaveHolidayObservat
 	out := v1alpha1.LeaveHolidayObservation{}
 
 	out.Id = int64(in.Id)
-	out.Name = in.Name
-	out.Date = in.Date
+	if raw, err := json.Marshal(in.Name); err == nil {
+		out.Name = string(raw)
+	} else {
+		return out, errors.Wrap(err, "name")
+	}
+	if raw, err := json.Marshal(in.Date); err == nil {
+		out.Date = string(raw)
+	} else {
+		return out, errors.Wrap(err, "date")
+	}
 	out.Recurring = in.Recurring
-	out.Length = in.Length
-	out.LengthName = in.LengthName
+	if raw, err := json.Marshal(in.Length); err == nil {
+		out.Length = string(raw)
+	} else {
+		return out, errors.Wrap(err, "length")
+	}
+	if raw, err := json.Marshal(in.LengthName); err == nil {
+		out.LengthName = string(raw)
+	} else {
+		return out, errors.Wrap(err, "lengthName")
+	}
 
 	return out, nil
 }
@@ -199,21 +223,45 @@ func observation(in *orangehrm.LeaveHolidayModel) (v1alpha1.LeaveHolidayObservat
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.LeaveHoliday, observed *orangehrm.LeaveHolidayModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Date != "" && cr.Spec.ForProvider.Date != observed.Date {
-		return false
+	if cr.Spec.ForProvider.Date != "" {
+		if raw, err := json.Marshal(observed.Date); err != nil || !jsonEqual(cr.Spec.ForProvider.Date, string(raw)) {
+			return false
+		}
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Name != "" && cr.Spec.ForProvider.Name != observed.Name {
-		return false
+	if cr.Spec.ForProvider.Name != "" {
+		if raw, err := json.Marshal(observed.Name); err != nil || !jsonEqual(cr.Spec.ForProvider.Name, string(raw)) {
+			return false
+		}
 	}
 	if cr.Spec.ForProvider.Recurring != observed.Recurring {
 		return false
 	}
 
 	return true
+}
+
+// jsonEqual compares two JSON documents by value rather than by text, so that
+// a server re-ordering an object's keys is not a permanent diff.
+func jsonEqual(a, b string) bool {
+	var left, right any
+
+	if err := json.Unmarshal([]byte(a), &left); err != nil {
+		return false
+	}
+	if err := json.Unmarshal([]byte(b), &right); err != nil {
+		return false
+	}
+
+	x, err := json.Marshal(left)
+	if err != nil {
+		return false
+	}
+	y, err := json.Marshal(right)
+	if err != nil {
+		return false
+	}
+
+	return string(x) == string(y)
 }
 
 func (c *external) Observe(ctx context.Context, cr *v1alpha1.LeaveHoliday) (managed.ExternalObservation, error) {

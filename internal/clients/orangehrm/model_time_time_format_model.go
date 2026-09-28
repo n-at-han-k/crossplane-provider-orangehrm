@@ -8,6 +8,6 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type TimeTimeFormatModel struct {
-	FormatId int32  `json:"formatId,omitempty"`
-	Format   string `json:"format,omitempty"`
+	FormatId int32       `json:"formatId,omitempty"`
+	Format   LooseString `json:"format,omitempty"`
 }

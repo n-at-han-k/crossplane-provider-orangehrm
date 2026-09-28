@@ -1156,8 +1156,14 @@ public class CrossplaneCodegen extends TerraformProviderCodegen {
                     element = element.substring("map[string]".length());
                 }
 
+                // LooseString is a type this client DEFINES (see client.go), not
+                // one the document names -- and read as undescribed it was reset
+                // to `string`, which is exactly the type that cannot parse the
+                // number OrangeHRM sends for a holiday's `length`. Every read of
+                // every holiday failed on it, after the create had succeeded.
                 if (element.isEmpty() || isScalar(element) || element.contains(".")
-                        || element.startsWith("interface{") || byName.containsKey(element)) {
+                        || element.startsWith("interface{") || "LooseString".equals(element)
+                        || byName.containsKey(element)) {
                     continue;
                 }
 

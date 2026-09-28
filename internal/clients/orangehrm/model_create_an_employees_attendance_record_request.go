@@ -8,9 +8,9 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type CreateAnEmployeesAttendanceRecordRequest struct {
-	Date           string `json:"date,omitempty"`
-	Time           string `json:"time,omitempty"`
-	TimezoneOffset string `json:"timezoneOffset,omitempty"`
-	TimezoneName   string `json:"timezoneName,omitempty"`
-	Note           string `json:"note,omitempty"`
+	Date           LooseString `json:"date,omitempty"`
+	Time           LooseString `json:"time,omitempty"`
+	TimezoneOffset LooseString `json:"timezoneOffset,omitempty"`
+	TimezoneName   LooseString `json:"timezoneName,omitempty"`
+	Note           LooseString `json:"note,omitempty"`
 }

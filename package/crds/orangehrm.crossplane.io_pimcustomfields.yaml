@@ -65,11 +65,14 @@ spec:
                   PimCustomFieldObservation instead.
                 properties:
                   extraData:
-                    description: ExtraData Specify a comma separated list of options
-                      for the dropdown type custom fields
+                    description: |-
+                      ExtraData Specify a comma separated list of options for the dropdown type custom fields
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   fieldName:
-                    description: FieldName Specify the name of the custom field
+                    description: |-
+                      FieldName Specify the name of the custom field
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   fieldType:
                     description: FieldType Specify whether the field is a text/number
@@ -77,8 +80,9 @@ spec:
                     format: int64
                     type: integer
                   screen:
-                    description: Screen Specify which PIM screen this field should
-                      be displayed
+                    description: |-
+                      Screen Specify which PIM screen this field should be displayed
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                 type: object
               managementPolicies:

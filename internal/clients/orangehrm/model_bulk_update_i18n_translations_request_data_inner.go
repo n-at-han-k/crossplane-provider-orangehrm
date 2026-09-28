@@ -8,6 +8,6 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type BulkUpdateI18nTranslationsRequestDataInner struct {
-	LangStringId    int32  `json:"langStringId,omitempty"`
-	TranslatedValue string `json:"translatedValue,omitempty"`
+	LangStringId    int32       `json:"langStringId,omitempty"`
+	TranslatedValue LooseString `json:"translatedValue,omitempty"`
 }

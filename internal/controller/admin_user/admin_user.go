@@ -172,8 +172,16 @@ type external struct {
 func desired(cr *v1alpha1.AdminUser) (*orangehrm.UpdateAUserRequest, error) {
 	body := &orangehrm.UpdateAUserRequest{}
 
-	body.Username = cr.Spec.ForProvider.Username
-	body.Password = cr.Spec.ForProvider.Password
+	if cr.Spec.ForProvider.Username != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Username), &body.Username); err != nil {
+			return nil, errors.Wrap(err, "username")
+		}
+	}
+	if cr.Spec.ForProvider.Password != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Password), &body.Password); err != nil {
+			return nil, errors.Wrap(err, "password")
+		}
+	}
 	body.Status = cr.Spec.ForProvider.Status
 	body.UserRoleId = int32(cr.Spec.ForProvider.UserRoleId)
 	body.EmpNumber = int32(cr.Spec.ForProvider.EmpNumber)
@@ -186,7 +194,11 @@ func observation(in *orangehrm.AdminUserModel) (v1alpha1.AdminUserObservation, e
 	out := v1alpha1.AdminUserObservation{}
 
 	out.Id = int64(in.Id)
-	out.UserName = in.UserName
+	if raw, err := json.Marshal(in.UserName); err == nil {
+		out.UserName = string(raw)
+	} else {
+		return out, errors.Wrap(err, "userName")
+	}
 	out.Deleted = in.Deleted
 	out.Status = in.Status
 	if raw, err := json.Marshal(in.Employee); err == nil {
@@ -208,10 +220,10 @@ func observation(in *orangehrm.AdminUserModel) (v1alpha1.AdminUserObservation, e
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.AdminUser, observed *orangehrm.AdminUserModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Username != "" && cr.Spec.ForProvider.Username != observed.UserName {
-		return false
+	if cr.Spec.ForProvider.Username != "" {
+		if raw, err := json.Marshal(observed.UserName); err != nil || !jsonEqual(cr.Spec.ForProvider.Username, string(raw)) {
+			return false
+		}
 	}
 	if cr.Spec.ForProvider.Status != observed.Status {
 		return false

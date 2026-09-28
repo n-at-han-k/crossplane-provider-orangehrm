@@ -175,7 +175,11 @@ func desired(cr *v1alpha1.PimEmployeeLanguage) (*orangehrm.AddALanguageToAnEmplo
 	body.LanguageId = int32(cr.Spec.ForProvider.LanguageId)
 	body.FluencyId = int32(cr.Spec.ForProvider.FluencyId)
 	body.CompetencyId = int32(cr.Spec.ForProvider.CompetencyId)
-	body.Comment = cr.Spec.ForProvider.Comment
+	if cr.Spec.ForProvider.Comment != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Comment), &body.Comment); err != nil {
+			return nil, errors.Wrap(err, "comment")
+		}
+	}
 
 	return body, nil
 }
@@ -199,7 +203,11 @@ func observation(in *orangehrm.PimEmployeeLanguageModel) (v1alpha1.PimEmployeeLa
 	} else {
 		return out, errors.Wrap(err, "competency")
 	}
-	out.Comment = in.Comment
+	if raw, err := json.Marshal(in.Comment); err == nil {
+		out.Comment = string(raw)
+	} else {
+		return out, errors.Wrap(err, "comment")
+	}
 
 	return out, nil
 }
@@ -209,10 +217,10 @@ func observation(in *orangehrm.PimEmployeeLanguageModel) (v1alpha1.PimEmployeeLa
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.PimEmployeeLanguage, observed *orangehrm.PimEmployeeLanguageModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Comment != "" && cr.Spec.ForProvider.Comment != observed.Comment {
-		return false
+	if cr.Spec.ForProvider.Comment != "" {
+		if raw, err := json.Marshal(observed.Comment); err != nil || !jsonEqual(cr.Spec.ForProvider.Comment, string(raw)) {
+			return false
+		}
 	}
 
 	return true

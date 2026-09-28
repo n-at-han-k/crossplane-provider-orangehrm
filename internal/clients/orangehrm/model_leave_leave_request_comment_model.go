@@ -10,8 +10,8 @@ package orangehrm
 type LeaveLeaveRequestCommentModel struct {
 	Id                int32                                    `json:"id,omitempty"`
 	LeaveRequest      *BuzzPostPhotoEditDeletedPhotosInner     `json:"leaveRequest,omitempty"`
-	Date              string                                   `json:"date,omitempty"`
-	Time              string                                   `json:"time,omitempty"`
+	Date              LooseString                              `json:"date,omitempty"`
+	Time              LooseString                              `json:"time,omitempty"`
 	CreatedByEmployee *LeaveLeaveCommentModelCreatedByEmployee `json:"createdByEmployee,omitempty"`
-	Comment           string                                   `json:"comment,omitempty"`
+	Comment           LooseString                              `json:"comment,omitempty"`
 }

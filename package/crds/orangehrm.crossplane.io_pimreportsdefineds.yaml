@@ -75,10 +75,14 @@ spec:
                       Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   include:
-                    description: Include
+                    description: |-
+                      Include
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   name:
-                    description: Name
+                    description: |-
+                      Name
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                 required:
                 - criteria

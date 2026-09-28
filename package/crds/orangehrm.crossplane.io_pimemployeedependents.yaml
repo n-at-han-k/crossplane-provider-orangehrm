@@ -66,7 +66,9 @@ spec:
                   PimEmployeeDependentObservation instead.
                 properties:
                   dateOfBirth:
-                    description: DateOfBirth Specify the date of birth of the dependent
+                    description: |-
+                      DateOfBirth Specify the date of birth of the dependent
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   empNumber:
                     description: |-
@@ -78,13 +80,19 @@ spec:
                     - message: empNumber is immutable
                       rule: self == oldSelf
                   name:
-                    description: Name Specify the name of the dependent
+                    description: |-
+                      Name Specify the name of the dependent
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   relationship:
-                    description: Relationship Specify additional details of the relationship
+                    description: |-
+                      Relationship Specify additional details of the relationship
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   relationshipType:
-                    description: RelationshipType Specify the relationship type
+                    description: |-
+                      RelationshipType Specify the relationship type
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                 required:
                 - empNumber

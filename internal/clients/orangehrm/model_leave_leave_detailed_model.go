@@ -10,7 +10,7 @@ package orangehrm
 type LeaveLeaveDetailedModel struct {
 	Id             int32                                       `json:"id,omitempty"`
 	Dates          *LeaveLeaveDetailedModelDates               `json:"dates,omitempty"`
-	EndTime        string                                      `json:"endTime,omitempty"`
+	EndTime        LooseString                                 `json:"endTime,omitempty"`
 	LengthHours    int32                                       `json:"lengthHours,omitempty"`
 	LeaveBalance   interface{}                                 `json:"leaveBalance"`
 	LeaveStatus    interface{}                                 `json:"leaveStatus"`

@@ -9,9 +9,9 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type AdminWorkShiftDetailedModel struct {
 	Id          int32              `json:"id,omitempty"`
-	Name        string             `json:"name,omitempty"`
+	Name        LooseString        `json:"name,omitempty"`
 	HoursPerDay float32            `json:"hoursPerDay,omitempty"`
-	StartTime   string             `json:"startTime,omitempty"`
-	EndTime     string             `json:"endTime,omitempty"`
+	StartTime   LooseString        `json:"startTime,omitempty"`
+	EndTime     LooseString        `json:"endTime,omitempty"`
 	Employees   []PimEmployeeModel `json:"employees"`
 }

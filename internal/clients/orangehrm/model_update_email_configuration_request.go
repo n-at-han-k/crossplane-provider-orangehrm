@@ -8,13 +8,13 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type UpdateEmailConfigurationRequest struct {
-	MailType         string `json:"mailType,omitempty"`
-	SentAs           string `json:"sentAs,omitempty"`
-	SmtpHost         string `json:"smtpHost,omitempty"`
-	SmtpPort         int32  `json:"smtpPort,omitempty"`
-	SmtpUsername     string `json:"smtpUsername,omitempty"`
-	SmtpPassword     string `json:"smtpPassword,omitempty"`
-	SmtpAuthType     string `json:"smtpAuthType,omitempty"`
-	SmtpSecurityType string `json:"smtpSecurityType,omitempty"`
-	TestEmailAddress string `json:"testEmailAddress,omitempty"`
+	MailType         LooseString `json:"mailType,omitempty"`
+	SentAs           LooseString `json:"sentAs,omitempty"`
+	SmtpHost         LooseString `json:"smtpHost,omitempty"`
+	SmtpPort         int32       `json:"smtpPort,omitempty"`
+	SmtpUsername     LooseString `json:"smtpUsername,omitempty"`
+	SmtpPassword     LooseString `json:"smtpPassword,omitempty"`
+	SmtpAuthType     LooseString `json:"smtpAuthType,omitempty"`
+	SmtpSecurityType LooseString `json:"smtpSecurityType,omitempty"`
+	TestEmailAddress LooseString `json:"testEmailAddress,omitempty"`
 }

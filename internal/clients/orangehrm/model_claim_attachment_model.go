@@ -11,5 +11,5 @@ type ClaimAttachmentModel struct {
 	Id         int32                                              `json:"id,omitempty"`
 	Attachment *ClaimAttachmentModelAttachment                    `json:"attachment,omitempty"`
 	AttachedBy *GetAnEmployeesClaimRequest200ResponseMetaEmployee `json:"attachedBy,omitempty"`
-	Date       string                                             `json:"date,omitempty"`
+	Date       LooseString                                        `json:"date,omitempty"`
 }

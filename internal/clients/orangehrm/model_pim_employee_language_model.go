@@ -11,5 +11,5 @@ type PimEmployeeLanguageModel struct {
 	Language   *PimEmployeeLanguageModelLanguage   `json:"language,omitempty"`
 	Fluency    *PimEmployeeLanguageModelFluency    `json:"fluency,omitempty"`
 	Competency *PimEmployeeLanguageModelCompetency `json:"competency,omitempty"`
-	Comment    string                              `json:"comment,omitempty"`
+	Comment    LooseString                         `json:"comment,omitempty"`
 }

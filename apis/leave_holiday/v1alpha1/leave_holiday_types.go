@@ -26,6 +26,8 @@ import (
 type LeaveHolidayParameters struct {
 	// Date
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Date string `json:"date"`
 
 	// Length 0 - working day, 4 - half day
@@ -34,6 +36,8 @@ type LeaveHolidayParameters struct {
 
 	// Name
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Name string `json:"name"`
 
 	// Recurring

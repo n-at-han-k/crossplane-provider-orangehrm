@@ -41,10 +41,14 @@ type ClaimRequestExpenseParameters struct {
 
 	// Note
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Note string `json:"note,omitempty"`
 
 	// Date
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Date string `json:"date"`
 }
 

@@ -26,6 +26,8 @@ import (
 type LeaveLeaveRequestParameters struct {
 	// Comment
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	Comment string `json:"comment,omitempty"`
 
 	// Duration
@@ -42,14 +44,20 @@ type LeaveLeaveRequestParameters struct {
 
 	// PartialOption
 	// +optional
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	PartialOption string `json:"partialOption,omitempty"`
 
 	// FromDate
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	FromDate string `json:"fromDate"`
 
 	// ToDate
 	// +kubebuilder:validation:Required
+	// Not a scalar in the API description, so it travels as raw JSON.
+	// +kubebuilder:validation:Type=string
 	ToDate string `json:"toDate"`
 
 	// LeaveTypeId

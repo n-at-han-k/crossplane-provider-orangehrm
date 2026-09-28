@@ -172,11 +172,19 @@ type external struct {
 func desired(cr *v1alpha1.RecruitmentVacancy) (*orangehrm.CreateAVacancyRequest, error) {
 	body := &orangehrm.CreateAVacancyRequest{}
 
-	body.Name = cr.Spec.ForProvider.Name
+	if cr.Spec.ForProvider.Name != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Name), &body.Name); err != nil {
+			return nil, errors.Wrap(err, "name")
+		}
+	}
 	body.Status = cr.Spec.ForProvider.Status
 	body.JobTitleId = int32(cr.Spec.ForProvider.JobTitleId)
 	body.IsPublished = cr.Spec.ForProvider.IsPublished
-	body.Description = cr.Spec.ForProvider.Description
+	if cr.Spec.ForProvider.Description != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Description), &body.Description); err != nil {
+			return nil, errors.Wrap(err, "description")
+		}
+	}
 	body.NumOfPositions = int32(cr.Spec.ForProvider.NumOfPositions)
 	body.EmployeeId = int32(cr.Spec.ForProvider.EmployeeId)
 
@@ -188,8 +196,16 @@ func observation(in *orangehrm.RecruitmentVacancyDetailedModel) (v1alpha1.Recrui
 	out := v1alpha1.RecruitmentVacancyObservation{}
 
 	out.Id = int64(in.Id)
-	out.Name = in.Name
-	out.Description = in.Description
+	if raw, err := json.Marshal(in.Name); err == nil {
+		out.Name = string(raw)
+	} else {
+		return out, errors.Wrap(err, "name")
+	}
+	if raw, err := json.Marshal(in.Description); err == nil {
+		out.Description = string(raw)
+	} else {
+		return out, errors.Wrap(err, "description")
+	}
 	out.NumOfPositions = int64(in.NumOfPositions)
 	out.Status = in.Status
 	out.IsPublished = in.IsPublished
@@ -212,10 +228,10 @@ func observation(in *orangehrm.RecruitmentVacancyDetailedModel) (v1alpha1.Recrui
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.RecruitmentVacancy, observed *orangehrm.RecruitmentVacancyDetailedModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Name != "" && cr.Spec.ForProvider.Name != observed.Name {
-		return false
+	if cr.Spec.ForProvider.Name != "" {
+		if raw, err := json.Marshal(observed.Name); err != nil || !jsonEqual(cr.Spec.ForProvider.Name, string(raw)) {
+			return false
+		}
 	}
 	if cr.Spec.ForProvider.Status != observed.Status {
 		return false
@@ -223,10 +239,10 @@ func upToDate(cr *v1alpha1.RecruitmentVacancy, observed *orangehrm.RecruitmentVa
 	if cr.Spec.ForProvider.IsPublished != observed.IsPublished {
 		return false
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Description != "" && cr.Spec.ForProvider.Description != observed.Description {
-		return false
+	if cr.Spec.ForProvider.Description != "" {
+		if raw, err := json.Marshal(observed.Description); err != nil || !jsonEqual(cr.Spec.ForProvider.Description, string(raw)) {
+			return false
+		}
 	}
 	// Only what the person actually set: an optional field left empty is not
 	// a difference from whatever the server chose to put there.

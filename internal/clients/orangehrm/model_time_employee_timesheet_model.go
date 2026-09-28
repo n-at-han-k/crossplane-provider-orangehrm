@@ -11,6 +11,6 @@ type TimeEmployeeTimesheetModel struct {
 	Id        int32                                      `json:"id,omitempty"`
 	Employee  *GetMyTimeAtWork200ResponseMetaCurrentUser `json:"employee,omitempty"`
 	Status    *ClaimEmployeeClaimRequestModelClaimEvent  `json:"status,omitempty"`
-	StartDate string                                     `json:"startDate,omitempty"`
-	EndDate   string                                     `json:"endDate,omitempty"`
+	StartDate LooseString                                `json:"startDate,omitempty"`
+	EndDate   LooseString                                `json:"endDate,omitempty"`
 }

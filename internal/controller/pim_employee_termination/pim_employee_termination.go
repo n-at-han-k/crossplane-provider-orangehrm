@@ -173,8 +173,16 @@ func desired(cr *v1alpha1.PimEmployeeTermination) (*orangehrm.TerminateAnEmploye
 	body := &orangehrm.TerminateAnEmployeeRequest{}
 
 	body.TerminationReasonId = int32(cr.Spec.ForProvider.TerminationReasonId)
-	body.Date = cr.Spec.ForProvider.Date
-	body.Note = cr.Spec.ForProvider.Note
+	if cr.Spec.ForProvider.Date != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Date), &body.Date); err != nil {
+			return nil, errors.Wrap(err, "date")
+		}
+	}
+	if cr.Spec.ForProvider.Note != "" {
+		if err := json.Unmarshal([]byte(cr.Spec.ForProvider.Note), &body.Note); err != nil {
+			return nil, errors.Wrap(err, "note")
+		}
+	}
 
 	return body, nil
 }
@@ -184,8 +192,16 @@ func observation(in *orangehrm.PimEmployeeTerminationModel) (v1alpha1.PimEmploye
 	out := v1alpha1.PimEmployeeTerminationObservation{}
 
 	out.Id = int64(in.Id)
-	out.Note = in.Note
-	out.Date = in.Date
+	if raw, err := json.Marshal(in.Note); err == nil {
+		out.Note = string(raw)
+	} else {
+		return out, errors.Wrap(err, "note")
+	}
+	if raw, err := json.Marshal(in.Date); err == nil {
+		out.Date = string(raw)
+	} else {
+		return out, errors.Wrap(err, "date")
+	}
 	if raw, err := json.Marshal(in.TerminationReason); err == nil {
 		out.TerminationReason = string(raw)
 	} else {
@@ -200,15 +216,15 @@ func observation(in *orangehrm.PimEmployeeTerminationModel) (v1alpha1.PimEmploye
 // server reshapes on the way out -- cannot be diffed without reporting drift
 // on every reconcile, so it is left alone.
 func upToDate(cr *v1alpha1.PimEmployeeTermination, observed *orangehrm.PimEmployeeTerminationModel) bool {
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Date != "" && cr.Spec.ForProvider.Date != observed.Date {
-		return false
+	if cr.Spec.ForProvider.Date != "" {
+		if raw, err := json.Marshal(observed.Date); err != nil || !jsonEqual(cr.Spec.ForProvider.Date, string(raw)) {
+			return false
+		}
 	}
-	// Only what the person actually set: an optional field left empty is not
-	// a difference from whatever the server chose to put there.
-	if cr.Spec.ForProvider.Note != "" && cr.Spec.ForProvider.Note != observed.Note {
-		return false
+	if cr.Spec.ForProvider.Note != "" {
+		if raw, err := json.Marshal(observed.Note); err != nil || !jsonEqual(cr.Spec.ForProvider.Note, string(raw)) {
+			return false
+		}
 	}
 
 	return true

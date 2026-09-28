@@ -8,13 +8,13 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type UpdateAnAttendanceRecordRequest struct {
-	PunchInDate          string  `json:"punchInDate,omitempty"`
-	PunchInTime          string  `json:"punchInTime,omitempty"`
-	PunchInOffset        float32 `json:"punchInOffset,omitempty"`
-	PunchInTimezoneName  string  `json:"punchInTimezoneName,omitempty"`
-	PunchOutDate         string  `json:"punchOutDate,omitempty"`
-	PunchOutTime         string  `json:"punchOutTime,omitempty"`
-	PunchOutOffset       float32 `json:"punchOutOffset,omitempty"`
-	PunchOutTimezoneName string  `json:"punchOutTimezoneName,omitempty"`
-	PunchOutNote         string  `json:"punchOutNote,omitempty"`
+	PunchInDate          LooseString `json:"punchInDate,omitempty"`
+	PunchInTime          LooseString `json:"punchInTime,omitempty"`
+	PunchInOffset        float32     `json:"punchInOffset,omitempty"`
+	PunchInTimezoneName  LooseString `json:"punchInTimezoneName,omitempty"`
+	PunchOutDate         LooseString `json:"punchOutDate,omitempty"`
+	PunchOutTime         LooseString `json:"punchOutTime,omitempty"`
+	PunchOutOffset       float32     `json:"punchOutOffset,omitempty"`
+	PunchOutTimezoneName LooseString `json:"punchOutTimezoneName,omitempty"`
+	PunchOutNote         LooseString `json:"punchOutNote,omitempty"`
 }

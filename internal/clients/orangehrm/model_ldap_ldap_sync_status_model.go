@@ -10,5 +10,5 @@ package orangehrm
 type LdapLdapSyncStatusModel struct {
 	SyncStartedAt  *LdapLdapSyncStatusModelSyncStartedAt `json:"syncStartedAt,omitempty"`
 	SyncFinishedAt *LdapLdapSyncStatusModelSyncStartedAt `json:"syncFinishedAt,omitempty"`
-	SyncStatus     string                                `json:"syncStatus,omitempty"`
+	SyncStatus     LooseString                           `json:"syncStatus,omitempty"`
 }

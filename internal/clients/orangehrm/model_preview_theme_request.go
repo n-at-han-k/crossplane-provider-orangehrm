@@ -8,10 +8,10 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type PreviewThemeRequest struct {
-	PrimaryColor              string `json:"primaryColor,omitempty"`
-	PrimaryFontColor          string `json:"primaryFontColor,omitempty"`
-	SecondaryColor            string `json:"secondaryColor,omitempty"`
-	SecondaryFontColor        string `json:"secondaryFontColor,omitempty"`
-	PrimaryGradientStartColor string `json:"primaryGradientStartColor,omitempty"`
-	PrimaryGradientEndColor   string `json:"primaryGradientEndColor,omitempty"`
+	PrimaryColor              LooseString `json:"primaryColor,omitempty"`
+	PrimaryFontColor          LooseString `json:"primaryFontColor,omitempty"`
+	SecondaryColor            LooseString `json:"secondaryColor,omitempty"`
+	SecondaryFontColor        LooseString `json:"secondaryFontColor,omitempty"`
+	PrimaryGradientStartColor LooseString `json:"primaryGradientStartColor,omitempty"`
+	PrimaryGradientEndColor   LooseString `json:"primaryGradientEndColor,omitempty"`
 }

@@ -9,9 +9,9 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type PerformancePerformanceTrackerLogModel struct {
 	Id           int32                                      `json:"id,omitempty"`
-	Log          string                                     `json:"log,omitempty"`
-	Comment      string                                     `json:"comment,omitempty"`
-	Achievement  string                                     `json:"achievement,omitempty"`
+	Log          LooseString                                `json:"log,omitempty"`
+	Comment      LooseString                                `json:"comment,omitempty"`
+	Achievement  LooseString                                `json:"achievement,omitempty"`
 	AddedDate    float32                                    `json:"addedDate,omitempty"`
 	ModifiedDate float32                                    `json:"modifiedDate,omitempty"`
 	Reviewer     *GetMyTimeAtWork200ResponseMetaCurrentUser `json:"reviewer,omitempty"`

@@ -8,9 +8,9 @@ package orangehrm
 // inherited half in the parent, and a struct built from `vars` alone would
 // silently drop `ref` and `_url` from every hyperlink.
 type OpenIdConnectProviderModel struct {
-	Id           int32  `json:"id,omitempty"`
-	ProviderName string `json:"providerName,omitempty"`
-	ProviderUrl  string `json:"providerUrl,omitempty"`
-	Status       bool   `json:"status"`
-	ClientId     string `json:"clientId,omitempty"`
+	Id           int32       `json:"id,omitempty"`
+	ProviderName LooseString `json:"providerName,omitempty"`
+	ProviderUrl  LooseString `json:"providerUrl,omitempty"`
+	Status       bool        `json:"status"`
+	ClientId     LooseString `json:"clientId,omitempty"`
 }

@@ -79,19 +79,29 @@ spec:
                     - message: empNumber is immutable
                       rule: self == oldSelf
                   endDate:
-                    description: EndDate
+                    description: |-
+                      EndDate
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   institute:
-                    description: Institute
+                    description: |-
+                      Institute
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   major:
-                    description: Major
+                    description: |-
+                      Major
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   score:
-                    description: Score
+                    description: |-
+                      Score
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   startDate:
-                    description: StartDate
+                    description: |-
+                      StartDate
+                      Not a scalar in the API description, so it travels as raw JSON.
                     type: string
                   year:
                     description: Year

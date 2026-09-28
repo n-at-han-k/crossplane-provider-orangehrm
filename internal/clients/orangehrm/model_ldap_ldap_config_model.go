@@ -9,12 +9,12 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type LdapLdapConfigModel struct {
 	Enable                                bool                            `json:"enable"`
-	Hostname                              string                          `json:"hostname,omitempty"`
+	Hostname                              LooseString                     `json:"hostname,omitempty"`
 	Port                                  int32                           `json:"port,omitempty"`
-	Encryption                            string                          `json:"encryption,omitempty"`
-	LdapImplementation                    string                          `json:"ldapImplementation,omitempty"`
+	Encryption                            LooseString                     `json:"encryption,omitempty"`
+	LdapImplementation                    LooseString                     `json:"ldapImplementation,omitempty"`
 	BindAnonymously                       bool                            `json:"bindAnonymously"`
-	BindUserDN                            string                          `json:"bindUserDN,omitempty"`
+	BindUserDN                            LooseString                     `json:"bindUserDN,omitempty"`
 	HasBindUserPassword                   bool                            `json:"hasBindUserPassword"`
 	UserLookupSettings                    []string                        `json:"userLookupSettings"`
 	DataMapping                           *LdapLdapConfigModelDataMapping `json:"dataMapping,omitempty"`

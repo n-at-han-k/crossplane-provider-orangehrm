@@ -10,8 +10,8 @@ package orangehrm
 type PimEmployeeSalaryModel struct {
 	Id           int32                                     `json:"id,omitempty"`
 	Amount       float32                                   `json:"amount,omitempty"`
-	SalaryName   string                                    `json:"salaryName,omitempty"`
-	Comment      string                                    `json:"comment,omitempty"`
+	SalaryName   LooseString                               `json:"salaryName,omitempty"`
+	Comment      LooseString                               `json:"comment,omitempty"`
 	PayPeriod    *ClaimEmployeeClaimRequestModelClaimEvent `json:"payPeriod,omitempty"`
 	PayGrade     *ClaimEmployeeClaimRequestModelClaimEvent `json:"payGrade,omitempty"`
 	CurrencyType *ClaimEmployeeClaimRequestModelClaimEvent `json:"currencyType,omitempty"`

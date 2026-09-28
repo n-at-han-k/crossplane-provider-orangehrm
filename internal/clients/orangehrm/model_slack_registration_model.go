@@ -9,12 +9,12 @@ package orangehrm
 // silently drop `ref` and `_url` from every hyperlink.
 type SlackRegistrationModel struct {
 	Id            int32                                 `json:"id,omitempty"`
-	Provider      string                                `json:"provider,omitempty"`
-	EventType     string                                `json:"eventType,omitempty"`
-	WebhookUrl    string                                `json:"webhookUrl,omitempty"`
-	ChannelLabel  string                                `json:"channelLabel,omitempty"`
+	Provider      LooseString                           `json:"provider,omitempty"`
+	EventType     LooseString                           `json:"eventType,omitempty"`
+	WebhookUrl    LooseString                           `json:"webhookUrl,omitempty"`
+	ChannelLabel  LooseString                           `json:"channelLabel,omitempty"`
 	Subunits      []SlackRegistrationModelSubunitsInner `json:"subunits"`
-	Timezone      string                                `json:"timezone,omitempty"`
-	DailySendTime string                                `json:"dailySendTime,omitempty"`
+	Timezone      LooseString                           `json:"timezone,omitempty"`
+	DailySendTime LooseString                           `json:"dailySendTime,omitempty"`
 	Active        bool                                  `json:"active"`
 }
